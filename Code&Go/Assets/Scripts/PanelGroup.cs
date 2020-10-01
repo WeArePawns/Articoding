@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class PanelGroup : MonoBehaviour
 {
+    /*
+     * Esta es la clase que se modificará para cambiar
+     * la forma en la que se cambian los paneles al 
+     * deslizar con gestos.
+     */
+
+
     /* All panels */
     public GameObject[] panels;
 
     private int currentPanel;
 
-
-    private void Start()
-    {
-        SetPanelIndex(0);
-    }
 
     private void ShowCurrentPanel()
     {

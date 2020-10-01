@@ -9,7 +9,7 @@ public class TabGroup : MonoBehaviour
     public List<TabButton> tabs;
 
     /* Current selected tab */
-    public TabButton selectedTab;
+    private TabButton selectedTab;
 
     /* Associated PanelGroup */
     public PanelGroup panelGroup;

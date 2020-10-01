@@ -10,15 +10,23 @@ public class TabButton : MonoBehaviour, IPointerClickHandler
     /* TabGroup that owns this tab */
     public TabGroup tabGroup;
 
-    public Image image;
+    private Image image;
 
     /* Images used when tab is selected or not selected */
     public Sprite selectedImage;
     public Sprite deselectedImage;
 
-    private void Start()
+    /* Set to default tab */
+    public bool isDefaultTab;
+
+    private void Awake()
     {
         image = GetComponent<Image>();
+    }
+    private void Start()
+    {
+        if (isDefaultTab)
+            Select();
     }
 
     private void Select()

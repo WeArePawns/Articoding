@@ -469,6 +469,7 @@ GameObject:
   - component: {fileID: 61554862}
   - component: {fileID: 61554864}
   - component: {fileID: 61554863}
+  - component: {fileID: 61554865}
   m_Layer: 0
   m_Name: ProfileTab
   m_TagString: Untagged
@@ -533,6 +534,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 61554861}
   m_CullTransparentMesh: 0
+--- !u!114 &61554865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 61554861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eabf3983068ffed42bcb1a7881b21dc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tabGroup: {fileID: 1998808658}
+  selectedImage: {fileID: 21300000, guid: 1d140cbc6d8360248a09598486c3953a, type: 3}
+  deselectedImage: {fileID: 21300000, guid: b025bb314c2544a46a9de5a74e9582e6, type: 3}
+  isDefaultTab: 1
 --- !u!1 &67789873
 GameObject:
   m_ObjectHideFlags: 0
@@ -1443,6 +1460,7 @@ GameObject:
   - component: {fileID: 488859495}
   - component: {fileID: 488859497}
   - component: {fileID: 488859496}
+  - component: {fileID: 488859498}
   m_Layer: 0
   m_Name: TemaryTab
   m_TagString: Untagged
@@ -1507,6 +1525,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 488859494}
   m_CullTransparentMesh: 0
+--- !u!114 &488859498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 488859494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eabf3983068ffed42bcb1a7881b21dc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tabGroup: {fileID: 1998808658}
+  selectedImage: {fileID: 21300000, guid: 40599814f634e9d4abcecc3bb4d73980, type: 3}
+  deselectedImage: {fileID: 21300000, guid: 41f54c9739f95eb4fbc33ba29b0e2e3e, type: 3}
+  isDefaultTab: 0
 --- !u!1 &513506608
 GameObject:
   m_ObjectHideFlags: 0
@@ -1808,7 +1842,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 472344322}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.30613038
+  m_Size: 0.30613035
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1882,6 +1916,7 @@ GameObject:
   - component: {fileID: 649249177}
   - component: {fileID: 649249179}
   - component: {fileID: 649249178}
+  - component: {fileID: 649249180}
   m_Layer: 0
   m_Name: ShopTab
   m_TagString: Untagged
@@ -1946,6 +1981,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 649249176}
   m_CullTransparentMesh: 0
+--- !u!114 &649249180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 649249176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eabf3983068ffed42bcb1a7881b21dc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tabGroup: {fileID: 1998808658}
+  selectedImage: {fileID: 21300000, guid: 3ba39cc0ce94aaf4e9a03d1969ecfdd2, type: 3}
+  deselectedImage: {fileID: 21300000, guid: 70363d5b289724b45ab8b7b71740a354, type: 3}
+  isDefaultTab: 0
 --- !u!1 &656513530
 GameObject:
   m_ObjectHideFlags: 0
@@ -3073,7 +3124,7 @@ RectTransform:
   m_Children:
   - {fileID: 416134418}
   m_Father: {fileID: 2064709142}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3129,6 +3180,7 @@ GameObject:
   - component: {fileID: 1050306376}
   - component: {fileID: 1050306378}
   - component: {fileID: 1050306377}
+  - component: {fileID: 1050306379}
   m_Layer: 0
   m_Name: PlayTab
   m_TagString: Untagged
@@ -3193,6 +3245,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1050306375}
   m_CullTransparentMesh: 0
+--- !u!114 &1050306379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1050306375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eabf3983068ffed42bcb1a7881b21dc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tabGroup: {fileID: 1998808658}
+  selectedImage: {fileID: 21300000, guid: 94125498dda61b84ab3faf46e7e8f13e, type: 3}
+  deselectedImage: {fileID: 21300000, guid: 206e1d13e57c2cc449b3c901241d3d27, type: 3}
+  isDefaultTab: 0
 --- !u!1 &1056885674
 GameObject:
   m_ObjectHideFlags: 0
@@ -4871,10 +4939,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eabf3983068ffed42bcb1a7881b21dc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tabGroup: {fileID: 0}
-  image: {fileID: 0}
-  selectedImage: {fileID: 0}
-  deselectedImage: {fileID: 0}
+  tabGroup: {fileID: 1998808658}
+  selectedImage: {fileID: 21300000, guid: 2c771af32a33bd247a014a488cdcc674, type: 3}
+  deselectedImage: {fileID: 21300000, guid: a012e2e818dc8604cb9faa65bf86e1af, type: 3}
+  isDefaultTab: 0
 --- !u!1 &1349718949
 GameObject:
   m_ObjectHideFlags: 0
@@ -5293,7 +5361,7 @@ RectTransform:
   - {fileID: 1901085075}
   - {fileID: 592317580}
   m_Father: {fileID: 2064709142}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -6422,9 +6490,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8061c5c46e93ab84e994396dbb4b395a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tabs: []
-  selectedTab: {fileID: 0}
-  panelGroup: {fileID: 0}
+  tabs:
+  - {fileID: 649249180}
+  - {fileID: 488859498}
+  - {fileID: 1050306379}
+  - {fileID: 61554865}
+  - {fileID: 1316305190}
+  panelGroup: {fileID: 2064709143}
 --- !u!1 &2017682941
 GameObject:
   m_ObjectHideFlags: 0
@@ -6693,15 +6765,15 @@ RectTransform:
   m_Children:
   - {fileID: 1307718119}
   - {fileID: 980491983}
-  - {fileID: 1443457884}
   - {fileID: 1016300156}
+  - {fileID: 1443457884}
   - {fileID: 1007807276}
   m_Father: {fileID: 1093438074}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.019756}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 4000, y: 1297.262}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2064709143
@@ -6717,9 +6789,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panels:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1307718118}
+  - {fileID: 980491982}
+  - {fileID: 1016300155}
+  - {fileID: 1443457883}
+  - {fileID: 1007807275}
 --- !u!114 &2064709144
 MonoBehaviour:
   m_ObjectHideFlags: 0
