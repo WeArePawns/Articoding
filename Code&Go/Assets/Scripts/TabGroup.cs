@@ -15,7 +15,6 @@ public class TabGroup : MonoBehaviour
     public PanelGroup panelGroup;
 
 
-
     public void Subscribe(TabButton tab)
     {
         if (tabs == null)
@@ -31,16 +30,11 @@ public class TabGroup : MonoBehaviour
         if (selectedTab == tab)
             return;
 
-        /*if (selectedTab != null)
-            selectedTab.GetComponent<RectTransform>().localScale = Vector3.one;*/
-
         selectedTab = tab;
         ResetTabs();
 
         /* Change to panel (order matters) */
         panelGroup.SetPanelIndex(tab.transform.GetSiblingIndex());
-
-        
     }
 
     /* Deselect all tabs */
@@ -50,5 +44,15 @@ public class TabGroup : MonoBehaviour
         {
             tab.ResetTab();
         }
+    }
+
+    public void SetTabIndex(int index)
+    {
+        if(index < 0 || index >= tabs.Count)
+        {
+            print("Valor de index no valido");
+            return;
+        }
+        tabs[index].Select();
     }
 }

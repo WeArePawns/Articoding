@@ -6,24 +6,32 @@ using UnityEngine.EventSystems;
 
 public class TabButton : MonoBehaviour, IPointerClickHandler
 {
-    /* TabGroup that owns this tab */
+    /* Public atributes */
     public TabGroup tabGroup;
 
-    private Image image;
+    [Space()]
+    [Min(0.0f)]
+    public float timeSpan;
+    [Min(0.0f)]
+    public float scaleRatio;
 
-    /* Images used when tab is selected or not selected */
-    //public Sprite selectedImage;
-    //public Sprite deselectedImage;
-
-    Vector3 originalScale;
-
+    [Space()]
     public Color selectedColor;
     public Color deselectedColor;
 
+    [Space()]
     /* Set to default tab */
     public bool isDefaultTab;
 
-    Vector3 newScale;
+    /* Private atributes */
+    private Image image;
+    private Vector3 originalScale;
+
+    /* Auxiliar variables */
+    private float timeAccumulator;
+    private Vector3 startScale;
+    private Vector3 desiredScale;
+
 
     private void Awake()
     {
@@ -32,31 +40,53 @@ public class TabButton : MonoBehaviour, IPointerClickHandler
         ResetTab();
     }
 
-    private void Update()
-    {
-        image.rectTransform.localScale = Vector3.Lerp(image.rectTransform.localScale, newScale, 0.25f);
-    }
-
     private void Start()
     {
         if (isDefaultTab)
             Select();
     }
 
-    private void Select()
+    private void Update()
+    {
+        DoInterpolation();
+    }
+
+    public void Select()
     {
         tabGroup.OnSelected(this);
         image.color = selectedColor;
-        newScale = image.rectTransform.localScale * 1.5f;
+
+        // Set point A and B
+        startScale = image.rectTransform.localScale;
+        desiredScale = originalScale * scaleRatio;
+        // Set timer
+        timeAccumulator = timeSpan;
     }
+
     public void ResetTab()
     {
         image.color = deselectedColor;
-        newScale = originalScale;
+
+        // Set point A and B
+        startScale = image.rectTransform.localScale;
+        desiredScale = originalScale;
+        // Set timer
+        timeAccumulator = timeSpan;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         Select();
+    }
+
+    private void DoInterpolation()
+    {
+        float timeAux = timeAccumulator;
+        timeAccumulator -= Time.deltaTime;
+        if (timeAccumulator >= 0.0f || timeAux > 0.0f) // Si TimeAux es positivo, el ratio tiene que llegar a 1 por ultima vez
+        {
+            float ratio = 1.0f - timeAccumulator / timeSpan;
+            image.rectTransform.localScale = Vector3.Lerp(startScale, desiredScale, ratio);
+        }
     }
 }

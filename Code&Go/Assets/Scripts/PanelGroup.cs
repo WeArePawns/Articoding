@@ -5,59 +5,47 @@ using UnityEngine.EventSystems;
 
 public class PanelGroup : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    /*
-     * Esta es la clase que se modificará para cambiar
-     * la forma en la que se cambian los paneles al 
-     * deslizar con gestos.
-     */
+    /* Public atributes */
+    public TabGroup tabGroup;
+    [Space()]
+    [Min(0.0f)]
+    public float timeSpan;
 
-
-    /* All panels */
-    public GameObject[] panels;
-
+    /* Private atributes */
+    /* Current shown panel index */
     private int currentPanel;
 
-    RectTransform rect;
-    Vector2 newPosition;
+    /* Auxiliar variables */
+    private RectTransform rect;
+    private float panelWidth;
+    private Vector2 startPosition;
+    private Vector2 desiredPosition;
+    private float timeAccumulator;
 
-    public bool dragging = false;
-    float panelWidth;
+    private bool isDragging;
 
     private void Awake()
     {
         rect = GetComponent<RectTransform>();
+        panelWidth = rect.rect.width / transform.childCount;
     }
 
     private void ShowCurrentPanel()
     {
-        /*for(int i = 0; i < panels.Length; i++)
-        {
-            bool shown = (i == currentPanel);
-            panels[i].SetActive(shown);
-        }*/
+        float offset = rect.rect.width / 2.0f - panelWidth / 2.0f;
 
-        panelWidth = rect.rect.width / panels.Length;
+        // Set point A and B
+        startPosition = new Vector2(rect.anchoredPosition.x, rect.anchoredPosition.y);
+        desiredPosition = new Vector2(currentPanel * -panelWidth + offset, rect.anchoredPosition.y);
 
-        newPosition = new Vector2(currentPanel * -panelWidth + rect.rect.width / 2 - panelWidth / 2, rect.anchoredPosition.y);
-
-        //GetComponent<RectTransform>() = rect;
+        // Set timer
+        timeAccumulator = timeSpan;
     }
 
     private void Update()
     {
-        if (rect.anchoredPosition != newPosition && !dragging)
-            rect.anchoredPosition = Vector2.Lerp(rect.anchoredPosition, newPosition, 0.25f);
-
-        // Swipe
-        if (dragging)
-        {
-            if (rect.anchoredPosition.x > newPosition.x - panelWidth / 2)
-                SetPanelIndex(currentPanel - 1);
-            else if (rect.anchoredPosition.x < newPosition.x + panelWidth / 2)
-                SetPanelIndex(currentPanel + 1);
-        }
-
-        print(currentPanel);
+        DoInterpolation();
+        CheckCurrentPage();
     }
 
     public void SetPanelIndex(int index)
@@ -68,11 +56,42 @@ public class PanelGroup : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        dragging = true;
+        isDragging = true;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        dragging = false;
+        isDragging = false;
+        ShowCurrentPanel();
     }
+
+    private void DoInterpolation()
+    {
+        float timeAux = timeAccumulator;
+        timeAccumulator -= Time.deltaTime;
+        if (!isDragging && (timeAccumulator >= 0.0f || timeAux > 0.0f)) // Si TimeAux es positivo, el ratio tiene que llegar a 1 por ultima vez
+        {
+            float ratio = 1.0f - timeAccumulator / timeSpan;
+            rect.anchoredPosition = Vector2.Lerp(startPosition, desiredPosition, ratio);
+        }
+    }
+
+    private void CheckCurrentPage()
+    {
+        if (isDragging)
+        {
+            float offset = rect.rect.width / 2.0f;
+            float xPosition = rect.anchoredPosition.x - offset;
+
+            int index = -(int)xPosition / (int)panelWidth;
+            index = Mathf.Clamp(index, 0, transform.childCount - 1);
+
+            if(index != currentPanel)
+            {
+                currentPanel = index;
+                tabGroup.SetTabIndex(currentPanel);
+            }
+        }
+    }
+
 }
