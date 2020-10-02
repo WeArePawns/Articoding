@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(Image))]
 public class TabButton : MonoBehaviour, IPointerClickHandler
 {
     /* TabGroup that owns this tab */
@@ -13,16 +12,31 @@ public class TabButton : MonoBehaviour, IPointerClickHandler
     private Image image;
 
     /* Images used when tab is selected or not selected */
-    public Sprite selectedImage;
-    public Sprite deselectedImage;
+    //public Sprite selectedImage;
+    //public Sprite deselectedImage;
+
+    Vector3 originalScale;
+
+    public Color selectedColor;
+    public Color deselectedColor;
 
     /* Set to default tab */
     public bool isDefaultTab;
 
+    Vector3 newScale;
+
     private void Awake()
     {
-        image = GetComponent<Image>();
+        image = GetComponentInChildren<Image>();
+        originalScale = image.rectTransform.localScale;
+        ResetTab();
     }
+
+    private void Update()
+    {
+        image.rectTransform.localScale = Vector3.Lerp(image.rectTransform.localScale, newScale, 0.25f);
+    }
+
     private void Start()
     {
         if (isDefaultTab)
@@ -32,11 +46,13 @@ public class TabButton : MonoBehaviour, IPointerClickHandler
     private void Select()
     {
         tabGroup.OnSelected(this);
-        image.sprite = selectedImage;
+        image.color = selectedColor;
+        newScale = image.rectTransform.localScale * 1.5f;
     }
     public void ResetTab()
     {
-        image.sprite = deselectedImage;
+        image.color = deselectedColor;
+        newScale = originalScale;
     }
 
     public void OnPointerClick(PointerEventData eventData)

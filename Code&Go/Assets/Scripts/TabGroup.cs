@@ -14,9 +14,11 @@ public class TabGroup : MonoBehaviour
     /* Associated PanelGroup */
     public PanelGroup panelGroup;
 
+
+
     public void Subscribe(TabButton tab)
     {
-        if(tabs == null)
+        if (tabs == null)
         {
             tabs = new List<TabButton>();
         }
@@ -26,17 +28,25 @@ public class TabGroup : MonoBehaviour
 
     public void OnSelected(TabButton tab)
     {
+        if (selectedTab == tab)
+            return;
+
+        /*if (selectedTab != null)
+            selectedTab.GetComponent<RectTransform>().localScale = Vector3.one;*/
+
         selectedTab = tab;
         ResetTabs();
 
         /* Change to panel (order matters) */
         panelGroup.SetPanelIndex(tab.transform.GetSiblingIndex());
+
+        
     }
 
     /* Deselect all tabs */
     private void ResetTabs()
     {
-        foreach(TabButton tab in tabs)
+        foreach (TabButton tab in tabs)
         {
             tab.ResetTab();
         }
