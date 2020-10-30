@@ -27,7 +27,7 @@ public class PanelGroup : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private void Awake()
     {
         rect = GetComponent<RectTransform>();
-        panelWidth = rect.rect.width / transform.childCount;
+        panelWidth = rect.rect.width;
     }
 
     private void ShowCurrentPanel()

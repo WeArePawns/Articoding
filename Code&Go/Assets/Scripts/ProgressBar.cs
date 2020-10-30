@@ -27,4 +27,19 @@ public class ProgressBar : MonoBehaviour
 
         fill.color = fillColor;
     }
+
+    public float GetMinimum()
+    {
+        return minimum;
+    }
+
+    public float GetMaximum()
+    {
+        return maximum;
+    }
+
+    public float GetCurrent()
+    {
+        return current;
+    }
 }
