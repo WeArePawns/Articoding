@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-public class PanelGroup : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class PanelGroup : MonoBehaviour
 {
     /* Public atributes */
     public TabGroup tabGroup;
@@ -54,17 +53,6 @@ public class PanelGroup : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         ShowCurrentPanel();
     }
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        isDragging = true;
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        isDragging = false;
-        ShowCurrentPanel();
-    }
-
     private void DoInterpolation()
     {
         float timeAux = timeAccumulator;
@@ -93,5 +81,18 @@ public class PanelGroup : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             }
         }
     }
+    public void OnBeginDrag()
+    {
+        isDragging = true;
+    }
 
+    public void OnDrag()
+    {
+        CheckCurrentPage();
+    }
+    public void OnEndDrag()
+    {
+        isDragging = false;
+        ShowCurrentPanel();
+    }
 }
