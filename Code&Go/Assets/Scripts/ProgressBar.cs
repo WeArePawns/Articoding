@@ -3,22 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[ExecuteInEditMode()]
+[ExecuteInEditMode]
 public class ProgressBar : MonoBehaviour
 {
     public float minimum;
     public float maximum;
     public float current;
-    public Color fillColor;
-    public Image mask;
-    public Image fill;
+    [SerializeField] private Color fillColor;
+    [SerializeField] private Image mask;
+    [SerializeField] private Image fill;
 
+#if !UNITY_EDITOR
+    private void Awake()
+    {
+        Configure();
+    }
+#else
     private void Update()
     {
-        GetCurrentFill();
+        //Configure();
     }
+#endif
 
-    private void GetCurrentFill()
+    private void Configure()
     {
         float currentOffset = current - minimum;
         float maximumOffset = maximum - minimum;
