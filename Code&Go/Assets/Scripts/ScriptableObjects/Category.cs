@@ -8,5 +8,5 @@ public class Category : ScriptableObject
     public string name_id;
     public string description;
 
-    // public Level[] levels;
+    public LevelData[] levels;
 }
