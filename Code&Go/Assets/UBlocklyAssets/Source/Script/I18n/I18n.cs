@@ -25,6 +25,7 @@ namespace UBlockly
     public class I18n
     {
         public const string EN = "en";
+        public const string ES = "es";
         public const string CN = "cn";
 
         private static Dictionary<string, string> mMsg = null;
