@@ -23,13 +23,15 @@ using System.Collections;
 
 namespace UBlockly
 {
+
     [CodeInterpreter(BlockType = "procedures_callreturn")]
-    public class Procedure_CallReturn_Cmdtor : EnumeratorCmdtor
+    public class Procedure_CallReturn_Cmdtor : ControlCmdtor
     {
         protected override IEnumerator Execute(Block block)
         {
             string procedureName = block.GetFieldValue("NAME");
             Block defBlock = block.Workspace.ProcedureDB.GetDefinitionBlock(procedureName);
+            if (CheckInfiniteLoop()) yield return null;
             yield return CSharp.Interpreter.StatementRun(defBlock, "STACK");
             
             CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(defBlock, "RETURN");
@@ -39,21 +41,23 @@ namespace UBlockly
     }
 
     [CodeInterpreter(BlockType = "procedures_callnoreturn")]
-    public class Procedure_CallNoReturn_Cmdtor : EnumeratorCmdtor
+    public class Procedure_CallNoReturn_Cmdtor : ControlCmdtor
     {
         protected override IEnumerator Execute(Block block)
         {
             string procedureName = block.GetFieldValue("NAME");
             Block defBlock = block.Workspace.ProcedureDB.GetDefinitionBlock(procedureName);
+            if (CheckInfiniteLoop()) yield return null;
             yield return CSharp.Interpreter.StatementRun(defBlock, "STACK");
         }
     }
 
     [CodeInterpreter(BlockType = "procedures_ifreturn")]
-    public class Proceudre_IfReturn_Cmdtor : EnumeratorCmdtor
+    public class Proceudre_IfReturn_Cmdtor : ControlCmdtor
     {
         protected override IEnumerator Execute(Block block)
         {
+            if (CheckInfiniteLoop()) yield return null;
             yield return 0;
         }
     }
