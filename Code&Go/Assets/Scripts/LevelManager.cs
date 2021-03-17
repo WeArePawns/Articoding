@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,6 +9,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private LevelData currentLevel;
     [SerializeField] private GameObject levelParent;
     private Level levelObject;
+    [Space]
+    [SerializeField] private StatementManager  statementManager;
 
     private void Start()
     {
@@ -43,7 +46,7 @@ public class LevelManager : MonoBehaviour
         levelObject.OnLevelStarted();
 
         // Maybe do more stuff
-
+        statementManager.Load(currentLevel.statement);
     }
 
     public void LoadLevel(LevelData level)
@@ -56,10 +59,4 @@ public class LevelManager : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-
-    // TODO: Comprobar mensaje de final de partida
-    /*private void recieveMessage(Message message)
-    {
-
-    }*/
 }
