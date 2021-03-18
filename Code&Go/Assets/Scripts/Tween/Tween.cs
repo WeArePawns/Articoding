@@ -24,10 +24,20 @@ public class Tween : MonoBehaviour
 
     [SerializeField] private TweenCallbacks callbacks;
 
+    public Tween()
+    {
+        function = new UnityEvent<float>();
+        OnStart = new UnityEvent();
+        OnFinished = new UnityEvent();
+        duration = 1.0f;
+    }
+
     public Tween(UnityEvent<float> func, float duration)
     {
         function = func;
         this.duration = duration;
+        OnStart = new UnityEvent();
+        OnFinished = new UnityEvent();
     }
 
     public Tween(BezierCurve curve, UnityEvent<float> func, float duration)
@@ -35,20 +45,25 @@ public class Tween : MonoBehaviour
         this.curve = curve;
         function = func;
         this.duration = duration;
+        OnStart = new UnityEvent();
+        OnFinished = new UnityEvent();
     }
     public BezierCurve Curve
     {
         get { return curve; }
+        set { curve = value; }
     }
 
     public UnityEvent<float> Function
     {
         get { return function; }
+        set { function = value; }
     }
 
     public float Duration
     {
         get { return duration; }
+        set { duration = value; }
     }
 
     public UnityEvent OnStart {
