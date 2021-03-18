@@ -59,6 +59,11 @@ public class LevelManager : MonoBehaviour
 
     public void ResetLevel()
     {
+        levelObject.ResetLevel();
+    }
+
+    public void ReloadLevel()
+    {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
