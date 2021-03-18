@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
+using UBlockly.UGUI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -47,6 +48,7 @@ public class LevelManager : MonoBehaviour
 
         // Maybe do more stuff
         statementManager.Load(currentLevel.statement);
+        LoadInitialBlocks(currentLevel.initialState);
     }
 
     public void LoadLevel(LevelData level)
@@ -58,5 +60,25 @@ public class LevelManager : MonoBehaviour
     public void ResetLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    // Copiado y modificado (TODO: cambiar de lugar si eso)
+    public void LoadInitialBlocks(TextAsset textAsset)
+    {
+        if (textAsset == null) return;
+
+        StartCoroutine(AsyncLoadInitialBlocks(textAsset));
+    }
+
+    IEnumerator AsyncLoadInitialBlocks(TextAsset textAsset)
+    {
+        BlocklyUI.WorkspaceView.CleanViews();
+
+        var dom = UBlockly.Xml.TextToDom(textAsset.text);
+
+        UBlockly.Xml.DomToWorkspace(dom, BlocklyUI.WorkspaceView.Workspace);
+        BlocklyUI.WorkspaceView.BuildViews();
+
+        yield return null;
     }
 }
