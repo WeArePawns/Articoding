@@ -31,7 +31,7 @@ namespace UBlockly
         {
             Debug.Log("Message Sent");
             string value = block.GetFieldValue("N_OBJECTS");
-            MessageManager.instance.sendMessage(value, MSG_TYPE.INSTANTIATE);
+            MessageManager.Instance.SendMessage(value, MSG_TYPE.INSTANTIATE);
 
             yield return null;          
         }
@@ -45,7 +45,7 @@ namespace UBlockly
             Debug.Log("Message Sent");
             string tag = block.GetFieldValue("TAG");
             string value = block.GetFieldValue("AMOUNT");
-            MessageManager.instance.sendMessage(tag+ ' '+ value, MSG_TYPE.MOVE);
+            MessageManager.Instance.SendMessage(tag+ ' '+ value, MSG_TYPE.MOVE);
 
             yield return null;
         }

@@ -7,7 +7,7 @@ public class Listener : MonoBehaviour
 {
     public GameObject testPrefab;
     //Equivalente a uniones?
-    public void receiveMessage(string msg, MSG_TYPE type)
+    public void ReceiveMessage(string msg, MSG_TYPE type)
     {
         switch (type)
         {
@@ -28,6 +28,11 @@ public class Listener : MonoBehaviour
 
     private void Start()
     {
-        MessageManager.instance.subscribeListener(this);
+        MessageManager.Instance.SubscribeListener(this);
+    }
+
+    private void OnDestroy()
+    {
+        MessageManager.Instance.UnsubscribeListener(this);
     }
 }

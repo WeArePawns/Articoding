@@ -7,11 +7,26 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
+    private Category currentCategory;
     [SerializeField] private LevelData currentLevel;
+    private int currentLevelIndex;
+
     [SerializeField] private GameObject levelParent;
     private Level levelObject;
     [Space]
     [SerializeField] private StatementManager  statementManager;
+
+    private void Awake()
+    {
+        GameManager gameManager = GameManager.Instance;
+
+        if(gameManager != null)
+        {
+            currentCategory = gameManager.GetCurrentCategory();
+            currentLevelIndex = gameManager.GetCurrentLevelIndex();
+            currentLevel = currentCategory.levels[currentLevelIndex];
+        }
+    }
 
     private void Start()
     {
@@ -26,6 +41,7 @@ public class LevelManager : MonoBehaviour
         if (levelObject.IsCompleted())
         {
             levelObject.OnLevelCompleted();
+            LoadNextLevel();
         }
     }
 
@@ -51,10 +67,26 @@ public class LevelManager : MonoBehaviour
         LoadInitialBlocks(currentLevel.initialState);
     }
 
-    public void LoadLevel(LevelData level)
+    public void LoadLevel(Category category, int levelIndex)
+    {
+        currentCategory = category;
+        currentLevelIndex = levelIndex;
+        LoadLevel(category.levels[levelIndex]);
+    }
+    private void LoadLevel(LevelData level)
     {
         currentLevel = level;
         Initialize();
+    }
+
+    // It is called when the current level is completed
+    private void LoadNextLevel()
+    {
+        int levelSize = currentCategory.levels.Length;
+        if(++currentLevelIndex < levelSize)
+            GameManager.Instance.LoadLevel(currentCategory, currentLevelIndex);
+        else
+            SceneManager.LoadScene("MenuScene"); // Por ejemplo
     }
 
     public void ResetLevel()
@@ -64,7 +96,8 @@ public class LevelManager : MonoBehaviour
 
     public void ReloadLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        LoadLevel(currentLevel);
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     // Copiado y modificado (TODO: cambiar de lugar si eso)
