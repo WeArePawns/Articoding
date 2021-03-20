@@ -9,7 +9,7 @@ public class LevelManager : MonoBehaviour
 {
     private Category currentCategory;
     [SerializeField] private LevelData currentLevel;
-    private int currentLevelIndex;
+    private int currentLevelIndex = 0;
 
     [SerializeField] private GameObject levelParent;
     private Level levelObject;
@@ -23,6 +23,8 @@ public class LevelManager : MonoBehaviour
         if(gameManager != null)
         {
             currentCategory = gameManager.GetCurrentCategory();
+            if (currentCategory == null)
+                currentCategory = gameManager.exampleCategory;
             currentLevelIndex = gameManager.GetCurrentLevelIndex();
             currentLevel = currentCategory.levels[currentLevelIndex];
         }
