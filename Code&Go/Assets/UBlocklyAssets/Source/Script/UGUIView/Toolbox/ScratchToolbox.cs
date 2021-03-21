@@ -16,6 +16,7 @@ limitations under the License.
 
 ****************************************************************************/
 
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -47,8 +48,8 @@ namespace UBlockly.UGUI
                 {
                     images[i].color = category.Color;
                 }
-                menuItem.SetActive(true);
-                
+                menuItem.SetActive(false);
+
                 Toggle toggle = menuItem.GetComponent<Toggle>();
                 toggle.onValueChanged.AddListener((selected) =>
                 {
@@ -57,29 +58,29 @@ namespace UBlockly.UGUI
                 });
                 mMenuList[category.CategoryName] = toggle;
             }
-            
+
             //layout the BlockScrollList
             GridLayoutGroup layoutGroup = m_MenuListContent.GetComponent<GridLayoutGroup>();
             int lineCount = Mathf.CeilToInt(mConfig.BlockCategoryList.Count / 2.0f);
             float height = layoutGroup.padding.vertical + (lineCount - 1) * layoutGroup.spacing.y + lineCount * layoutGroup.cellSize.y;
-            Vector2 offset = ((RectTransform) m_BlockScrollList.transform).offsetMax;
+            Vector2 offset = ((RectTransform)m_BlockScrollList.transform).offsetMax;
             offset.y = m_MenuListContent.anchoredPosition.y - height;
-            ((RectTransform) m_BlockScrollList.transform).offsetMax = offset;
+            ((RectTransform)m_BlockScrollList.transform).offsetMax = offset;
         }
-        
+
         public void ShowBlockCategory(string categoryName)
         {
             if (string.Equals(categoryName, mActiveCategory))
                 return;
-         
+
             if (!m_BlockScrollList.activeInHierarchy)
                 m_BlockScrollList.SetActive(true);
-            
+
             if (!string.IsNullOrEmpty(mActiveCategory))
                 mRootList[mActiveCategory].SetActive(false);
 
             mActiveCategory = categoryName;
-            
+
             GameObject contentObj;
             RectTransform contentTrans;
             if (mRootList.TryGetValue(categoryName, out contentObj))
@@ -95,7 +96,7 @@ namespace UBlockly.UGUI
                 mRootList[categoryName] = contentObj;
 
                 contentTrans = contentObj.GetComponent<RectTransform>();
-                
+
                 //build new blocks
                 if (categoryName.Equals(Define.VARIABLE_CATEGORY_NAME))
                     BuildVariableBlocks();
@@ -107,7 +108,7 @@ namespace UBlockly.UGUI
 
             m_BlockScrollList.GetComponent<ScrollRect>().content = contentTrans;
         }
-        
+
         public void HideBlockCategory()
         {
             if (string.IsNullOrEmpty(mActiveCategory))
@@ -128,14 +129,17 @@ namespace UBlockly.UGUI
             var blockTypes = mConfig.GetBlockCategory(mActiveCategory).BlockList;
             foreach (string blockType in blockTypes)
             {
-                NewBlockView(blockType, contentTrans);
+                BlockView block = NewBlockView(blockType, contentTrans);
+
+                //Deactivate the block if it's not in the active list
+                block.gameObject.SetActive(allActive || Array.IndexOf(activeBlocks, blockType) != -1);
             }
         }
-        
+
         public override bool CheckBin(BlockView blockView)
         {
             if (blockView.InToolbox) return false;
-            
+
             RectTransform toggleTrans = m_BinArea.transform as RectTransform;
             if (RectTransformUtility.RectangleContainsScreenPoint(toggleTrans, UnityEngine.Input.mousePosition, BlocklyUI.UICanvas.worldCamera))
             {

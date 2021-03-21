@@ -14,13 +14,13 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject levelParent;
     private Level levelObject;
     [Space]
-    [SerializeField] private StatementManager  statementManager;
+    [SerializeField] private StatementManager statementManager;
 
     private void Awake()
     {
         GameManager gameManager = GameManager.Instance;
 
-        if(gameManager != null)
+        if (gameManager != null)
         {
             currentCategory = gameManager.GetCurrentCategory();
             if (currentCategory == null)
@@ -57,7 +57,7 @@ public class LevelManager : MonoBehaviour
 
         levelObject = Instantiate(currentLevel.levelPrefab, levelParent.transform);
 
-        if(levelObject == null)
+        if (levelObject == null)
         {
             Debug.LogError("Object instantiation failed");
         }
@@ -67,6 +67,7 @@ public class LevelManager : MonoBehaviour
         // Maybe do more stuff
         statementManager.Load(currentLevel.statement);
         LoadInitialBlocks(currentLevel.initialState);
+        ActivateLevelBlocks(currentLevel.activeBlocks, currentLevel.allActive);
     }
 
     public void LoadLevel(Category category, int levelIndex)
@@ -85,7 +86,7 @@ public class LevelManager : MonoBehaviour
     private void LoadNextLevel()
     {
         int levelSize = currentCategory.levels.Length;
-        if(++currentLevelIndex < levelSize)
+        if (++currentLevelIndex < levelSize)
             GameManager.Instance.LoadLevel(currentCategory, currentLevelIndex);
         else
             SceneManager.LoadScene("MenuScene"); // Por ejemplo
@@ -120,5 +121,15 @@ public class LevelManager : MonoBehaviour
         BlocklyUI.WorkspaceView.BuildViews();
 
         yield return null;
+    }
+
+    public void ActivateLevelBlocks(TextAsset textAsset, bool allActive)
+    {
+        if (allActive) BlocklyUI.WorkspaceView.Toolbox.SetActiveAllBlocks();
+        else if (textAsset != null)
+        {
+            ActiveBlocks blocks = ActiveBlocks.FromJson(textAsset.text);
+            BlocklyUI.WorkspaceView.Toolbox.SetActiveBlocks(blocks.activeCategories, blocks.activeBlocks);
+        }
     }
 }

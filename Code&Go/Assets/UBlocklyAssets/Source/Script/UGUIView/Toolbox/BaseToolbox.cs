@@ -29,12 +29,12 @@ namespace UBlockly.UGUI
         /// the current displayed block category
         /// </summary>
         protected string mActiveCategory;
-        
+
         /// <summary>
         /// root objects of block views for different category
         /// </summary>
         protected Dictionary<string, GameObject> mRootList = new Dictionary<string, GameObject>();
-        
+
         /// <summary>
         /// different toggle item for different block category
         /// </summary>
@@ -42,22 +42,43 @@ namespace UBlockly.UGUI
 
         protected Workspace mWorkspace;
         protected ToolboxConfig mConfig;
-        protected BlockView mPickedBlockView; 
+        protected BlockView mPickedBlockView;
+
+        protected string[] activeCategories = { };
+        protected string[] activeBlocks = { };
+        protected bool allActive = false;
+
+        public void SetActiveBlocks(string[] activeCategories, string[] activeBlocks)
+        {
+            this.activeCategories = activeCategories;
+            this.activeBlocks = activeBlocks;
+
+            //Activate the category if it's not in the active list
+            foreach (var category in mConfig.BlockCategoryList)
+                mMenuList[category.CategoryName].gameObject.SetActive(Array.IndexOf(activeCategories, category.CategoryName.ToLower()) != -1);
+        }
+
+        public void SetActiveAllBlocks()
+        {
+            allActive = true;
+            foreach (var category in mConfig.BlockCategoryList)
+                mMenuList[category.CategoryName].gameObject.SetActive(true);
+        }
 
         protected abstract void Build();
-        protected virtual void OnPickBlockView(){}
+        protected virtual void OnPickBlockView() { }
 
         public void Init(Workspace workspace, ToolboxConfig config)
         {
             mWorkspace = workspace;
             mConfig = config;
-            
+
             Build();
-            
+
             mWorkspace.VariableMap.AddObserver(new VariableObserver(this));
             mWorkspace.ProcedureDB.AddObserver(new ProcedureObserver(this));
         }
-        
+
         /// <summary>
         /// Create a new block view in toolbox 
         /// </summary>
@@ -73,7 +94,7 @@ namespace UBlockly.UGUI
         protected BlockView NewBlockView(Block block, Transform parent, int index = -1)
         {
             mWorkspace.RemoveTopBlock(block);
-            
+
             BlockView view = BlockViewFactory.CreateView(block);
             view.InToolbox = true;
             view.ViewTransform.SetParent(parent, false);
@@ -91,7 +112,7 @@ namespace UBlockly.UGUI
             UIEventListener.Get(maskObj).onBeginDrag = data => PickBlockView(view);
             if (!BlockViewSettings.Get().MaskedInToolbox)
                 maskTrans.SetAsFirstSibling();
-            
+
             return view;
         }
 
@@ -105,7 +126,7 @@ namespace UBlockly.UGUI
 
             // compute the local position of the block view in coding area
             Vector3 localPos = BlocklyUI.WorkspaceView.CodingArea.InverseTransformPoint(blockView.ViewTransform.position);
-            
+
             // clone a new block view for coding area
             mPickedBlockView = BlocklyUI.WorkspaceView.CloneBlockView(blockView, new Vector2(localPos.x, localPos.y));
             mPickedBlockView.OnBeginDrag(null);
@@ -116,11 +137,11 @@ namespace UBlockly.UGUI
         protected void UpdatePickedBlockView()
         {
             if (mPickedBlockView == null) return;
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             if (!UnityEngine.Input.anyKey)
-            #else
+#else
             if (UnityEngine.Input.touchCount == 0)
-            #endif
+#endif
             {
                 mPickedBlockView.OnEndDrag(null);
                 mPickedBlockView = null;
@@ -141,7 +162,7 @@ namespace UBlockly.UGUI
                     if (string.Equals(view.BlockType, type))
                     {
                         return category.CategoryName;
-                    }  
+                    }
                 }
             }
             return null;
@@ -159,21 +180,21 @@ namespace UBlockly.UGUI
                     if (string.Equals(view.BlockType, type))
                     {
                         return category.Color;
-                    }  
+                    }
                 }
             }
             return Color.white;
         }
 
         #region Variables
-        
+
         protected Dictionary<string, BlockView> mVariableGetterViews = new Dictionary<string, BlockView>();
         protected List<BlockView> mVariableHelperViews = new List<BlockView>();
-        
+
         protected void BuildVariableBlocks()
         {
             Transform parent = mRootList[Define.VARIABLE_CATEGORY_NAME].transform;
-            
+
             //build createVar button
             GameObject obj = GameObject.Instantiate(BlockViewSettings.Get().PrefabBtnCreateVar);
             obj.transform.SetParent(parent, false);
@@ -185,7 +206,7 @@ namespace UBlockly.UGUI
 
             List<VariableModel> allVars = mWorkspace.GetAllVariables();
             if (allVars.Count == 0) return;
-            
+
             CreateVariableHelperViews();
 
             //list all variable getter views
@@ -220,13 +241,13 @@ namespace UBlockly.UGUI
                 view.Dispose();
             }
         }
-        
+
         protected void CreateVariableHelperViews()
         {
             GameObject parentObj;
             if (!mRootList.TryGetValue(Define.VARIABLE_CATEGORY_NAME, out parentObj))
                 return;
-            
+
             string varName = mWorkspace.GetAllVariables()[0].Name;
             List<string> blockTypes = mConfig.GetBlockCategory(Define.VARIABLE_CATEGORY_NAME).BlockList;
             foreach (string blockType in blockTypes)
@@ -255,45 +276,45 @@ namespace UBlockly.UGUI
             switch (updateData.Type)
             {
                 case VariableUpdateData.Create:
-                {
-                    if (mVariableHelperViews.Count == 0)
-                        CreateVariableHelperViews();
-                    CreateVariableGetterView(updateData.VarName);
-                    break;
-                }
-                case VariableUpdateData.Delete:
-                {
-                    DeleteVariableGetterView(updateData.VarName);
-
-                    //change variable helper view
-                    List<VariableModel> allVars = mWorkspace.GetAllVariables();
-                    if (allVars.Count == 0)
                     {
-                        DeleteVariableHelperViews();
+                        if (mVariableHelperViews.Count == 0)
+                            CreateVariableHelperViews();
+                        CreateVariableGetterView(updateData.VarName);
+                        break;
                     }
-                    else
+                case VariableUpdateData.Delete:
                     {
-                        foreach (BlockView view in mVariableHelperViews)
+                        DeleteVariableGetterView(updateData.VarName);
+
+                        //change variable helper view
+                        List<VariableModel> allVars = mWorkspace.GetAllVariables();
+                        if (allVars.Count == 0)
                         {
-                            if (view.Block.GetFieldValue("VAR").Equals(updateData.VarName))
+                            DeleteVariableHelperViews();
+                        }
+                        else
+                        {
+                            foreach (BlockView view in mVariableHelperViews)
                             {
-                                view.Block.SetFieldValue("VAR", allVars[0].Name);
+                                if (view.Block.GetFieldValue("VAR").Equals(updateData.VarName))
+                                {
+                                    view.Block.SetFieldValue("VAR", allVars[0].Name);
+                                }
                             }
                         }
+                        break;
                     }
-                    break;
-                }
                 case VariableUpdateData.Rename:
-                {
-                    BlockView view;
-                    mVariableGetterViews.TryGetValue(updateData.VarName, out view);
-                    if (view != null)
                     {
-                        mVariableGetterViews.Remove(updateData.VarName);
-                        mVariableGetterViews[updateData.NewVarName] = view;
+                        BlockView view;
+                        mVariableGetterViews.TryGetValue(updateData.VarName, out view);
+                        if (view != null)
+                        {
+                            mVariableGetterViews.Remove(updateData.VarName);
+                            mVariableGetterViews[updateData.NewVarName] = view;
+                        }
+                        break;
                     }
-                    break;
-                }
             }
         }
 
@@ -309,16 +330,16 @@ namespace UBlockly.UGUI
             public void OnUpdated(object subject, VariableUpdateData args)
             {
                 if (mToolbox == null || mToolbox.transform == null)
-                    ((Observable<VariableUpdateData>) subject).RemoveObserver(this);
+                    ((Observable<VariableUpdateData>)subject).RemoveObserver(this);
                 else mToolbox.OnVariableUpdate(args);
             }
         }
         #endregion
-        
+
         #region Procedures
-        
+
         protected Dictionary<string, BlockView> mProcedureCallerViews = new Dictionary<string, BlockView>();
-        
+
         protected void BuildProcedureBlocks()
         {
             Transform parent = mRootList[Define.PROCEDURE_CATEGORY_NAME].transform;
@@ -331,11 +352,11 @@ namespace UBlockly.UGUI
                     NewBlockView(blockType, parent);
                 }
             }
-            
+
             // list all caller views
             foreach (Block block in mWorkspace.ProcedureDB.GetDefinitionBlocks())
             {
-                CreateProcedureCallerView(((ProcedureDefinitionMutator) block.Mutator).ProcedureInfo, ProcedureDB.HasReturn(block));
+                CreateProcedureCallerView(((ProcedureDefinitionMutator)block.Mutator).ProcedureInfo, ProcedureDB.HasReturn(block));
             }
         }
 
@@ -343,7 +364,7 @@ namespace UBlockly.UGUI
         {
             if (mProcedureCallerViews.ContainsKey(procedureInfo.Name))
                 return;
-            
+
             GameObject parentObj;
             if (!mRootList.TryGetValue(Define.PROCEDURE_CATEGORY_NAME, out parentObj))
                 return;
@@ -354,7 +375,7 @@ namespace UBlockly.UGUI
             BlockView view = NewBlockView(block, parentObj.transform);
             mProcedureCallerViews[procedureInfo.Name] = view;
         }
-        
+
         protected void DeleteProcedureCallerView(Procedure procedureInfo)
         {
             BlockView view;
@@ -365,37 +386,37 @@ namespace UBlockly.UGUI
                 view.Dispose();
             }
         }
-        
+
         protected void OnProcedureUpdate(ProcedureUpdateData updateData)
         {
             switch (updateData.Type)
             {
                 case ProcedureUpdateData.Add:
-                {
-                    CreateProcedureCallerView(updateData.ProcedureInfo, ProcedureDB.HasReturn(updateData.ProcedureDefinitionBlock));
-                    break;
-                }
-                case ProcedureUpdateData.Remove:
-                {
-                    DeleteProcedureCallerView(updateData.ProcedureInfo);
-                    break;
-                }
-                case ProcedureUpdateData.Mutate:
-                {
-                    //mutate the caller prototype view
-                    BlockView view = mProcedureCallerViews[updateData.ProcedureInfo.Name];
-                    if (!updateData.ProcedureInfo.Name.Equals(updateData.NewProcedureInfo.Name))
                     {
-                        mProcedureCallerViews.Remove(updateData.ProcedureInfo.Name);
-                        mProcedureCallerViews[updateData.NewProcedureInfo.Name] = view;
+                        CreateProcedureCallerView(updateData.ProcedureInfo, ProcedureDB.HasReturn(updateData.ProcedureDefinitionBlock));
+                        break;
                     }
-                    
-                    ((ProcedureMutator) view.Block.Mutator).Mutate(updateData.NewProcedureInfo);
-                    break;
-                }
+                case ProcedureUpdateData.Remove:
+                    {
+                        DeleteProcedureCallerView(updateData.ProcedureInfo);
+                        break;
+                    }
+                case ProcedureUpdateData.Mutate:
+                    {
+                        //mutate the caller prototype view
+                        BlockView view = mProcedureCallerViews[updateData.ProcedureInfo.Name];
+                        if (!updateData.ProcedureInfo.Name.Equals(updateData.NewProcedureInfo.Name))
+                        {
+                            mProcedureCallerViews.Remove(updateData.ProcedureInfo.Name);
+                            mProcedureCallerViews[updateData.NewProcedureInfo.Name] = view;
+                        }
+
+                    ((ProcedureMutator)view.Block.Mutator).Mutate(updateData.NewProcedureInfo);
+                        break;
+                    }
             }
         }
-        
+
         private class ProcedureObserver : IObserver<ProcedureUpdateData>
         {
             private BaseToolbox mToolbox;
@@ -408,20 +429,20 @@ namespace UBlockly.UGUI
             public void OnUpdated(object subject, ProcedureUpdateData args)
             {
                 if (mToolbox == null || mToolbox.transform == null)
-                    ((Observable<ProcedureUpdateData>) subject).RemoveObserver(this);
+                    ((Observable<ProcedureUpdateData>)subject).RemoveObserver(this);
                 else mToolbox.OnProcedureUpdate(args);
             }
         }
-        
+
         #endregion
-        
+
         #region Bin
 
         /// <summary>
         /// Check the block view is over the bin area, preparing dropped in bin
         /// </summary>
         public abstract bool CheckBin(BlockView blockView);
-        
+
         /// <summary>
         /// Finish the check. 
         /// If the block view is over bin, drop it. 
@@ -429,7 +450,7 @@ namespace UBlockly.UGUI
         public abstract void FinishCheckBin(BlockView blockView);
 
         #endregion
-        
+
         #region Monobehavior calls
 
         private void Update()
@@ -438,6 +459,6 @@ namespace UBlockly.UGUI
         }
 
         #endregion
-        
+
     }
 }

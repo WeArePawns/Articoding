@@ -29,12 +29,12 @@ namespace UBlockly.UGUI
         [SerializeField] protected GameObject m_BlockScrollList;
         [SerializeField] protected GameObject m_BlockContentPrefab;
         [SerializeField] protected GameObject m_BinArea;
-        
+
         protected override void Build()
         {
             BuildMenu();
         }
-        
+
         /// <summary>
         /// Build the left menu list, child class should implement this for custom build
         /// </summary>
@@ -50,33 +50,33 @@ namespace UBlockly.UGUI
                 {
                     images[i].color = category.Color;
                 }
-                menuItem.SetActive(true);
-                
+                menuItem.SetActive(false);
+
                 Toggle toggle = menuItem.GetComponent<Toggle>();
                 toggle.onValueChanged.AddListener((selected) =>
                 {
                     if (selected)
                         ShowBlockCategory(menuItem.name);
-                    else 
+                    else
                         HideBlockCategory();
                 });
                 mMenuList[category.CategoryName] = toggle;
             }
         }
-        
+
         public void ShowBlockCategory(string categoryName)
         {
             if (string.Equals(categoryName, mActiveCategory))
                 return;
-         
+
             if (!m_BlockScrollList.activeInHierarchy)
                 m_BlockScrollList.SetActive(true);
-            
+
             if (!string.IsNullOrEmpty(mActiveCategory))
                 mRootList[mActiveCategory].SetActive(false);
 
             mActiveCategory = categoryName;
-            
+
             GameObject contentObj;
             RectTransform contentTrans;
             if (mRootList.TryGetValue(categoryName, out contentObj))
@@ -92,7 +92,7 @@ namespace UBlockly.UGUI
                 mRootList[categoryName] = contentObj;
 
                 contentTrans = contentObj.GetComponent<RectTransform>();
-                
+
                 //build new blocks
                 if (categoryName.Equals(Define.VARIABLE_CATEGORY_NAME))
                     BuildVariableBlocks();
@@ -105,7 +105,7 @@ namespace UBlockly.UGUI
             //resize the background
             LayoutRebuilder.ForceRebuildLayoutImmediate(contentTrans);
             m_BlockScrollList.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, LayoutUtility.GetPreferredWidth(contentTrans));
-            
+
             m_BlockScrollList.GetComponent<ScrollRect>().content = contentTrans;
         }
 
@@ -129,7 +129,10 @@ namespace UBlockly.UGUI
             var blockTypes = mConfig.GetBlockCategory(mActiveCategory).BlockList;
             foreach (string blockType in blockTypes)
             {
-                NewBlockView(blockType, contentTrans);
+                BlockView block = NewBlockView(blockType, contentTrans);
+
+                //Deactivate the block if it's not in the active list
+                block.gameObject.SetActive(allActive || Array.IndexOf(activeBlocks, blockType) != -1);
             }
         }
 
@@ -141,7 +144,7 @@ namespace UBlockly.UGUI
         public override bool CheckBin(BlockView blockView)
         {
             if (blockView.InToolbox) return false;
-            
+
             RectTransform toggleTrans = m_BinArea.transform as RectTransform;
             if (RectTransformUtility.RectangleContainsScreenPoint(toggleTrans, UnityEngine.Input.mousePosition, BlocklyUI.UICanvas.worldCamera))
             {

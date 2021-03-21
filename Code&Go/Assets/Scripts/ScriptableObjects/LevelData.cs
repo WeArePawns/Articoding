@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,5 +12,10 @@ public class LevelData : ScriptableObject
 
     public BlockData[] availableBlocks; // o cambiar por el enumerator
 
+    [Header("Active Blocks")]
+    public TextAsset activeBlocks;//Bloques y categorias disponibles    
+    public bool allActive = false;
+    
+    [Space(10)]
     public Level levelPrefab;
 }
