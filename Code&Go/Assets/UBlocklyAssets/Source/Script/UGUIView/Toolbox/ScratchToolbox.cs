@@ -132,7 +132,13 @@ namespace UBlockly.UGUI
                 BlockView block = NewBlockView(blockType, contentTrans);
 
                 //Deactivate the block if it's not in the active list
-                block.gameObject.SetActive(allActive || Array.IndexOf(activeBlocks, blockType) != -1);
+                bool active = false;
+                if (activeCategories.ContainsKey(mActiveCategory.ToLower()))
+                {
+                    CategoryBlocks info = activeCategories[mActiveCategory.ToLower()];
+                    active = info.activate == (Array.IndexOf(info.activeBlocks, blockType) != -1);
+                }
+                block.gameObject.SetActive(allActive || active);
             }
         }
 

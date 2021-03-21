@@ -1,13 +1,33 @@
 {
-    "activeCategories": [
-        "messages",
-        "control",
-        "math"
-    ],
-    "activeBlocks": [
-        "messages_move_object",
-        "controls_for",
-        "controls_if",
-        "math_number"
+    "categories": [
+        {
+            "categoryName": "messages",
+            "blocksInfo": {
+                "activate": true,
+                "activeBlocks": [
+                    "messages_move_object"
+                ]
+            }
+        },
+        {
+            "categoryName": "math",
+            "blocksInfo": {
+                "activate": true,
+                "activeBlocks": [
+                    "math_number"
+                ]
+            }
+        },
+        {
+            "categoryName": "control",
+            "blocksInfo": {
+                "activate": false,
+                "activeBlocks": [
+                    "controls_ifelse",
+                    "controls_for",
+                    "controls_flow_statements"
+                ]
+            }
+        }
     ]
 }

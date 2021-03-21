@@ -44,18 +44,16 @@ namespace UBlockly.UGUI
         protected ToolboxConfig mConfig;
         protected BlockView mPickedBlockView;
 
-        protected string[] activeCategories = { };
-        protected string[] activeBlocks = { };
         protected bool allActive = false;
+        protected Dictionary<string, CategoryBlocks> activeCategories;
 
-        public void SetActiveBlocks(string[] activeCategories, string[] activeBlocks)
+        public void SetActiveBlocks(Dictionary<string, CategoryBlocks> activeCategories)
         {
             this.activeCategories = activeCategories;
-            this.activeBlocks = activeBlocks;
 
             //Activate the category if it's not in the active list
             foreach (var category in mConfig.BlockCategoryList)
-                mMenuList[category.CategoryName].gameObject.SetActive(Array.IndexOf(activeCategories, category.CategoryName.ToLower()) != -1);
+                mMenuList[category.CategoryName].gameObject.SetActive(activeCategories.ContainsKey(category.CategoryName.ToLower()));
         }
 
         public void SetActiveAllBlocks()

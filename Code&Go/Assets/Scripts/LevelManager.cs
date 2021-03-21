@@ -129,7 +129,7 @@ public class LevelManager : MonoBehaviour
         else if (textAsset != null)
         {
             ActiveBlocks blocks = ActiveBlocks.FromJson(textAsset.text);
-            BlocklyUI.WorkspaceView.Toolbox.SetActiveBlocks(blocks.activeCategories, blocks.activeBlocks);
+            BlocklyUI.WorkspaceView.Toolbox.SetActiveBlocks(blocks.AsMap());
         }
     }
 }
