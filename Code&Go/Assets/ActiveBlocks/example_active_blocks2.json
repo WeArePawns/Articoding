@@ -5,7 +5,10 @@
             "blocksInfo": {
                 "activate": true,
                 "activeBlocks": [
-                    "messages_move_object"
+                    {
+                        "blockName": "messages_move_object",
+                        "maxUses": 1
+                    }
                 ]
             }
         },
@@ -14,7 +17,10 @@
             "blocksInfo": {
                 "activate": true,
                 "activeBlocks": [
-                    "math_number"
+                    {
+                        "blockName": "math_number",
+                        "maxUses": 1
+                    }
                 ]
             }
         },
@@ -23,9 +29,15 @@
             "blocksInfo": {
                 "activate": false,
                 "activeBlocks": [
-                    "controls_ifelse",
-                    "controls_for",
-                    "controls_flow_statements"
+                    {
+                        "blockName": "controls_ifelse"
+                    },
+                    {
+                        "blockName": "controls_for"
+                    },
+                    {
+                        "blockName": "controls_flow_statements"
+                    }
                 ]
             }
         }

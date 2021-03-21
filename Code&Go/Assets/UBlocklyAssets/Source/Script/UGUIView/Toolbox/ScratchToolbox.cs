@@ -136,7 +136,9 @@ namespace UBlockly.UGUI
                 if (activeCategories.ContainsKey(mActiveCategory.ToLower()))
                 {
                     CategoryBlocks info = activeCategories[mActiveCategory.ToLower()];
-                    active = info.activate == (Array.IndexOf(info.activeBlocks, blockType) != -1);
+                    active = info.activate == (info.activeBlocks.ContainsKey(blockType));
+                    int prevValue = (Block.blocksAvailable.ContainsKey(blockType)) ? Block.blocksAvailable[blockType] : 0;
+                    Block.blocksAvailable[blockType] = prevValue + (info.activeBlocks.ContainsKey(blockType) ? info.activeBlocks[blockType] : Int16.MaxValue);
                 }
                 block.gameObject.SetActive(allActive || active);
             }
@@ -159,7 +161,24 @@ namespace UBlockly.UGUI
         public override void FinishCheckBin(BlockView blockView)
         {
             if (CheckBin(blockView))
+            {
+                string type = blockView.BlockType;
+                string category = GetCategoryNameOfBlockView(blockView);
+                bool reactivate = Block.blocksAvailable.ContainsKey(type) && Block.blocksAvailable[type] == 0;
                 blockView.Dispose();
+
+                //If the block was disabled we reactivate it
+                if (reactivate)
+                {
+                    foreach (BlockView bw in mRootList[category].transform.GetComponentsInChildren<BlockView>())
+                        if (bw.BlockType == type)
+                        {
+                            bw.enabled = true;
+                            bw.ChangeBgColor(GetColorOfBlockView(bw));
+                            break;
+                        }
+                }
+            }
             m_BinArea.gameObject.SetActive(false);
         }
     }

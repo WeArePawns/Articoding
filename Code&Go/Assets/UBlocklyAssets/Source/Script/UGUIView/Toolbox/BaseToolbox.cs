@@ -116,6 +116,7 @@ namespace UBlockly.UGUI
 
         protected void PickBlockView(BlockView blockView)
         {
+            if (!blockView.enabled) return;
             if (mPickedBlockView != null)
             {
                 Debug.LogError("Toolbox-PickBlockView: Already picked a block view.");
@@ -128,6 +129,17 @@ namespace UBlockly.UGUI
             // clone a new block view for coding area
             mPickedBlockView = BlocklyUI.WorkspaceView.CloneBlockView(blockView, new Vector2(localPos.x, localPos.y));
             mPickedBlockView.OnBeginDrag(null);
+
+            //if the max number of blocks have been used disable the block
+            if (Block.blocksAvailable.ContainsKey(blockView.BlockType) && Block.blocksAvailable[blockView.BlockType] > 0)
+            {
+                Block.blocksAvailable[blockView.BlockType]--;
+                if (Block.blocksAvailable[blockView.BlockType] <= 0)
+                {
+                    blockView.ChangeBgColor(Color.grey);
+                    blockView.enabled = false;
+                }
+            }
 
             OnPickBlockView();
         }

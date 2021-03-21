@@ -29,12 +29,12 @@ namespace UBlockly.UGUI
     public class BlockView : BaseView, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
     {
         [SerializeField] private List<Image> m_BgImages = new List<Image>();
-        
+
         public override ViewType Type
         {
             get { return ViewType.Block; }
         }
-        
+
         public string BlockType
         {
             get { return mBlock.Type; }
@@ -44,9 +44,9 @@ namespace UBlockly.UGUI
         public Block Block { get { return mBlock; } }
 
         public bool InToolbox { get; set; }
-        
+
         private MemorySafeBlockObserver mBlockObserver;
-            
+
         public void BindModel(Block block)
         {
             if (mBlock == block) return;
@@ -72,7 +72,7 @@ namespace UBlockly.UGUI
                     LineGroupView groupView = view as LineGroupView;
                     foreach (var inputView in groupView.Childs)
                     {
-                        ((InputView) inputView).BindModel(mBlock.InputList[inputIndex]);
+                        ((InputView)inputView).BindModel(mBlock.InputList[inputIndex]);
                         inputIndex++;
                     }
                 }
@@ -89,19 +89,19 @@ namespace UBlockly.UGUI
             {
                 if (view.Type == ViewType.Connection)
                 {
-                    ((ConnectionView) view).UnBindModel();
+                    ((ConnectionView)view).UnBindModel();
                 }
                 else if (view.Type == ViewType.LineGroup)
                 {
                     LineGroupView groupView = view as LineGroupView;
                     foreach (var inputView in groupView.Childs)
                     {
-                        ((InputView) inputView).UnBindModel();
+                        ((InputView)inputView).UnBindModel();
                         inputIndex++;
                     }
                 }
             }
-            
+
             BlocklyUI.WorkspaceView.RemoveBlockView(this);
             mBlock.RemoveObserver(mBlockObserver);
             mBlock = null;
@@ -114,7 +114,7 @@ namespace UBlockly.UGUI
         {
             Block model = mBlock;
             UnBindModel();
-            GameObject.Destroy(this.gameObject);
+            GameObject.Destroy(this.gameObject,0.1f);
             model.Dispose();
         }
 
@@ -127,7 +127,7 @@ namespace UBlockly.UGUI
                 if (Childs[0].Type == ViewType.Connection)
                 {
                     // connection point' start xy is specified
-                    Define.EConnection conType = ((ConnectionView) Childs[0]).ConnectionType;
+                    Define.EConnection conType = ((ConnectionView)Childs[0]).ConnectionType;
                     switch (conType)
                     {
                         case Define.EConnection.OutputValue:
@@ -145,7 +145,7 @@ namespace UBlockly.UGUI
         protected override Vector2 CalculateSize()
         {
             bool alignRight = false;
-            
+
             //accumulate all child lineGroups' size
             Vector2 size = Vector2.zero;
             for (int i = 0; i < Childs.Count; i++)
@@ -158,11 +158,11 @@ namespace UBlockly.UGUI
                     if (i < Childs.Count - 1)
                         size.y += BlockViewSettings.Get().ContentSpace.y;
 
-                    if (((InputView) groupView.LastChild).AlignRight)
+                    if (((InputView)groupView.LastChild).AlignRight)
                         alignRight = true;
                 }
             }
-            
+
             //collect all child lineGroups' vertices for custom drawing
             List<Vector4> dimensions = new List<Vector4>();
             for (int i = 0; i < Childs.Count; i++)
@@ -172,13 +172,13 @@ namespace UBlockly.UGUI
                 {
                     if (alignRight)
                         groupView.UpdateAlignRight(size.x);
-                    
+
                     //linegroup's anchor and pivot both are top-left
                     Vector2 drawSize = groupView.GetDrawSize();
                     dimensions.Add(new Vector4(groupView.XY.x, groupView.XY.y - drawSize.y, groupView.XY.x + drawSize.x, groupView.XY.y));
                 }
             }
-            
+
             //update image mesh
             ((CustomMeshImage)m_BgImages[0]).SetDrawDimensions(dimensions.ToArray());
             return size;
@@ -201,14 +201,14 @@ namespace UBlockly.UGUI
                     LineGroupView groupView = view as LineGroupView;
                     foreach (var inputView in groupView.Childs)
                     {
-                        ConnectionInputView conInputView = ((InputView) inputView).GetConnectionView();
+                        ConnectionInputView conInputView = ((InputView)inputView).GetConnectionView();
                         if (conInputView != null)
                             conInputView.OnXYUpdated();
                     }
                 }
             }
         }
-        
+
         /// <summary>
         /// Build the layout of the block view from its topmost child
         /// </summary>
@@ -242,7 +242,7 @@ namespace UBlockly.UGUI
         #endregion
 
         #region UI Interactions
-        
+
         private void RegisterUIEvents()
         {
             //show mutator editor
@@ -271,23 +271,23 @@ namespace UBlockly.UGUI
         private Connection mClosestConnection = null;
         // local connection opposite to closest connection found
         private Connection mAttachingConnection = null;
-        
+
         public void OnBeginDrag(PointerEventData eventData)
         {
             mBlock.UnPlug();
             SetOrphan();
-            
+
             //record the touch offset relative to the block transform
             Vector2 localPos;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform) ViewTransform.parent, UnityEngine.Input.mousePosition,
+            RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)ViewTransform.parent, UnityEngine.Input.mousePosition,
                                                                     BlocklyUI.UICanvas.worldCamera, out localPos);
             mTouchOffset = XY - localPos;
         }
-        
+
         public void OnDrag(PointerEventData eventData)
         {
             Vector2 localPos;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform) ViewTransform.parent, UnityEngine.Input.mousePosition,
+            RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)ViewTransform.parent, UnityEngine.Input.mousePosition,
                                                                     BlocklyUI.UICanvas.worldCamera, out localPos);
             XY = localPos + mTouchOffset;
 
@@ -300,9 +300,9 @@ namespace UBlockly.UGUI
             {
                 if (Childs[i].Type != ViewType.Connection)
                     break;
-                if (((ConnectionView) Childs[i]).SearchClosest(minRadius, ref mClosestConnection, ref minRadius))
+                if (((ConnectionView)Childs[i]).SearchClosest(minRadius, ref mClosestConnection, ref minRadius))
                 {
-                    mAttachingConnection = ((ConnectionView) Childs[i]).Connection;
+                    mAttachingConnection = ((ConnectionView)Childs[i]).Connection;
                 }
             }
 
@@ -313,7 +313,7 @@ namespace UBlockly.UGUI
             {
                 mClosestConnection.FireUpdate(Connection.UpdateState.Highlight);
             }
-            
+
             // check over bin
             BlocklyUI.WorkspaceView.Toolbox.CheckBin(this);
         }
@@ -329,14 +329,14 @@ namespace UBlockly.UGUI
             // check over bin
             BlocklyUI.WorkspaceView.Toolbox.FinishCheckBin(this);
         }
-        
+
         public void OnPointerClick(PointerEventData eventData)
         {
             //todo: background outline
             /*if (!eventData.dragging && !InToolbox) 
                 BlocklyUI.WorkspaceView.CloneBlockView(this, XYInCodingArea + BlockViewSettings.Get().BumpAwayOffset);*/
         }
-        
+
         #endregion
 
         #region Block State Update
@@ -349,21 +349,21 @@ namespace UBlockly.UGUI
             switch (updateState)
             {
                 case Block.UpdateState.Inputs:
-                {
-                    //rebuild block view's input views
-                    BlockViewBuilder.BuildInputViews(mBlock, this);
+                    {
+                        //rebuild block view's input views
+                        BlockViewBuilder.BuildInputViews(mBlock, this);
 
-                    //reupdate layout
-                    BuildLayout();
-                    
-                    //call this once to update the connection DB
-                    this.OnXYUpdated();
-                    
-                    //call this again to change new input views
-                    this.ChangeBgColor(m_BgImages[0].color);
-                    
-                    break;
-                }
+                        //reupdate layout
+                        BuildLayout();
+
+                        //call this once to update the connection DB
+                        this.OnXYUpdated();
+
+                        //call this again to change new input views
+                        this.ChangeBgColor(m_BgImages[0].color);
+
+                        break;
+                    }
             }
         }
 
@@ -380,13 +380,13 @@ namespace UBlockly.UGUI
             {
                 if (mViewRef == null || mViewRef.ViewTransform == null || mViewRef.Block != block)
                 {
-                    ((Block) block).RemoveObserver(this);
+                    ((Block)block).RemoveObserver(this);
                 }
                 else
                 {
                     foreach (Block.UpdateState state in Enum.GetValues(typeof(Block.UpdateState)))
                     {
-                        if (((1 << (int) state) & updateStateMask) != 0)
+                        if (((1 << (int)state) & updateStateMask) != 0)
                         {
                             mViewRef.OnBlockUpdated(state);
                         }
@@ -396,9 +396,9 @@ namespace UBlockly.UGUI
         }
 
         #endregion
-        
+
         #region Child View Getter
-        
+
         /// <summary>
         /// Get the connection view of connectionType
         /// output, previous, next connection
@@ -511,11 +511,11 @@ namespace UBlockly.UGUI
                     inputCounter++;
                 }
             }
-            
+
             //Debug.LogFormat("<color=red>Can't find the {0}th field view in block view of {1}.</color>", index, BlockType);
             return null;
         }
-        
+
         #endregion
     }
 }

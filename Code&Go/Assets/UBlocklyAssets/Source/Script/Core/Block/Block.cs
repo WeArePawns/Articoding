@@ -99,8 +99,10 @@ namespace UBlockly
             get { return Workspace != null && Workspace.RTL; }
         }
 
-        public string Data = null;    
-        
+        public string Data = null;
+
+        public static Dictionary<string, int> blocksAvailable = new Dictionary<string, int>();
+
         public Block() {}
 
         /// <summary>
@@ -147,9 +149,15 @@ namespace UBlockly
                 // Allready deleted.
                 return;
             }
-            
+
             UnPlug(healStack);
             
+            //Update available blocks
+            if (blocksAvailable.ContainsKey(Type))
+                blocksAvailable[Type]++;
+            else
+                blocksAvailable[Type] = 1;
+
             // This block is now at the top of the workspace.
             // Remove this block from the workspace's list of top-most blocks.
             Workspace.RemoveTopBlock(this);

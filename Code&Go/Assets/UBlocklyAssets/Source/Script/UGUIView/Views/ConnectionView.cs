@@ -85,7 +85,15 @@ namespace UBlockly.UGUI
         public virtual void UnBindModel()
         {
             if (mConnection == null) return;
-            
+
+            for (int i = 0; i < Childs.Count; i++)
+            {
+                var view = Childs[i];
+                if (view.Type == ViewType.Field)
+                    ((FieldView)view).UnBindModel();
+                else if (view.Type == ViewType.Block)
+                    ((BlockView)view).UnBindModel();
+            }
             mConnection.RemoveObserver(mObserver);
             mConnection = null;
         }
