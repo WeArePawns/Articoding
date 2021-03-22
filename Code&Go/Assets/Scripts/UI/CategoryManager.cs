@@ -13,6 +13,14 @@ public class CategoryManager : MonoBehaviour
     public Text categoryName;
     public Text categoryDescription;
 
+    public GameObject categoriesPanel;
+    public GameObject levelsPanel;
+
+    public GameObject currentCategoryPanel;
+    public GameObject currentLevelPanel;
+
+    public Text currentCategoryLevelsText;
+
     public int currentCategory;
 
     private void Start()
@@ -28,6 +36,8 @@ public class CategoryManager : MonoBehaviour
                 SelectCategory(index);
             });
         }
+
+        HideLevels();
     }
 
     private void SelectCategory(int index)
@@ -39,5 +49,28 @@ public class CategoryManager : MonoBehaviour
             categoryName.text = categories[currentCategory].name_id;
             categoryDescription.text = categories[currentCategory].description;
         }
+    }
+
+    public void ShowLevels()
+    {
+        currentCategoryLevelsText.text = "Levels - " + categories[currentCategory].name_id;
+
+        categoriesPanel.SetActive(false);
+        levelsPanel.SetActive(true);
+
+        currentCategoryPanel.SetActive(false);
+        currentLevelPanel.SetActive(true);
+    }
+
+    public void HideLevels()
+    {
+        currentCategoryLevelsText.text = "Categories";
+
+        categoriesPanel.SetActive(true);
+        levelsPanel.SetActive(false);
+
+        currentCategoryPanel.SetActive(true);
+        currentLevelPanel.SetActive(false);
+
     }
 }

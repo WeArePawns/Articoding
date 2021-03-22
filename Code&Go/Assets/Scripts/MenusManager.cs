@@ -8,18 +8,11 @@ public class MenusManager : MonoBehaviour
     public GameObject exitConfirmationPanel;
     public GameObject settingsMenu;
 
-
-
     void Start()
     {
         exitConfirmationPanel.SetActive(false);
         blackPanel.SetActive(false);
         settingsMenu.SetActive(false);
-    }
-
-    void Update()
-    {
-        
     }
 
     public void toggleSettingsMenu()
@@ -35,7 +28,7 @@ public class MenusManager : MonoBehaviour
 
     public void exitGame()
     {
-        //GameManager.instance
+        //GameManager.instance.Quit(); //TODO: GameManager
         Application.Quit();
     }
 }
