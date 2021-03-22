@@ -10,8 +10,14 @@ public class CategoryManager : MonoBehaviour
     [SerializeField] private GameObject categoriesParent;
     [SerializeField] private CategoryCard categoryCardPrefab;
 
+    [SerializeField] private GameObject levelsParent;
+    [SerializeField] private LevelCard levelCardPrefab;
+
     public Text categoryName;
     public Text categoryDescription;
+
+    public Text levelName;
+    public Text levelDescription;
 
     public GameObject categoriesPanel;
     public GameObject levelsPanel;
@@ -22,6 +28,7 @@ public class CategoryManager : MonoBehaviour
     public Text currentCategoryLevelsText;
 
     public int currentCategory;
+    private int currentLevel;
 
     private void Start()
     {
@@ -38,6 +45,8 @@ public class CategoryManager : MonoBehaviour
         }
 
         HideLevels();
+
+        SelectCategory(currentCategory);
     }
 
     private void SelectCategory(int index)
@@ -53,13 +62,33 @@ public class CategoryManager : MonoBehaviour
 
     public void ShowLevels()
     {
-        currentCategoryLevelsText.text = "Levels - " + categories[currentCategory].name_id;
+        Category category = categories[currentCategory];
+        currentCategoryLevelsText.text = "Levels - " + category.name_id;
 
         categoriesPanel.SetActive(false);
         levelsPanel.SetActive(true);
 
         currentCategoryPanel.SetActive(false);
         currentLevelPanel.SetActive(true);
+
+        for (int i = 0; i < category.levels.Length; i++)
+        {
+            int index = i;
+            LevelData levelData = category.levels[i];
+            LevelCard levelCard = Instantiate(levelCardPrefab, levelsParent.transform);
+            levelCard.ConfigureLevel(levelData, i + 1);
+            levelCard.button.onClick.AddListener(() =>
+            {
+                currentLevel = index;
+                levelName.text = levelData.levelName;
+                levelDescription.text = levelData.description;
+            });
+
+            // TODO: cargar progreso y poner estrellas
+        }
+
+        // TODO: seleccionar primer level sin completar
+
     }
 
     public void HideLevels()
@@ -72,5 +101,13 @@ public class CategoryManager : MonoBehaviour
         currentCategoryPanel.SetActive(true);
         currentLevelPanel.SetActive(false);
 
+        while(levelsParent.transform.childCount != 0)
+            DestroyImmediate(levelsParent.transform.GetChild(0).gameObject);
+
+    }
+
+    public void PlaySelectedLevel()
+    {
+        GameManager.Instance.LoadLevel(categories[currentCategory], currentLevel);
     }
 }

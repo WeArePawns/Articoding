@@ -7,6 +7,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Level", menuName = "ScriptableObjects/Level")]
 public class LevelData : ScriptableObject
 {
+    public string levelName;
+    [TextArea(3,6)]
+    public string description;
+
     public TextAsset statement; // Enunciado en .xml
     public TextAsset initialState; // Estado inicial en .xml
 

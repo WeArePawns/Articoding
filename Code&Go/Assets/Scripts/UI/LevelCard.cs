@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class LevelCard : MonoBehaviour
 {
-    [SerializeField] private Level level;
+    private LevelData level;
 
     [SerializeField] private Text title;
     [SerializeField] private GameObject[] stars;
@@ -37,7 +37,7 @@ public class LevelCard : MonoBehaviour
 
     }
 
-    public void ConfigureLevel(Level level, int numLevel)
+    public void ConfigureLevel(LevelData level, int numLevel)
     {
         this.level = level;
         this.numLevel = numLevel;
