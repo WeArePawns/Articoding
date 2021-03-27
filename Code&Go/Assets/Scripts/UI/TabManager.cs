@@ -5,76 +5,95 @@ using UnityEngine.UI;
 
 public class TabManager : MonoBehaviour
 {
-    private enum TabType
-    {
-        SHOP_TAB = 0,
-        TEMARY_TAB,
-        PLAY_TAB,
-        PROFILE_TAB,
-        META_TAB
-    }
-
     [SerializeField] private KeyCode leftKeyCode;
     [SerializeField] private KeyCode rightKeyCode;
 
     [SerializeField] private Text leftText;
     [SerializeField] private Text rightText;
 
-    [SerializeField] private TabType defaultTab = TabType.PLAY_TAB;
+    [SerializeField] private Text currentText;
 
     public Tab[] tabs;
     public GameObject[] panels;
 
-    private int currentTabIndex;
+    public int tabIndex;
 
     void Start()
     {
         ConfigureTabs();
         ConfigureTexts();
 
-        currentTabIndex = (int)defaultTab;
-        tabs[currentTabIndex].Select();
+        tabs[tabIndex].Select();
+        //panels[tabIndex].SetActive(true);
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(leftKeyCode))
         {
-            if (currentTabIndex - 1 >= 0)
-                tabs[currentTabIndex - 1].Select();
+            PreviousTab();
         }
         else if (Input.GetKeyDown(rightKeyCode))
         {
-            if (currentTabIndex + 1 < tabs.Length)
-                tabs[currentTabIndex + 1].Select();
+            NextTab();
         }
+    }
+
+    public void PreviousTab()
+    {
+        // Desactivamos el tab actual
+        tabs[tabIndex].Deselect();
+
+        tabIndex = (tabIndex + tabs.Length - 1) % tabs.Length;
+        tabs[tabIndex].Select();
+    }
+
+    public void NextTab()
+    {
+        // Desactivamos el tab actual
+        tabs[tabIndex].Deselect();
+
+        tabIndex = (tabIndex + 1) % tabs.Length;
+        tabs[tabIndex].Select();
     }
 
     private void SelectCallback(int index)
     {
-        if (index >= tabs.Length) return;
-        if (index < 0) return;
+        if (index >= tabs.Length || index < 0) return;
 
-        for (int i = 0; i < tabs.Length; i++)
-        {
-            if (i == index) continue;
-            tabs[i].Deselect();
-            panels[i].SetActive(false);
-        }
+        // Desactivamos el tab actual
+        if(tabIndex != index) tabs[tabIndex].Deselect();
 
-        panels[index].SetActive(true);
+        // Activamos el nuevo tab seleccionado
+        tabIndex = index;
+        panels[tabIndex].SetActive(true);
 
-        currentTabIndex = index;
+        currentText.text = panels[tabIndex].name;
+    }
+    private void DeselectCallback(int index)
+    {
+        if (index >= tabs.Length || index < 0) return;
+
+        panels[index].SetActive(false);
     }
 
     private void ConfigureTabs()
     {
         for (int i = 0; i < tabs.Length; i++)
         {
-            TabType type = (TabType)i;
-            tabs[i].callbacks.OnSelected.AddListener(() => {
-                SelectCallback((int)type);
+            int index = i;
+
+            tabs[i].callbacks.OnSelected.AddListener(() =>
+            {
+                SelectCallback(index);
             });
+
+            tabs[i].callbacks.OnDeselected.AddListener(() =>
+            {
+                DeselectCallback(index);
+            });
+
+            tabs[i].Deselect();
         }
     }
 

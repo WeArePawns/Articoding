@@ -30,6 +30,9 @@ public class Tab : MonoBehaviour, IPointerClickHandler
 
     private bool selected = false;
 
+    [HideInInspector]
+    public int index;
+
 #if !UNITY_EDITOR
     private void Awake()
     {
