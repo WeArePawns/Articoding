@@ -4,39 +4,65 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public int rows;
-    public int columns;
+    [SerializeField] private int rows;
+    [SerializeField] private int columns;
 
-    public BoardCell cellPrefab;
+    [SerializeField] private BoardCell cellPrefab;
+    [SerializeField] private Transform cellsParent;
+    [SerializeField] private Transform elementsParent;
+    [SerializeField] private BoardObject[] elements;
+
+
+    // Hidden atributtes
+    private BoardCell[,] board;
+
 
     private void Awake()
     {
         GenerateBoard();
+        GenerateBoardElements();
     }
 
-    // Current gameObject is parent of the cells
     private void GenerateBoard()
     {
         // If a board already exist, destroy it
         DestroyBoard();
 
         // Initialize board
-        for(int y = 0; y < rows; y++)
+        board = new BoardCell[columns, rows];
+        // Instantiate cells
+        for (int y = 0; y < rows; y++)
         {
             for(int x = 0; x < columns; x++)
             {
-                BoardCell cell = Instantiate(cellPrefab, transform);
+                BoardCell cell = Instantiate(cellPrefab, cellsParent);
                 cell.SetPosition(x, y);
+                board[x, y] = cell;
             }
         }
     }
 
     private void DestroyBoard()
     {
-        foreach (Transform child in transform)
+        foreach (Transform child in cellsParent)
         {
             Destroy(child.gameObject);
         }
+
+        foreach (Transform child in elementsParent)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+    
+    private void GenerateBoardElements()
+    {
+        // Read from file or whatever
+
+        // TODO: delete this
+        BoardObject bObject = Instantiate(elements[0], elementsParent);
+        bObject.SetBoard(this);
+        board[3, 2].PlaceObject(bObject);
     }
 
 }

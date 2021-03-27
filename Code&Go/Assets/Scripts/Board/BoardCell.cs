@@ -4,9 +4,26 @@ using UnityEngine;
 
 public class BoardCell : MonoBehaviour
 {
+    public enum BoardCellState
+    {
+        NONE,
+        FREE,
+        PARTIALLY_OCUPPIED,
+        OCUPPIED
+    }
+
     private int x;
     private int y;
-    private GameObject placedObject;
+    private BoardObject placedObject;
+
+    private BoardCellState state = BoardCellState.NONE;
+
+    [SerializeField] private Renderer cellRenderer;
+
+    private void Awake()
+    {
+        SetState(BoardCellState.FREE);
+    }
 
     public void SetPosition(int x, int y)
     {
@@ -27,11 +44,34 @@ public class BoardCell : MonoBehaviour
         return new Vector2Int(x, y);
     }
 
-    public bool PlaceObject(GameObject gameObject)
+    public bool PlaceObject(BoardObject boardObject)
     {
         if (placedObject != null) return false; // Cannot placed, cell ocuppied
 
-        placedObject = gameObject;
+        placedObject = boardObject;
+        placedObject.transform.position = transform.position;
+        SetState(BoardCellState.OCUPPIED);
         return true;
+    }
+
+    public void SetState(BoardCellState state)
+    {
+        if (this.state == state) return;
+
+        this.state = state;
+
+#if UNITY_EDITOR
+        if (state == BoardCellState.FREE)
+            cellRenderer.material.color = Color.green;
+        else if (state == BoardCellState.PARTIALLY_OCUPPIED)
+            cellRenderer.material.color = Color.yellow;
+        else if (state == BoardCellState.OCUPPIED)
+            cellRenderer.material.color = Color.red;
+#endif
+    }
+
+    public BoardCellState GetState()
+    {
+        return state;
     }
 }
