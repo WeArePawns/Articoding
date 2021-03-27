@@ -60,9 +60,9 @@ public class BoardManager : MonoBehaviour
         // Read from file or whatever
 
         // TODO: delete this
-        BoardObject bObject = Instantiate(elements[0], elementsParent);
+        BoardObject bObject = Instantiate(elements[2], elementsParent);
         bObject.SetBoard(this);
-        board[3, 2].PlaceObject(bObject);
+        board[0, 2].PlaceObject(bObject);
     }
 
 }

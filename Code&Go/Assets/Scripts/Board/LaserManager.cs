@@ -30,9 +30,7 @@ public class LaserManager : MonoBehaviour
         // TODO: eliminar esto
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            CastLaser(Vector3.right * -2, Vector3.up + Vector3.right);
+            CastLaser(Vector3.right * -2 + Vector3.forward * -0.2f, Vector3.up + Vector3.right);
         }
     }
-
-
 }
