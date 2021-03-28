@@ -17,33 +17,18 @@ public class LaserRay : MonoBehaviour
         lineRenderer.material.color = color;
     }
 
-    public void Cast(Vector3 from, Vector3 direction)
+    public void Cast(Vector3 from, Vector3 direction, Transform parent)
     {
         List<Vector3> positions = new List<Vector3>();
+        ILaserReflector reflector = null;
 
         positions.Add(from);
         RaycastHit hitInfo;
         if (Physics.Raycast(new Ray(from, direction), out hitInfo))
         {
             positions.Add(hitInfo.point);
-
             // Collider is a child of main object
-            ILaserReflector reflector = hitInfo.transform.parent.GetComponent<ILaserReflector>();
-
-            if(reflector != null)
-            {
-                Vector3[] refletedFrom = null;
-                Vector3[] reflectedDirection = null;
-                reflector.Reflect(hitInfo.point, direction, hitInfo.normal, out refletedFrom, out reflectedDirection);
-                if(refletedFrom != null)
-                {
-                    for(int i = 0; i < refletedFrom.Length; i++)
-                    {
-                        LaserManager.Instance.CastLaser(refletedFrom[i], reflectedDirection[i]);
-                    }
-                }
-            }
-
+            reflector = hitInfo.transform.parent.GetComponent<ILaserReflector>();
         }
         else
         {
@@ -51,5 +36,20 @@ public class LaserRay : MonoBehaviour
         }
 
         lineRenderer.SetPositions(positions.ToArray());
+
+
+        if (reflector != null)
+        {
+            Vector3[] refletedFrom = null;
+            Vector3[] reflectedDirection = null;
+            reflector.Reflect(hitInfo.point, direction, hitInfo.normal, out refletedFrom, out reflectedDirection);
+            if (refletedFrom != null)
+            {
+                for (int i = 0; i < refletedFrom.Length; i++)
+                {
+                    LaserManager.Instance.CastLaser(refletedFrom[i], reflectedDirection[i], parent);
+                }
+            }
+        }
     }
 }

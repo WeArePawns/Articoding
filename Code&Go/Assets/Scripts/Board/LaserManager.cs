@@ -11,26 +11,63 @@ public class LaserManager : MonoBehaviour
 
     private List<LaserRay> laserRays;
 
+    private List<ILaserEmitter> emitters;
+    private List<ILaserReceiver> receivers;
+
     private void Awake()
     {
         if (Instance != null)
             Destroy(Instance.gameObject);
 
         Instance = this;
-    }
-
-    public void CastLaser(Vector3 from, Vector3 direction)
-    {
-        LaserRay laser = Instantiate(laserRayPrefab, laserParent);
-        laser.Cast(from, direction);
+        emitters = new List<ILaserEmitter>();
+        receivers = new List<ILaserReceiver>();
     }
 
     private void Update()
     {
-        // TODO: eliminar esto
-        if (Input.GetKeyDown(KeyCode.Space))
+        foreach(ILaserEmitter emitter in emitters)
         {
-            CastLaser(Vector3.right * -2 + Vector3.forward * -0.2f, Vector3.up + Vector3.right);
+            emitter.Emit();
+            // TODO: expandir si es necesario
         }
+    }
+
+    public LaserRay CastLaser(Vector3 from, Vector3 direction)
+    {
+        LaserRay laser = Instantiate(laserRayPrefab, laserParent);
+        laser.Cast(from, direction, laserParent);
+        return laser;
+    }
+
+    public LaserRay CastLaser(Vector3 from, Vector3 direction, Transform parent)
+    {
+        if (parent == null) parent = laserParent;
+
+        LaserRay laser = Instantiate(laserRayPrefab, parent.transform);
+        laser.Cast(from, direction, parent);
+        return laser;
+    }
+
+    public void AddLaserEmitter(ILaserEmitter emitter)
+    {
+        if (emitters.Contains(emitter)) return;
+        emitters.Add(emitter);
+    }
+
+    public void RemoveLaserEmitter(ILaserEmitter emitter)
+    {
+        emitters.Remove(emitter);
+    }
+
+    public void AddLaserReceiver(ILaserReceiver receiver)
+    {
+        if (receivers.Contains(receiver)) return;
+        receivers.Add(receiver);
+    }
+
+    public void RemoveLaserReceiver(ILaserReceiver receiver)
+    {
+        receivers.Remove(receiver);
     }
 }

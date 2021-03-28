@@ -16,7 +16,6 @@ public class BoardManager : MonoBehaviour
     // Hidden atributtes
     private BoardCell[,] board;
 
-
     private void Awake()
     {
         GenerateBoard();
@@ -60,7 +59,11 @@ public class BoardManager : MonoBehaviour
         // Read from file or whatever
 
         // TODO: delete this
-        BoardObject bObject = Instantiate(elements[2], elementsParent);
+        BoardObject bObject = Instantiate(elements[3], elementsParent);
+        bObject.SetBoard(this);
+        board[4, 2].PlaceObject(bObject);
+
+        bObject = Instantiate(elements[0], elementsParent);
         bObject.SetBoard(this);
         board[0, 2].PlaceObject(bObject);
     }
