@@ -59,8 +59,13 @@ namespace UBlockly.UGUI
         public void SetActiveAllBlocks()
         {
             allActive = true;
-            foreach (var category in mConfig.BlockCategoryList)
+            foreach (ToolboxBlockCategory category in mConfig.BlockCategoryList)
+            {
                 mMenuList[category.CategoryName].gameObject.SetActive(true);
+                List<string> blockTypes = mConfig.GetBlockCategory(category.CategoryName).BlockList;
+                foreach (string blockType in blockTypes)
+                    Block.blocksAvailable[blockType] = Int16.MaxValue;
+            }
         }
 
         protected abstract void Build();

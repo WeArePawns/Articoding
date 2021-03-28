@@ -8,7 +8,7 @@ public class LaserReceiver : BoardObject, ILaserReceiver
 
     public void OnLaserReceived()
     {
-        receiverRenderer.material.color = Color.red;
+        receiverRenderer.material.color = Color.green;
     }
 
     public void OnLaserReceiving()

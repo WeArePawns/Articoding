@@ -46,12 +46,17 @@ public class BoardCell : MonoBehaviour
 
     public bool PlaceObject(BoardObject boardObject)
     {
-        if (placedObject != null) return false; // Cannot placed, cell ocuppied
+        if (placedObject != null) return false; // Cannot place, cell ocuppied
 
         placedObject = boardObject;
         placedObject.transform.position = transform.position;
         SetState(BoardCellState.OCUPPIED);
         return true;
+    }
+
+    public BoardObject GetPlacedObject()
+    {       
+        return placedObject;
     }
 
     public void SetState(BoardCellState state)

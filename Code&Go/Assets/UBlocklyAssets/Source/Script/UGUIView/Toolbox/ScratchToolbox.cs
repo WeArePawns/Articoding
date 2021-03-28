@@ -133,7 +133,7 @@ namespace UBlockly.UGUI
 
                 //Deactivate the block if it's not in the active list
                 bool active = false;
-                if (activeCategories.ContainsKey(mActiveCategory.ToLower()))
+                if (activeCategories != null && activeCategories.ContainsKey(mActiveCategory.ToLower()))
                 {
                     CategoryBlocks info = activeCategories[mActiveCategory.ToLower()];
                     active = info.activate == (info.activeBlocks.ContainsKey(blockType));
