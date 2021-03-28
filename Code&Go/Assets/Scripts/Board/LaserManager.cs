@@ -26,10 +26,30 @@ public class LaserManager : MonoBehaviour
 
     private void Update()
     {
+        List<ILaserReceiver> oldReceivers = new List<ILaserReceiver>(receivers);
+        receivers.Clear();
+
+
         foreach(ILaserEmitter emitter in emitters)
         {
             emitter.Emit();
             // TODO: expandir si es necesario
+        }
+
+
+        // En este punto, los laseres han enlistado los receptores que han alcanzado
+        foreach (ILaserReceiver receiver in receivers)
+        {
+            if (!oldReceivers.Contains(receiver))
+                receiver.OnLaserReceived();
+            receiver.OnLaserReceiving();
+        }
+
+        // Si los antiguos receptores no se encuentran en los actuales, entonces han dejado de recibir
+        foreach(ILaserReceiver receiver in oldReceivers)
+        {
+            if (!receivers.Contains(receiver))
+                receiver.OnLaserLost();
         }
     }
 
@@ -44,7 +64,7 @@ public class LaserManager : MonoBehaviour
     {
         if (parent == null) parent = laserParent;
 
-        LaserRay laser = Instantiate(laserRayPrefab, parent.transform);
+        LaserRay laser = Instantiate(laserRayPrefab, parent);
         laser.Cast(from, direction, parent);
         return laser;
     }

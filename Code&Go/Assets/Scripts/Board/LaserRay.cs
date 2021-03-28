@@ -21,6 +21,7 @@ public class LaserRay : MonoBehaviour
     {
         List<Vector3> positions = new List<Vector3>();
         ILaserReflector reflector = null;
+        ILaserReceiver receiver = null;
 
         positions.Add(from);
         RaycastHit hitInfo;
@@ -29,6 +30,7 @@ public class LaserRay : MonoBehaviour
             positions.Add(hitInfo.point);
             // Collider is a child of main object
             reflector = hitInfo.transform.parent.GetComponent<ILaserReflector>();
+            receiver = hitInfo.transform.parent.GetComponent<ILaserReceiver>();
         }
         else
         {
@@ -50,6 +52,11 @@ public class LaserRay : MonoBehaviour
                     LaserManager.Instance.CastLaser(refletedFrom[i], reflectedDirection[i], parent);
                 }
             }
+        }
+
+        if(receiver != null)
+        {
+            LaserManager.Instance.AddLaserReceiver(receiver);
         }
     }
 }
