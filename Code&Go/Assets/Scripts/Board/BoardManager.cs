@@ -75,13 +75,13 @@ public class BoardManager : MonoBehaviour
         foreach (BoardObjectState objectState in state.boardElements)
             AddBoardObject(objectState.id, objectState.x, objectState.y, objectState.orientation, objectState.args);
     }
-    private bool PosInsideBoard(int x, int y)
+    private bool IsInBoardBounds(int x, int y)
     {
         return y >= 0 && y < rows && x >= 0 && x < columns;
     }
-    private bool PosInsideBoard(Vector2Int pos)
+    private bool IsInBoardBound(Vector2Int position)
     {
-        return PosInsideBoard(pos.x, pos.y);
+        return IsInBoardBounds(position.x, position.y);
     }
 
     public void SetRows(int rows)
@@ -106,7 +106,7 @@ public class BoardManager : MonoBehaviour
 
     public BoardCell GetBoardCell(int x, int y)
     {
-        return PosInsideBoard(x, y) ? board[x, y] : null;
+        return IsInBoardBounds(x, y) ? board[x, y] : null;
     }
 
     public string GetBoardState()
@@ -133,25 +133,47 @@ public class BoardManager : MonoBehaviour
 
     public void AddBoardObject(int x, int y, BoardObject boardObject)
     {
-        if (PosInsideBoard(x, y) && boardObject != null)
+        if (IsInBoardBounds(x, y) && boardObject != null)
             board[x, y].PlaceObject(boardObject);
     }
 
     public void RemoveBoardObject(int x, int y)
     {
-        if (PosInsideBoard(x, y))
+        if (IsInBoardBounds(x, y))
             board[x, y].RemoveObject();
     }
 
     public void MoveBoardObject(Vector2Int from, Vector2Int to)
     {
-        if (PosInsideBoard(from) && PosInsideBoard(to) && from != to)
+        if (IsInBoardBound(from) && IsInBoardBound(to) && from != to)
         {
             BoardObject bObject = board[from.x, from.y].GetPlacedObject();
             if (bObject == null) return;
 
             board[from.x, from.y].RemoveObject(false);
             board[to.x, to.y].PlaceObject(bObject);
+        }
+    }
+
+    public void RotateBoardObject(Vector2Int position, int direction)
+    {
+        if (IsInBoardBound(position))
+        {
+            BoardObject bObject = board[position.x, position.y].GetPlacedObject();
+            if (bObject == null) return;
+
+            bObject.Rotate(direction);
+        }
+    }
+
+    public void SetBoardObjectDirection(Vector2Int position, BoardObject.Direction direction)
+    {
+        if (IsInBoardBound(position))
+        {
+            BoardObject bObject = board[position.x, position.y].GetPlacedObject();
+            if (bObject == null) return;
+
+            bObject.SetDirection(direction);
         }
     }
 }
