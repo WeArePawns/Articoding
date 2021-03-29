@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
@@ -62,36 +61,6 @@ public class BoardManager : MonoBehaviour
             element.GetObjectID();
     }
 
-    public BoardCell GetBoardCell(int x, int y)
-    {
-        if (y < 0 || y > rows || x < 0 || x > columns)
-            return null;
-        return board[x, y];
-    }
-
-    public int GetRows()
-    {
-        return rows;
-    }
-
-    public int GetColumns()
-    {
-        return columns;
-    }
-
-    public string GetBoardState()
-    {
-        BoardState state = new BoardState(rows, columns, elementsParent.childCount);
-
-        int i = 0;
-        foreach (BoardCell cell in board)
-        {
-            if (i < elementsParent.childCount && cell.GetState() == BoardCell.BoardCellState.OCUPPIED)
-                state.SetBoardObject(i++, cell);
-        }
-
-        return state.ToJson();
-    }
 
     private void LoadBoard(TextAsset textAsset)
     {
@@ -104,13 +73,85 @@ public class BoardManager : MonoBehaviour
 
         //Generate board elements
         foreach (BoardObjectState objectState in state.boardElements)
-        {
-            BoardObject bObject = Instantiate(elements[objectState.id], elementsParent);
-            bObject.SetBoard(this);
-            bObject.SetDirection((BoardObject.Direction)objectState.orientation);
-            bObject.LoadArgs(objectState.args);
-            board[objectState.x, objectState.y].PlaceObject(bObject);
-        }
+            AddBoardObject(objectState.id, objectState.x, objectState.y, objectState.orientation, objectState.args);
+    }
+    private bool PosInsideBoard(int x, int y)
+    {
+        return y >= 0 && y < rows && x >= 0 && x < columns;
+    }
+    private bool PosInsideBoard(Vector2Int pos)
+    {
+        return PosInsideBoard(pos.x, pos.y);
     }
 
+    public void SetRows(int rows)
+    {
+       this.rows = rows;
+    }
+
+    public void SetColumns(int columns)
+    {
+        this.columns = columns;
+    }
+
+    public int GetRows()
+    {
+        return rows;
+    }
+
+    public int GetColumns()
+    {
+        return columns;
+    }
+
+    public BoardCell GetBoardCell(int x, int y)
+    {
+        return PosInsideBoard(x, y) ? board[x, y] : null;
+    }
+
+    public string GetBoardState()
+    {
+        BoardState state = new BoardState(rows, columns, elementsParent.childCount);
+        int i = 0;
+        foreach (BoardCell cell in board)
+            if (i < elementsParent.childCount && cell.GetState() == BoardCell.BoardCellState.OCUPPIED)
+                state.SetBoardObject(i++, cell);
+
+        return state.ToJson();
+    }
+
+    public void AddBoardObject(int id, int x, int y, int orientation = 0, string[] additionalArgs = null)
+    {
+        if (id > elements.Length) return;
+
+        BoardObject bObject = Instantiate(elements[id], elementsParent);
+        bObject.SetBoard(this);
+        bObject.SetDirection((BoardObject.Direction)orientation);
+        bObject.LoadArgs(additionalArgs);
+        AddBoardObject(x, y, bObject);
+    }
+
+    public void AddBoardObject(int x, int y, BoardObject boardObject)
+    {
+        if (PosInsideBoard(x, y) && boardObject != null)
+            board[x, y].PlaceObject(boardObject);
+    }
+
+    public void RemoveBoardObject(int x, int y)
+    {
+        if (PosInsideBoard(x, y))
+            board[x, y].RemoveObject();
+    }
+
+    public void MoveBoardObject(Vector2Int from, Vector2Int to)
+    {
+        if (PosInsideBoard(from) && PosInsideBoard(to) && from != to)
+        {
+            BoardObject bObject = board[from.x, from.y].GetPlacedObject();
+            if (bObject == null) return;
+
+            board[from.x, from.y].RemoveObject(false);
+            board[to.x, to.y].PlaceObject(bObject);
+        }
+    }
 }

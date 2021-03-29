@@ -54,8 +54,19 @@ public class BoardCell : MonoBehaviour
         return true;
     }
 
+    //Removes the reference to the object and optionally delete it
+    public bool RemoveObject(bool deleteObject = true)
+    {
+        if (placedObject == null) return false; // Cannot remove, cell free
+
+        if (deleteObject) Destroy(placedObject.gameObject);
+        placedObject = null;
+        SetState(BoardCellState.FREE);
+        return true;
+    }
+
     public BoardObject GetPlacedObject()
-    {       
+    {
         return placedObject;
     }
 
