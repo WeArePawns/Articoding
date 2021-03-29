@@ -23,7 +23,7 @@ public class BoardManager : MonoBehaviour
         LoadBoard(boardState);
     }
 
-    private void GenerateBoard()
+    public void GenerateBoard()
     {
         // If a board already exist, destroy it
         DestroyBoard();
