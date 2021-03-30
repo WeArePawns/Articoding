@@ -147,6 +147,10 @@ public class BoardManager : MonoBehaviour
     {
         if (IsInBoardBound(from) && IsInBoardBound(to) && from != to)
         {
+            BoardCell cell = board[to.x, to.y];
+            if (cell.GetState() != BoardCell.BoardCellState.FREE) return;
+
+
             BoardObject bObject = board[from.x, from.y].GetPlacedObject();
             if (bObject == null) return;
 

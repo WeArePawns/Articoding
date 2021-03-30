@@ -87,7 +87,7 @@ public class BoardCreator : MonoBehaviour
                     selectedIndicator.transform.position = new Vector3(cursorPos.x + offset.x, cursorPos.y + offset.y, 0);
                 }
                 //Move object to cursor
-                else if (selectedPos != -Vector2Int.one && cell.GetState() == BoardCell.BoardCellState.FREE)
+                else if (selectedPos != -Vector2Int.one)
                 {
                     board.MoveBoardObject(selectedPos, cursorPos);
                     selectedPos = cursorPos;
