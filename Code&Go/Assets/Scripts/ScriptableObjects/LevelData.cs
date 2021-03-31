@@ -19,7 +19,7 @@ public class LevelData : ScriptableObject
     [Header("Active Blocks")]
     public TextAsset activeBlocks;//Bloques y categorias disponibles    
     public bool allActive = false;
-    
+
     [Space(10)]
-    public Level levelPrefab;
+    public TextAsset levelBoard;
 }

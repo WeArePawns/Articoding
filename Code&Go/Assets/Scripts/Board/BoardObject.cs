@@ -13,7 +13,7 @@ public class BoardObject : MonoBehaviour
 
     Direction objectDirection;
 
-    BoardManager boardManager;
+    protected BoardManager boardManager;
 
     public void SetBoard(BoardManager board)
     {

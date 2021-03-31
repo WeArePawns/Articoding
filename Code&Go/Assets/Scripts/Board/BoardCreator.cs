@@ -16,6 +16,9 @@ public class BoardCreator : MonoBehaviour
 
     [SerializeField] GameObject indicatorPrefab;
 
+    [SerializeField] private Vector2 boardInitOffset;
+    [SerializeField] private Camera mainCamera;
+
     private string fileName = "level";
     private int nLevel = 1;
     private string filePath = "";
@@ -29,10 +32,31 @@ public class BoardCreator : MonoBehaviour
 
     private void Start()
     {
+        GenerateNewBoard();
         filePath = Application.dataPath + "/LevelsCreated/";
         rows = board.GetRows();
         columns = board.GetColumns();
         material.color = Color.yellow;
+        FitBoard();
+    }
+
+    private void FitBoard()
+    {
+        if (mainCamera != null)
+        {
+            float height = mainCamera.orthographicSize * 2, width = height * mainCamera.aspect;
+            float xPos = Mathf.Lerp(-width / 2.0f, width / 2.0f, boardInitOffset.x);
+            height *= (1.0f - boardInitOffset.y);
+            width *= (1.0f - boardInitOffset.x);
+            float boardHeight = (float)board.GetRows(), boardWidth = (float)board.GetColumns();
+            float xRatio = width / boardWidth, yRatio = height / boardHeight;
+            float ratio = Mathf.Min(xRatio, yRatio);
+            float offsetX = (width - boardWidth * ratio) / 2.0f + 0.5f * ratio, offsetY = (height - boardHeight * ratio) / 2.0f + 0.5f * ratio;
+
+            //Fit the board on the screen and resize it
+            board.transform.localPosition = new Vector3(xPos + offsetX, -height / 2.0f + offsetY, 0);
+            board.transform.localScale = new Vector3(ratio, ratio, 1.0f);
+        }
     }
 
     private void Update()
@@ -44,7 +68,7 @@ public class BoardCreator : MonoBehaviour
         int nY = Input.GetKeyDown(KeyCode.S) ? -1 : (Input.GetKeyDown(KeyCode.W) ? 1 : 0);
         cursorPos.x = ((cursorPos.x + nX) + columns) % columns;
         cursorPos.y = ((cursorPos.y + nY) + rows) % rows;
-        transform.position = new Vector3(cursorPos.x + offset.x, cursorPos.y + offset.y, 0);
+        transform.localPosition = new Vector3(cursorPos.x + offset.x, cursorPos.y + offset.y, 0);
     }
 
     private void AddObject(int id)
@@ -84,7 +108,7 @@ public class BoardCreator : MonoBehaviour
                     material.color = Color.blue;
 
                     selectedIndicator = Instantiate(indicatorPrefab, transform.parent);
-                    selectedIndicator.transform.position = new Vector3(cursorPos.x + offset.x, cursorPos.y + offset.y, 0);
+                    selectedIndicator.transform.localPosition = new Vector3(cursorPos.x + offset.x, cursorPos.y + offset.y, 0);
                 }
                 //Move object to cursor
                 else if (selectedPos != -Vector2Int.one)
@@ -93,7 +117,7 @@ public class BoardCreator : MonoBehaviour
                     //board.MoveObject(selectedPos, cursorPos - selectedPos, 0.5f);
                     selectedPos = cursorPos;
                     if (selectedIndicator != null)
-                        selectedIndicator.transform.position = new Vector3(cursorPos.x + offset.x, cursorPos.y + offset.y, 0);
+                        selectedIndicator.transform.localPosition = new Vector3(cursorPos.x + offset.x, cursorPos.y + offset.y, 0);
                 }
             }
         }
@@ -147,13 +171,16 @@ public class BoardCreator : MonoBehaviour
 
         board.SetColumns(columns);
         board.SetRows(rows);
+        board.transform.localScale = Vector3.one;
+        board.transform.localPosition = Vector3.zero;
         board.GenerateBoard();
 
         DeselectObject();
         cursorPos = Vector2Int.zero;
-        transform.position = Vector3.zero;
+        transform.localPosition = Vector3.zero;
         this.rows = rows;
         this.columns = columns;
+        FitBoard();
     }
     public void SaveBoard()
     {

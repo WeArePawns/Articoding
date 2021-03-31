@@ -6,13 +6,13 @@ public class BoardManager : MonoBehaviour
 {
     private int rows;
     private int columns;
+    private int nReceivers = 0;
+    private int nReceiversActive = 0;
 
     [SerializeField] private BoardCell cellPrefab;
     [SerializeField] private Transform cellsParent;
     [SerializeField] private Transform elementsParent;
     [SerializeField] private BoardObject[] elements;
-
-    [SerializeField] private TextAsset boardState;
 
     // Hidden atributtes
     private BoardCell[,] board;
@@ -20,14 +20,12 @@ public class BoardManager : MonoBehaviour
     private void Awake()
     {
         InitIDs();
-        LoadBoard(boardState);
     }
 
     public void GenerateBoard()
     {
         // If a board already exist, destroy it
         DestroyBoard();
-
         // Initialize board
         board = new BoardCell[columns, rows];
         // Instantiate cells
@@ -40,6 +38,8 @@ public class BoardManager : MonoBehaviour
                 board[x, y] = cell;
             }
         }
+        nReceivers = 0;
+        nReceiversActive = 0;
     }
 
     private void DestroyBoard()
@@ -62,7 +62,16 @@ public class BoardManager : MonoBehaviour
     }
 
 
-    private void LoadBoard(TextAsset textAsset)
+    private bool IsInBoardBounds(int x, int y)
+    {
+        return y >= 0 && y < rows && x >= 0 && x < columns;
+    }
+    private bool IsInBoardBounds(Vector2Int position)
+    {
+        return IsInBoardBounds(position.x, position.y);
+    }
+
+    public void LoadBoard(TextAsset textAsset)
     {
         if (textAsset == null) return;
 
@@ -75,18 +84,30 @@ public class BoardManager : MonoBehaviour
         foreach (BoardObjectState objectState in state.boardElements)
             AddBoardObject(objectState.id, objectState.x, objectState.y, objectState.orientation, objectState.args);
     }
-    private bool IsInBoardBounds(int x, int y)
+
+    public void RegisterReceiver()
     {
-        return y >= 0 && y < rows && x >= 0 && x < columns;
+        nReceivers++;
     }
-    private bool IsInBoardBounds(Vector2Int position)
+
+    public void ReceiverActivated()
     {
-        return IsInBoardBounds(position.x, position.y);
+        nReceiversActive++;
+    }
+
+    public void ReceiverDeactivated()
+    {
+        nReceiversActive--;
+    }
+
+    public bool BoardCompleted()
+    {
+        return nReceivers > 0 && nReceiversActive >= nReceivers;
     }
 
     public void SetRows(int rows)
     {
-       this.rows = rows;
+        this.rows = rows;
     }
 
     public void SetColumns(int columns)

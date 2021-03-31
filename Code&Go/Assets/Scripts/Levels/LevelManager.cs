@@ -11,10 +11,13 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private LevelData currentLevel;
     private int currentLevelIndex = 0;
 
-    [SerializeField] private GameObject levelParent;
-    private Level levelObject;
+    //Values between 0 and 1 that indicate the limits of the board
+    [SerializeField] private Vector2 boardInitOffset;
     [Space]
     [SerializeField] private StatementManager statementManager;
+
+    [SerializeField] private BoardManager boardManager;
+    [SerializeField] private Camera mainCamera;
 
     private void Awake()
     {
@@ -28,6 +31,9 @@ public class LevelManager : MonoBehaviour
             currentLevelIndex = gameManager.GetCurrentLevelIndex();
             currentLevel = currentCategory.levels[currentLevelIndex];
         }
+
+        //Clamp values between 0 and 1
+        boardInitOffset = new Vector2(Mathf.Clamp(boardInitOffset.x, 0.0f, 1.0f), Mathf.Clamp(boardInitOffset.y, 0.0f, 1.0f));
     }
 
     private void Start()
@@ -37,12 +43,11 @@ public class LevelManager : MonoBehaviour
 
     private void Update()
     {
-        if (levelObject == null)
+        if (boardManager == null)
             return;
 
-        if (levelObject.IsCompleted())
-        {
-            levelObject.OnLevelCompleted();
+        if (boardManager.BoardCompleted())
+        {            
             LoadNextLevel();
         }
     }
@@ -55,19 +60,31 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
-        levelObject = Instantiate(currentLevel.levelPrefab, levelParent.transform);
-
-        if (levelObject == null)
-        {
-            Debug.LogError("Object instantiation failed");
-        }
-
-        levelObject.OnLevelStarted();
-
         // Maybe do more stuff
         statementManager.Load(currentLevel.statement);
         LoadInitialBlocks(currentLevel.initialState);
         ActivateLevelBlocks(currentLevel.activeBlocks, currentLevel.allActive);
+        boardManager.LoadBoard(currentLevel.levelBoard);
+        FitBoard();
+    }
+
+    private void FitBoard()
+    {
+        if (mainCamera != null)
+        {
+            float height = mainCamera.orthographicSize * 2, width = height * mainCamera.aspect;
+            float xPos = Mathf.Lerp(-width / 2.0f, width / 2.0f, boardInitOffset.x);
+            height *= (1.0f - boardInitOffset.y);
+            width *= (1.0f - boardInitOffset.x);
+            float boardHeight = (float)boardManager.GetRows(), boardWidth = (float)boardManager.GetColumns();
+            float xRatio = width / boardWidth, yRatio = height / boardHeight;
+            float ratio = Mathf.Min(xRatio, yRatio);
+            float offsetX = (width - boardWidth * ratio) / 2.0f + 0.5f * ratio, offsetY = (height - boardHeight * ratio) / 2.0f + 0.5f * ratio;
+
+            //Fit the board on the screen and resize it
+            boardManager.transform.position = new Vector3(xPos + offsetX, -height / 2.0f + offsetY, 0);
+            boardManager.transform.localScale = new Vector3(ratio, ratio, 1.0f);
+        }
     }
 
     public void LoadLevel(Category category, int levelIndex)
@@ -92,9 +109,13 @@ public class LevelManager : MonoBehaviour
             SceneManager.LoadScene("MenuScene"); // Por ejemplo
     }
 
+    //TODO:Hacer un reset board en vez de volver a cargarla... o no
     public void ResetLevel()
     {
-        levelObject.ResetLevel();
+        boardManager.transform.localScale = Vector3.one;
+        boardManager.transform.localPosition = Vector3.zero;
+        boardManager.LoadBoard(currentLevel.levelBoard);
+        FitBoard();
     }
 
     public void ReloadLevel()
