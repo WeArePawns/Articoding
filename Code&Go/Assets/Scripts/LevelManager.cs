@@ -125,11 +125,20 @@ public class LevelManager : MonoBehaviour
 
     public void ActivateLevelBlocks(TextAsset textAsset, bool allActive)
     {
+        if (textAsset == null) return;
+
+        StartCoroutine(AsyncActivateLevelBlocks(textAsset, allActive));
+    }
+
+    IEnumerator AsyncActivateLevelBlocks(TextAsset textAsset, bool allActive)
+    {
         if (allActive) BlocklyUI.WorkspaceView.Toolbox.SetActiveAllBlocks();
         else if (textAsset != null)
         {
             ActiveBlocks blocks = ActiveBlocks.FromJson(textAsset.text);
             BlocklyUI.WorkspaceView.Toolbox.SetActiveBlocks(blocks.AsMap());
         }
+
+        yield return null;
     }
 }
