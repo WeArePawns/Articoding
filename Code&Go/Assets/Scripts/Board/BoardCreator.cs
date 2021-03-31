@@ -90,6 +90,7 @@ public class BoardCreator : MonoBehaviour
                 else if (selectedPos != -Vector2Int.one)
                 {
                     board.MoveBoardObject(selectedPos, cursorPos);
+                    //board.MoveObject(selectedPos, cursorPos - selectedPos, 0.5f);
                     selectedPos = cursorPos;
                     if (selectedIndicator != null)
                         selectedIndicator.transform.position = new Vector3(cursorPos.x + offset.x, cursorPos.y + offset.y, 0);
@@ -100,7 +101,10 @@ public class BoardCreator : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Q))
         {
             if (selectedPos != -Vector2Int.one)
+            {
                 board.RotateBoardObject(selectedPos, Input.GetKeyDown(KeyCode.E) ? 1 : -1);
+                //board.RotateObject(selectedPos, Input.GetKeyDown(KeyCode.E) ? 1 : -1, 0.5f);
+            }
         }
 
         //Deselect the current object

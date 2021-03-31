@@ -6,7 +6,7 @@ using UnityEngine;
 // Base class of all board objects
 public class BoardObject : MonoBehaviour
 {
-    public enum Direction { RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT, UP, UP_RIGHT };
+    public enum Direction { RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT, UP, UP_RIGHT, PARTIAL };
 
     static Dictionary<string, int> IDs = new Dictionary<string, int>();
     static int numIDs = 0;
@@ -27,9 +27,15 @@ public class BoardObject : MonoBehaviour
         return IDs[this.GetType().Name];
     }
 
-    public void SetDirection(Direction direction)
+    public void SetDirection(Direction direction, bool rotate = true)
     {
         objectDirection = direction;
+
+        if (!rotate) return;
+
+        if (direction == Direction.PARTIAL)
+            direction = Direction.RIGHT; // Default
+
         Vector3 lastRot = transform.localEulerAngles;
         lastRot.z = (int)direction * -45.0f;
         transform.localEulerAngles = lastRot;
