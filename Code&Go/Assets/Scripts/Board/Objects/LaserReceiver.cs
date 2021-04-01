@@ -7,6 +7,10 @@ public class LaserReceiver : BoardObject, ILaserReceiver
     [SerializeField] private Renderer receiverRenderer;
 
     private bool registered = false;
+    private void Awake()
+    {
+        typeName = "Receiver";        
+    }
 
     private void Start()
     {

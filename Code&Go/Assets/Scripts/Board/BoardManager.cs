@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoardManager : MonoBehaviour
+public class BoardManager : Listener
 {
     private int rows;
     private int columns;
@@ -16,6 +16,8 @@ public class BoardManager : MonoBehaviour
 
     // Hidden atributtes
     private BoardCell[,] board;
+
+    private Dictionary<string, List<Vector2Int>> elementPositions;
 
     private void Awake()
     {
@@ -75,6 +77,7 @@ public class BoardManager : MonoBehaviour
     {
         if (textAsset == null) return;
 
+        elementPositions = new Dictionary<string, List<Vector2Int>>();
         BoardState state = BoardState.FromJson(textAsset.text);
         rows = state.rows;
         columns = state.columns;
@@ -143,7 +146,7 @@ public class BoardManager : MonoBehaviour
 
     public void AddBoardObject(int id, int x, int y, int orientation = 0, string[] additionalArgs = null)
     {
-        if (id > elements.Length) return;
+        if (id > elements.Length || !IsInBoardBounds(x, y)) return;
 
         BoardObject bObject = Instantiate(elements[id], elementsParent);
         bObject.SetBoard(this);
@@ -155,7 +158,12 @@ public class BoardManager : MonoBehaviour
     public void AddBoardObject(int x, int y, BoardObject boardObject)
     {
         if (IsInBoardBounds(x, y) && boardObject != null)
+        {
             board[x, y].PlaceObject(boardObject);
+            if (!elementPositions.ContainsKey(boardObject.GetName()))
+                elementPositions[boardObject.GetName()] = new List<Vector2Int>();
+            elementPositions[boardObject.GetName()].Add(new Vector2Int(x, y));
+        }
     }
 
     public void RemoveBoardObject(int x, int y)
@@ -202,18 +210,32 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    //Moves an object given its name and index called by the blocks
+    public void MoveObject(string name, int index, Vector2Int direction, float time)
+    {
+        if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
+            if (MoveObject(elementPositions[name][index], direction, time))
+                elementPositions[name][index] += direction;
+    }
+
+    public void RotateObject(string name, int index, int direction, float time)
+    {
+        if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
+            RotateObject(elementPositions[name][index], direction, time);
+    }
+
     // Smooth interpolation, this code must be called by blocks
-    public void MoveObject(Vector2Int origin, Vector2Int direction, float time)
+    public bool MoveObject(Vector2Int origin, Vector2Int direction, float time)
     {
         // Check valid direction
         if (!(direction.magnitude == 1.0f && (Mathf.Abs(direction.x) == 1 || Mathf.Abs(direction.y) == 1)))
-            return;
+            return false;
 
         // Check if origin object exists
-        if (!IsInBoardBounds(origin)) return;
+        if (!IsInBoardBounds(origin)) return false;
 
         BoardObject bObject = board[origin.x, origin.y].GetPlacedObject();
-        if (bObject == null) return; // No object to move
+        if (bObject == null) return false; // No object to move
 
         // Check if direction in valid
         if (IsInBoardBounds(origin + direction))
@@ -222,14 +244,16 @@ public class BoardManager : MonoBehaviour
             BoardCell fromCell = board[origin.x, origin.y];
             BoardCell toCell = board[origin.x + direction.x, origin.y + direction.y];
 
-            if (toCell.GetPlacedObject() != null) return;
+            if (toCell.GetPlacedObject() != null) return false;
 
             StartCoroutine(InternalMoveObject(fromCell, toCell, time));
+            return true;
         }
         else
         {
             // Not a valid direction
             // TODO: hacer que se choque o haga algo
+            return false;
         }
     }
 
@@ -308,5 +332,79 @@ public class BoardManager : MonoBehaviour
 
         // Set final rotation (defensive code)
         bObject.SetDirection(targetDirection);
+    }
+
+    //TODO: Mover esto
+    private Vector2Int GetDirectionFromString(string dir)
+    {
+        dir = dir.ToLower();
+        switch (dir)
+        {
+            case ("down"):
+                return Vector2Int.down;
+            case ("right"):
+                return Vector2Int.right;
+            case ("up"):
+                return Vector2Int.up;
+            case ("left"):
+                return Vector2Int.left;
+            default:
+                return Vector2Int.zero;
+        }
+    }
+
+    private int GetRotationFromString(string rot)
+    {
+        rot = rot.ToLower();
+        return rot == "clockwise" ? 1 : (rot == "anti_clockwise" ? -1 : 0);
+    }
+
+    public override void ReceiveMessage(string msg, MSG_TYPE type)
+    {
+        string[] args = msg.Split(' ');
+        int amount = 0, index = -1, rot = 0;
+        Vector2Int dir;
+        float intensity = 0.0f;
+        switch (type)
+        {
+            case MSG_TYPE.MOVE_LASER:
+                amount = int.Parse(args[0]);
+                dir = GetDirectionFromString(args[1]);
+                MoveObject("Laser", 0, dir, 0.5f);
+                break;
+            case MSG_TYPE.MOVE:
+                index = int.Parse(args[1]);
+                amount = int.Parse(args[2]);
+                dir = GetDirectionFromString(args[3]);
+                MoveObject(args[0], index, dir, 0.5f);
+                break;
+            case MSG_TYPE.ROTATE_LASER:
+                amount = int.Parse(args[0]);
+                rot = GetRotationFromString(args[1]);
+                RotateObject("Laser", 0, rot, 0.5f);
+                break;
+            case MSG_TYPE.ROTATE:
+                index = int.Parse(args[1]);
+                amount = int.Parse(args[2]);
+                rot = GetRotationFromString(args[3]);
+                RotateObject(args[0], index, rot, 0.5f);
+                break;
+            case MSG_TYPE.CHANGE_INTENSITY:
+                index = int.Parse(args[0]);
+                intensity = float.Parse(args[1]);
+                ChangeLaserIntensity(index, intensity);
+                break;
+        }
+    }
+
+    private void ChangeLaserIntensity(int index, float newIntensity)
+    {
+        if (elementPositions.ContainsKey("Laser") && index < elementPositions["Laser"].Count)
+        {
+            Vector2Int pos = elementPositions["Laser"][index];
+            LaserEmitter laser = (LaserEmitter)board[pos.x, pos.y].GetPlacedObject();
+            if (laser != null)
+                laser.ChangeIntensity(newIntensity);
+        }
     }
 }

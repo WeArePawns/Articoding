@@ -14,6 +14,7 @@ public class BoardObject : MonoBehaviour
     Direction objectDirection;
 
     protected BoardManager boardManager;
+    protected string typeName = "";
 
     public void SetBoard(BoardManager board)
     {
@@ -25,6 +26,11 @@ public class BoardObject : MonoBehaviour
         if (!IDs.ContainsKey(this.GetType().Name))
             IDs[this.GetType().Name] = numIDs++;
         return IDs[this.GetType().Name];
+    }
+
+    public string GetName()
+    {
+        return typeName;
     }
 
     public void SetDirection(Direction direction, bool rotate = true)

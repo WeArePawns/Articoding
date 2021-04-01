@@ -18,8 +18,8 @@
     ]
   },
     {
-      "type": "movement_move",
-      "message0": "%{BKY_MOVEMENT_MOVE_TITLE}",
+      "type": "movement_move_laser",
+      "message0": "%{BKY_MOVEMENT_MOVE_LASER_TITLE}",
       "args0": [
         {
           "type": "input_value",
@@ -46,9 +46,73 @@
       ]
     },
     {
+      "type": "movement_move",
+      "message0": "%{BKY_MOVEMENT_MOVE_TITLE}",
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "NAME",
+          "check": "String"
+        },
+        {
+          "type": "input_value",
+          "name": "AMOUNT",
+          "check": "Number"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "DIRECTION",
+          "options": [
+            ["%{BKY_MOVEMENT_DIRECTION_RIGHT}", "RIGHT"],
+            ["%{BKY_MOVEMENT_DIRECTION_DOWN}", "DOWN"],
+            ["%{BKY_MOVEMENT_DIRECTION_LEFT}", "LEFT"],
+            ["%{BKY_MOVEMENT_DIRECTION_UP}", "UP"]
+          ]
+        }
+      ],
+      "inputsInline": true,
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": "%{BKY_MOVEMENT_HUE}",
+      "extensions": [
+        "text_append_tooltip"
+      ]
+    },
+    {
+      "type": "movement_rotate_laser",
+      "message0": "%{BKY_MOVEMENT_ROTATE_LASER_TITLE}",
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "AMOUNT",
+          "check": "Number"
+        },
+        {
+          "type": "field_dropdown",
+          "name": "ROTATION",
+          "options": [
+            ["%{BKY_MOVEMENT_ROTATION_RIGHT}", "CLOCKWISE"],
+            ["%{BKY_MOVEMENT_ROTATION_LEFT}", "ANTI_CLOCKWISE"]
+          ]
+        }
+      ],
+      "inputsInline": true,
+      "previousStatement": null,
+      "nextStatement": null,
+      "colour": "%{BKY_MOVEMENT_HUE}",
+      "extensions": [
+        "text_append_tooltip"
+      ]
+    },
+    {
       "type": "movement_rotate",
       "message0": "%{BKY_MOVEMENT_ROTATE_TITLE}",
       "args0": [
+        {
+          "type": "input_value",
+          "name": "NAME",
+          "check": "String"
+        },
         {
           "type": "input_value",
           "name": "AMOUNT",

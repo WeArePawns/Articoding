@@ -10,9 +10,14 @@ public class LaserEmitter : BoardObject, ILaserEmitter
     [SerializeField] private LaserRay laserRayPrefab;
     private LaserRay laserRay;
 
+    private void Awake()
+    {        
+        typeName = "Laser";
+    }
+
     public void Start()
     {
-        LaserManager.Instance.AddLaserEmitter(this);        
+        LaserManager.Instance.AddLaserEmitter(this);
     }
 
     private void OnDestroy()
@@ -38,12 +43,12 @@ public class LaserEmitter : BoardObject, ILaserEmitter
         //throw new System.NotImplementedException();
     }
 
-    //TODO:Quitar
-    private void Update()
+    public void ChangeIntensity(float newIntensity)
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-            intensity = 1.0f;
+        if (newIntensity > 0.0f)
+            intensity = newIntensity;
     }
+
     override
     public string[] GetArgs()
     { 

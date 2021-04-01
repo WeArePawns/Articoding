@@ -24,31 +24,61 @@ using UnityEngine;
 
 namespace UBlockly
 {
+    [CodeInterpreter(BlockType = "movement_move_laser")]
+    public class Move_Laser_Cmdtor : EnumeratorCmdtor
+    {
+        protected override IEnumerator Execute(Block block)
+        {
+            CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "AMOUNT", new DataStruct(0));
+            yield return ctor;
+            DataStruct arg0 = ctor.Data;
+
+            string dir = block.GetFieldValue("DIRECTION");
+
+            string msg = arg0.ToString() + " " + dir;
+            MessageManager.Instance.SendMessage(msg, MSG_TYPE.MOVE_LASER);
+
+            yield return new WaitForSeconds(1);
+        }
+    }
+
     [CodeInterpreter(BlockType = "movement_move")]
     public class Move_Cmdtor : EnumeratorCmdtor
     {
         protected override IEnumerator Execute(Block block)
         {
+            CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "NAME", new DataStruct(0));
+            yield return ctor;
+            DataStruct arg0 = ctor.Data;    
+            
+            ctor = CSharp.Interpreter.ValueReturn(block, "AMOUNT", new DataStruct(0));
+            yield return ctor;
+            DataStruct arg1 = ctor.Data;
 
-            //CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "AMOUNT", new DataStruct(0));
-            //yield return ctor;
-            //DataStruct arg0 = ctor.Data;
-            //arg0.NumberValue;
+            string dir = block.GetFieldValue("DIRECTION");
 
-            //string op = block.GetFieldValue("DIRECTION");
-            //switch (op)
-            //{
-            //    case "UP":
-            //        break;
-            //    case "DOWN":
-            //        break;
-            //    case "LEFT":
-            //        break;
-            //    case "RIGHT":
-            //        break;
-            //}
+            string msg = arg0.ToString() +" "+ arg1.ToString() + " " + dir;
+            MessageManager.Instance.SendMessage(msg, MSG_TYPE.MOVE);
 
-            yield return null;
+            yield return new WaitForSeconds(1);
+        }
+    }
+
+    [CodeInterpreter(BlockType = "movement_rotate_laser")]
+    public class Rotate_Laser_Cmdtor : EnumeratorCmdtor
+    {
+        protected override IEnumerator Execute(Block block)
+        {
+            CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "AMOUNT", new DataStruct(0));
+            yield return ctor;
+            DataStruct arg0 = ctor.Data;
+
+            string rot = block.GetFieldValue("ROTATION");
+
+            string msg = arg0.ToString() + " " + rot;
+            MessageManager.Instance.SendMessage(msg, MSG_TYPE.ROTATE_LASER);
+
+            yield return new WaitForSeconds(1);
         }
     }
 
@@ -57,34 +87,37 @@ namespace UBlockly
     {
         protected override IEnumerator Execute(Block block)
         {
-            //    CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "AMOUNT", new DataStruct(0));
-            //    yield return ctor;
-            //    DataStruct arg0 = ctor.Data;
-            //    arg0.NumberValue;
+            CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "NAME", new DataStruct(0));
+            yield return ctor;
+            DataStruct arg0 = ctor.Data;
 
-            //    string op = block.GetFieldValue("ROTATION");
-            //    switch (op)
-            //    {
-            //        case "LEFT":
-            //            break;
-            //        case "RIGHT":
-            //            break;
-            //    }
-            yield return null;
+            ctor = CSharp.Interpreter.ValueReturn(block, "AMOUNT", new DataStruct(0));
+            yield return ctor;
+            DataStruct arg1 = ctor.Data;
+
+            string rot = block.GetFieldValue("ROTATION");
+
+            string msg = arg0.ToString() + " " + arg1.ToString() + " " + rot;
+            MessageManager.Instance.SendMessage(msg, MSG_TYPE.ROTATE);
+
+            yield return new WaitForSeconds(1);
         }
     }
 
-    [CodeInterpreter(BlockType = "movement_change_intensity")]
+    [CodeInterpreter(BlockType = "movement_laser_change_intensity")]
     public class Change_Intensity_Cmdtor : EnumeratorCmdtor
     {
         protected override IEnumerator Execute(Block block)
         {
-            //    CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "AMOUNT", new DataStruct(0));
-            //    yield return ctor;
-            //    DataStruct arg0 = ctor.Data;
-            //    arg0.NumberValue;
-          
-            yield return null;
+            CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "AMOUNT", new DataStruct(0));
+            yield return ctor;
+            DataStruct arg0 = ctor.Data;
+            Number amount = arg0.NumberValue;           
+
+            string msg = "0 " + amount.ToString();
+            MessageManager.Instance.SendMessage(msg, MSG_TYPE.CHANGE_INTENSITY);
+
+            yield return new WaitForSeconds(1);
         }
     }
 }
