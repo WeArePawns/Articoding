@@ -24,9 +24,16 @@ using UnityEngine;
 
 namespace UBlockly
 {
+    public class Times
+    {
+        public static float instructionWaitTime = 1.5f;   
+        public static float logicWaitTime = 0.3f;   
+    }
+
     [CodeInterpreter(BlockType = "movement_move_laser")]
     public class Move_Laser_Cmdtor : EnumeratorCmdtor
     {
+        
         protected override IEnumerator Execute(Block block)
         {
             CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "AMOUNT", new DataStruct(0));
@@ -38,7 +45,7 @@ namespace UBlockly
             string msg = arg0.ToString() + " " + dir;
             MessageManager.Instance.SendMessage(msg, MSG_TYPE.MOVE_LASER);
 
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(Times.instructionWaitTime);
         }
     }
 
@@ -60,7 +67,7 @@ namespace UBlockly
             string msg = arg0.ToString() +" "+ arg1.ToString() + " " + dir;
             MessageManager.Instance.SendMessage(msg, MSG_TYPE.MOVE);
 
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(Times.instructionWaitTime);
         }
     }
 
@@ -78,7 +85,7 @@ namespace UBlockly
             string msg = arg0.ToString() + " " + rot;
             MessageManager.Instance.SendMessage(msg, MSG_TYPE.ROTATE_LASER);
 
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(Times.instructionWaitTime);
         }
     }
 
@@ -100,7 +107,7 @@ namespace UBlockly
             string msg = arg0.ToString() + " " + arg1.ToString() + " " + rot;
             MessageManager.Instance.SendMessage(msg, MSG_TYPE.ROTATE);
 
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(Times.instructionWaitTime);
         }
     }
 
@@ -117,7 +124,7 @@ namespace UBlockly
             string msg = "0 " + amount.ToString();
             MessageManager.Instance.SendMessage(msg, MSG_TYPE.CHANGE_INTENSITY);
 
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(Times.instructionWaitTime);
         }
     }
 }

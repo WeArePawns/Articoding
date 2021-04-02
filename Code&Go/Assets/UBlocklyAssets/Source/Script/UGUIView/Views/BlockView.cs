@@ -274,6 +274,7 @@ namespace UBlockly.UGUI
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (InToolbox) return;
             mBlock.UnPlug();
             SetOrphan();
 
@@ -286,6 +287,7 @@ namespace UBlockly.UGUI
 
         public void OnDrag(PointerEventData eventData)
         {
+            if (InToolbox) return;
             Vector2 localPos;
             RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)ViewTransform.parent, UnityEngine.Input.mousePosition,
                                                                     BlocklyUI.UICanvas.worldCamera, out localPos);

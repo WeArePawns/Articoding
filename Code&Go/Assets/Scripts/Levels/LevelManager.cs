@@ -62,8 +62,8 @@ public class LevelManager : MonoBehaviour
 
         // Maybe do more stuff
         statementManager.Load(currentLevel.statement);
-        LoadInitialBlocks(currentLevel.initialState);
         ActivateLevelBlocks(currentLevel.activeBlocks, currentLevel.allActive);
+        LoadInitialBlocks(currentLevel.initialState);
         boardManager.LoadBoard(currentLevel.levelBoard);
         FitBoard();
     }

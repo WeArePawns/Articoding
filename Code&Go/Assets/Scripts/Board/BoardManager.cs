@@ -211,17 +211,29 @@ public class BoardManager : Listener
     }
 
     //Moves an object given its name and index called by the blocks
-    public void MoveObject(string name, int index, Vector2Int direction, float time)
+    public IEnumerator MoveObject(string name, int index, Vector2Int direction, int amount, float time)
     {
         if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
-            if (MoveObject(elementPositions[name][index], direction, time))
+        {
+            int i = 0;
+            while (i++ < amount && MoveObject(elementPositions[name][index], direction, time))
+            {
                 elementPositions[name][index] += direction;
+                yield return new WaitForSeconds(time + 0.05f);
+            }
+        }
+        yield return null;
     }
 
-    public void RotateObject(string name, int index, int direction, float time)
+    public IEnumerator RotateObject(string name, int index, int direction, int amount, float time)
     {
         if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
-            RotateObject(elementPositions[name][index], direction, time);
+            for (int i = 0; i < amount % 8; i++)
+            {
+                RotateObject(elementPositions[name][index], direction, time);
+                yield return new WaitForSeconds(time + 0.05f);
+            }
+        yield return null;
     }
 
     // Smooth interpolation, this code must be called by blocks
@@ -363,31 +375,35 @@ public class BoardManager : Listener
     {
         string[] args = msg.Split(' ');
         int amount = 0, index = -1, rot = 0;
+        float intensity = 0.0f, time = 0.5f;
         Vector2Int dir;
-        float intensity = 0.0f;
         switch (type)
         {
             case MSG_TYPE.MOVE_LASER:
                 amount = int.Parse(args[0]);
                 dir = GetDirectionFromString(args[1]);
-                MoveObject("Laser", 0, dir, 0.5f);
+                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                StartCoroutine(MoveObject("Laser", 0, dir, amount, time));
                 break;
             case MSG_TYPE.MOVE:
                 index = int.Parse(args[1]);
                 amount = int.Parse(args[2]);
                 dir = GetDirectionFromString(args[3]);
-                MoveObject(args[0], index, dir, 0.5f);
+                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                StartCoroutine(MoveObject(args[0], index, dir, amount, time));
                 break;
             case MSG_TYPE.ROTATE_LASER:
-                amount = int.Parse(args[0]);
+                amount = int.Parse(args[0]) * 2;
                 rot = GetRotationFromString(args[1]);
-                RotateObject("Laser", 0, rot, 0.5f);
+                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                StartCoroutine(RotateObject("Laser", 0, rot, amount, time));
                 break;
             case MSG_TYPE.ROTATE:
                 index = int.Parse(args[1]);
-                amount = int.Parse(args[2]);
+                amount = int.Parse(args[2]) * 2;
                 rot = GetRotationFromString(args[3]);
-                RotateObject(args[0], index, rot, 0.5f);
+                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                StartCoroutine(RotateObject(args[0], index, rot, amount, time));
                 break;
             case MSG_TYPE.CHANGE_INTENSITY:
                 index = int.Parse(args[0]);

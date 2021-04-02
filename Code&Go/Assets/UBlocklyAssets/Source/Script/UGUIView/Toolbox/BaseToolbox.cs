@@ -51,6 +51,7 @@ namespace UBlockly.UGUI
         {
             this.activeCategories = activeCategories;
 
+            Block.blocksAvailable = new Dictionary<string, int>();
             //Activate the category if it's not in the active list
             foreach (var category in mConfig.BlockCategoryList)
                 mMenuList[category.CategoryName].gameObject.SetActive(activeCategories.ContainsKey(category.CategoryName.ToLower()));
@@ -133,6 +134,7 @@ namespace UBlockly.UGUI
 
             // clone a new block view for coding area
             mPickedBlockView = BlocklyUI.WorkspaceView.CloneBlockView(blockView, new Vector2(localPos.x, localPos.y));
+            if (mPickedBlockView.InToolbox) return;
             mPickedBlockView.OnBeginDrag(null);
 
             //if the max number of blocks have been used disable the block

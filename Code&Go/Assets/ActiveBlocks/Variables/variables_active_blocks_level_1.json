@@ -7,16 +7,28 @@
                 "activeBlocks": [
                     {
                         "blockName": "math_number",
-                        "maxUses": 2
+                        "maxUses": 1
                     }
                 ]
             }
         },
         {
-            "categoryName": "variables",
+            "categoryName": "variable",
             "blocksInfo": {
                 "activate": true,
-                "activeBlocks": [            
+                "activeBlocks": [ 
+                    {
+                        "blockName": "variables_get",
+                        "maxUses": 2
+                    },
+                    {
+                        "blockName": "variables_set",
+                        "maxUses": 2
+                    },
+                    {
+                        "blockName": "variables_change",
+                        "maxUses": 2
+                    }             
                 ]
             }
         },

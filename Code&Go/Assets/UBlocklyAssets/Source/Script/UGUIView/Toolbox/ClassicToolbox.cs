@@ -138,7 +138,8 @@ namespace UBlockly.UGUI
                     CategoryBlocks info = activeCategories[mActiveCategory.ToLower()];
                     active = info.activate == (info.activeBlocks.ContainsKey(blockType));
                     int prevValue = (Block.blocksAvailable.ContainsKey(blockType)) ? Block.blocksAvailable[blockType] : 0;
-                    Block.blocksAvailable[blockType] = prevValue + (info.activeBlocks.ContainsKey(blockType) ? info.activeBlocks[blockType] : Int16.MaxValue);
+                    int value = prevValue + (info.activeBlocks.ContainsKey(blockType) ? info.activeBlocks[blockType] : Int16.MaxValue);
+                    Block.blocksAvailable[blockType] = value;
                 }
                 block.gameObject.SetActive(allActive || active);
             }
