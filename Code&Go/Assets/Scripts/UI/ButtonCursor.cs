@@ -9,7 +9,7 @@ public class ButtonCursor : MonoBehaviour
     [SerializeField] private Texture2D pressCursor;
     [SerializeField] private Texture2D viewCursor;
 
-    void Start()
+    /*void Start()
     { 
 
     }
@@ -22,5 +22,5 @@ public class ButtonCursor : MonoBehaviour
     void OnMouseExit()
     {
         Cursor.SetCursor(normalCursor, Vector2.zero, CursorMode.Auto);
-    }
+    }*/
 }
