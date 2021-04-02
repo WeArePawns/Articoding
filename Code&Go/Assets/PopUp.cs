@@ -1,6 +1,25 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+public class PopUpData
+{
+    public string title;
+    public string content;
+    public Vector2 position;
+    public Vector2 offset;
+    public PopUpData next;
+
+    public PopUpData()
+    {
+    }
+
+    public PopUpData(PopUpData data)
+    {
+        title = data.title;
+        content = data.content;
+    }
+}
+
 [ExecuteInEditMode()]
 public class PopUp : MonoBehaviour
 {
@@ -11,7 +30,8 @@ public class PopUp : MonoBehaviour
     [SerializeField] private Button nextButton;
     [Space]
     [SerializeField] private LayoutElement capLayoutElement;
-    [SerializeField] private int characterCap;
+    [SerializeField] [Min(0)] private int titleCharacterCap;
+    [SerializeField] [Min(0)] private int contentCharacterCap;
     [Space]
     [SerializeField] private bool lerpX = false;
     [SerializeField] private bool lerpY = true;
@@ -19,41 +39,50 @@ public class PopUp : MonoBehaviour
     private void Awake()
     {
         if (!Application.isPlaying) return;
-        //gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 
     private void Update()
     {
-        if (!Application.isPlaying)
+        //if (!Application.isPlaying)
         {
             UpdateCapLimit();
         }
     }
 
-    public void Show(string title, string content, System.Action nextAction = null)
+    public void Show(PopUpData data)
     {
         // Set texts
-        if (string.IsNullOrEmpty(title))
+        if (string.IsNullOrEmpty(data.title))
         {
             titleText.gameObject.SetActive(false);
         }
-        titleText.text = title;
+        titleText.text = data.title;
 
-        if (string.IsNullOrEmpty(content))
+        if (string.IsNullOrEmpty(data.content))
         {
             contentText.gameObject.SetActive(false);
         }
-        contentText.text = content;
+        contentText.text = data.content;
 
         // Set action
-        if (nextAction == null)
-        {
-            nextAction = Hide;
-            buttonText.text = "Cerrar";
-        }
-        buttonText.text = "Siguiente";
         nextButton.onClick.RemoveAllListeners();
-        nextButton.onClick.AddListener(nextAction.Invoke);
+        if (data.next == null)
+        {
+            buttonText.text = "Cerrar";
+            nextButton.onClick.AddListener(Hide);
+        }
+        else
+        {
+            buttonText.text = "Siguiente";
+            nextButton.onClick.AddListener(() => Show(data.next));
+        }
+
+        // Update size dynamically
+        UpdateCapLimit();
+
+        // Set position
+        SetPosition(data.position, data.offset);
 
         // Activate panel
         gameObject.SetActive(true);
@@ -62,10 +91,13 @@ public class PopUp : MonoBehaviour
     public void Hide()
     {
         gameObject.SetActive(false);
+        PopUpManager.Instance.Hide();
     }
 
     public void SetPosition(Vector2 position, Vector2 offset)
     {
+        if (position == null) return;
+
         float width = Screen.width;
         float height = Screen.height;
 
@@ -75,8 +107,11 @@ public class PopUp : MonoBehaviour
         panelRect.pivot = pivot;
 
         // Offset position
-        position.x -= offset.x * (panelRect.pivot.x * 2.0f - 1.0f);
-        position.y -= offset.y * (panelRect.pivot.y * 2.0f - 1.0f);
+        if (offset != null)
+        {
+            position.x -= offset.x * (panelRect.pivot.x * 2.0f - 1.0f);
+            position.y -= offset.y * (panelRect.pivot.y * 2.0f - 1.0f);
+        }
 
         // Check on screen
         float leftBound = panelRect.pivot.x * panelRect.rect.width;
@@ -100,7 +135,7 @@ public class PopUp : MonoBehaviour
 
     private void UpdateCapLimit()
     {
-        bool capPassed = contentText.text.Length >= characterCap;
+        bool capPassed = contentText.text.Length >= contentCharacterCap || titleText.text.Length >= titleCharacterCap;
         capLayoutElement.enabled = capPassed;
     }
 }
