@@ -2,6 +2,7 @@
 {
     Properties
     {
+        [HideInInspector] _MainTex("Base (RGB)", 2D) = "white" {}
         _PositionSize ("Position and Size", Vector) = (0.0, 0.0, 0.0, 0.0)
         _BackgroundColor("Background Color", Color) = (0.0, 0.0, 0.0, 0.3)
         _HighlightColor("Highlight Color", Color) = (1.0, 1.0, 1.0, 0.1)

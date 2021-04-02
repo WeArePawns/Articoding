@@ -7,6 +7,9 @@ public class PopUpManager : MonoBehaviour
     [SerializeField] private GameObject mainContent;
     [SerializeField] private PopUp popupPanel;
     [SerializeField] private Image highlightImage;
+    [Space]
+    [SerializeField] private Shader highlightShader;
+    [SerializeField] [Min(0.0f)] private float highlightPadding; 
     private Material imageMaterial;
 
     //TODO: quitar
@@ -15,7 +18,8 @@ public class PopUpManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        imageMaterial = highlightImage.material;
+        imageMaterial = new Material(highlightShader);
+        highlightImage.material = imageMaterial;
         mainContent.SetActive(false);
     }
 
@@ -45,8 +49,8 @@ public class PopUpManager : MonoBehaviour
         PopUpData data = new PopUpData();
         data.title = title;
         data.content = content;
-        data.position = new Vector2(rect.x, rect.y);
-        data.offset = new Vector2(rect.width, rect.height);
+        data.position = new Vector2(rect.x + rect.width / 2.0f, rect.y + rect.height / 2.0f);
+        data.offset = new Vector2(rect.width / 2.0f + highlightPadding, rect.height / 2.0f + highlightPadding);
 
         imageMaterial.SetVector("_PositionSize", new Vector4(rect.x, rect.y, rect.width, rect.height));
 
