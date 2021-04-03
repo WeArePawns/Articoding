@@ -341,7 +341,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 6f6a255f76152454e8231bfdd8c021b7, type: 2}
-  ID: 0
+  destroyOnTriggered: 0
+  OnTriggered:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1440010655
 GameObject:
   m_ObjectHideFlags: 0
@@ -898,10 +901,6 @@ PrefabInstance:
     - target: {fileID: 1935694178192948159, guid: aac9942121b03f3478da27dd316dd41b, type: 3}
       propertyPath: m_Name
       value: PopUpCanvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 1935694178383496616, guid: aac9942121b03f3478da27dd316dd41b, type: 3}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1935694178477645186, guid: aac9942121b03f3478da27dd316dd41b, type: 3}
       propertyPath: m_IsActive

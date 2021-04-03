@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 
 [CreateAssetMenu(fileName = "PopUpData", menuName = "ScriptableObjects/PopUpData")]
 public class PopUpData : ScriptableObject
@@ -6,9 +7,8 @@ public class PopUpData : ScriptableObject
     public string title;
     [TextArea(3, 6)]
     public string content;
-    public Vector2 position;
-    public Vector2 offset;
     public PopUpData next = null;
+    public UnityEvent OnButtonPressed;
 
     public PopUpData()
     {

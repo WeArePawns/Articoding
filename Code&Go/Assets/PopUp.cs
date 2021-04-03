@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 
-[ExecuteInEditMode()]
+// Class that controls inner functionality
 public class PopUp : MonoBehaviour
 {
     [SerializeField] private RectTransform panelRect;
@@ -22,16 +23,10 @@ public class PopUp : MonoBehaviour
     {
         if (!Application.isPlaying) return;
         gameObject.SetActive(false);
+        panelRect.anchoredPosition = new Vector2(Screen.width / 2.0f, Screen.height / 2.0f);
     }
 
-    private void Update()
-    {
-        //if (!Application.isPlaying)
-        {
-            UpdateCapLimit();
-        }
-    }
-
+    // Warning: this method empties button listeners
     public void Show(PopUpData data)
     {
         // Set texts
@@ -49,22 +44,20 @@ public class PopUp : MonoBehaviour
 
         // Set action
         nextButton.onClick.RemoveAllListeners();
+        nextButton.onClick.AddListener(data.OnButtonPressed.Invoke);
         if (data.next == null)
         {
             buttonText.text = "Cerrar";
-            nextButton.onClick.AddListener(Hide);
+            //nextButton.onClick.AddListener(Hide); // Controlled from manager
         }
         else
         {
             buttonText.text = "Siguiente";
-            nextButton.onClick.AddListener(() => Show(data.next));
+            //nextButton.onClick.AddListener(() => Show(data.next)); // Controlled from manager
         }
 
         // Update size dynamically
         UpdateCapLimit();
-
-        // Set position
-        SetPosition(data.position, data.offset);
 
         // Activate panel
         gameObject.SetActive(true);
@@ -73,10 +66,9 @@ public class PopUp : MonoBehaviour
     public void Hide()
     {
         gameObject.SetActive(false);
-        PopUpManager.Instance.Hide();
     }
 
-    public void SetPosition(Vector2 position, Vector2 offset)
+    public void SetTargetPositionAndOffset(Vector2 position, Vector2 offset)
     {
         if (position == null) return;
 
@@ -110,9 +102,14 @@ public class PopUp : MonoBehaviour
         panelRect.anchoredPosition = position;
     }
 
-    public void SetPosition(float x, float y)
+    public void SetTargetPosition(float x, float y)
     {
-        SetPosition(new Vector2(x, y), Vector2.zero);
+        SetTargetPositionAndOffset(new Vector2(x, y), Vector2.zero);
+    }
+
+    public void AddListener(UnityAction action)
+    {
+        nextButton.onClick.AddListener(action);
     }
 
     private void UpdateCapLimit()
