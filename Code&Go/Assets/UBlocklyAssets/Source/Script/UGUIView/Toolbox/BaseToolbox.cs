@@ -117,6 +117,8 @@ namespace UBlockly.UGUI
             if (!BlockViewSettings.Get().MaskedInToolbox)
                 maskTrans.SetAsFirstSibling();
 
+            view.ActivateCountText(view.InToolbox);
+            view.UpdateCount();
             return view;
         }
 
@@ -136,6 +138,7 @@ namespace UBlockly.UGUI
             mPickedBlockView = BlocklyUI.WorkspaceView.CloneBlockView(blockView, new Vector2(localPos.x, localPos.y));
             if (mPickedBlockView.InToolbox) return;
             mPickedBlockView.OnBeginDrag(null);
+            mPickedBlockView.ActivateCountText(false);
 
             //if the max number of blocks have been used disable the block
             if (Block.blocksAvailable.ContainsKey(blockView.BlockType) && Block.blocksAvailable[blockView.BlockType] > 0)
@@ -147,6 +150,7 @@ namespace UBlockly.UGUI
                     blockView.enabled = false;
                 }
             }
+            blockView.UpdateCount();
 
             OnPickBlockView();
         }

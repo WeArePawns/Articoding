@@ -142,6 +142,7 @@ namespace UBlockly.UGUI
                     Block.blocksAvailable[blockType] = value;
                 }
                 block.gameObject.SetActive(allActive || active);
+                block.UpdateCount();
             }
         }
 
@@ -173,17 +174,19 @@ namespace UBlockly.UGUI
                 bool reactivate = Block.blocksAvailable.ContainsKey(type) && Block.blocksAvailable[type] == 0;
                 blockView.Dispose();
 
-                //If the block was disabled we reactivate it
-                if (reactivate)
-                {
-                    foreach (BlockView bw in mRootList[category].transform.GetComponentsInChildren<BlockView>())
-                        if (bw.BlockType == type)
+                //Update the blockCounter
+                foreach (BlockView bw in mRootList[category].transform.GetComponentsInChildren<BlockView>())
+                    if (bw.BlockType == type)
+                    {
+                        //If the block was disabled we reactivate it
+                        if (reactivate)
                         {
                             bw.enabled = true;
                             bw.ChangeBgColor(GetColorOfBlockView(bw));
-                            break;
                         }
-                }
+                        bw.UpdateCount();
+                        break;
+                    }
             }
             m_BinArea.gameObject.SetActive(false);
         }

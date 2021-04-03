@@ -47,6 +47,25 @@ namespace UBlockly.UGUI
 
         private MemorySafeBlockObserver mBlockObserver;
 
+        private Text countText;
+
+        public void SetCountText(Text text)
+        {
+            countText = text;
+        }
+
+        public void ActivateCountText(bool active)
+        {
+            if (countText != null)
+                countText.transform.parent.gameObject.SetActive(active);
+        }
+
+        public void UpdateCount()
+        {
+            if (countText != null)
+                countText.text = Block.blocksAvailable.ContainsKey(BlockType) ? Block.blocksAvailable[BlockType].ToString() : "0";
+        }
+
         public void BindModel(Block block)
         {
             if (mBlock == block) return;
@@ -79,6 +98,10 @@ namespace UBlockly.UGUI
             }
 
             RegisterUIEvents();
+
+            foreach (Transform child in transform)
+                if (child.name.ToLower().StartsWith("block_count"))
+                    SetCountText(child.GetComponentInChildren<Text>());
         }
 
         public void UnBindModel()
@@ -114,7 +137,7 @@ namespace UBlockly.UGUI
         {
             Block model = mBlock;
             UnBindModel();
-            GameObject.Destroy(this.gameObject,0.1f);
+            GameObject.Destroy(this.gameObject, 0.1f);
             model.Dispose();
         }
 
