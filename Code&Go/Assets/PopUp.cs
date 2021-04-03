@@ -1,24 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class PopUpData
-{
-    public string title;
-    public string content;
-    public Vector2 position;
-    public Vector2 offset;
-    public PopUpData next;
-
-    public PopUpData()
-    {
-    }
-
-    public PopUpData(PopUpData data)
-    {
-        title = data.title;
-        content = data.content;
-    }
-}
 
 [ExecuteInEditMode()]
 public class PopUp : MonoBehaviour

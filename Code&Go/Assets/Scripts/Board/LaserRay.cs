@@ -25,7 +25,8 @@ public class LaserRay : MonoBehaviour
 
         positions.Add(from);
         RaycastHit hitInfo;
-        if (Physics.Raycast(new Ray(from, direction), out hitInfo))
+        int layerMask = 1 << LayerMask.NameToLayer("LaserLayer");
+        if (Physics.Raycast(new Ray(from, direction), out hitInfo, 20.0f, layerMask))
         {
             positions.Add(hitInfo.point);
             // Collider is a child of main object

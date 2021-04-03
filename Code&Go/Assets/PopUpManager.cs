@@ -58,6 +58,17 @@ public class PopUpManager : MonoBehaviour
         popupPanel.Show(data);
     }
 
+    public void Show(PopUpData data, Rect rect)
+    {
+        data.position = new Vector2(rect.x + rect.width / 2.0f, rect.y + rect.height / 2.0f);
+        data.offset = new Vector2(rect.width / 2.0f + highlightPadding, rect.height / 2.0f + highlightPadding);
+
+        imageMaterial.SetVector("_PositionSize", new Vector4(rect.x, rect.y, rect.width, rect.height));
+
+        mainContent.SetActive(true);
+        popupPanel.Show(data);
+    }
+
     public void Hide()
     {
         mainContent.SetActive(false);
