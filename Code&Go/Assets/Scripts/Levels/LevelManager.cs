@@ -12,7 +12,9 @@ public class LevelManager : MonoBehaviour
     private int currentLevelIndex = 0;
 
     //Values between 0 and 1 that indicate the limits of the board
-    [SerializeField] private Vector2 boardInitOffset;
+    [SerializeField] private Vector2 boardInitOffsetLeftDown;
+    [SerializeField] private Vector2 boardInitOffsetRightUp;
+
     [Space]
     [SerializeField] private StatementManager statementManager;
 
@@ -33,7 +35,13 @@ public class LevelManager : MonoBehaviour
         }
 
         //Clamp values between 0 and 1
-        boardInitOffset = new Vector2(Mathf.Clamp(boardInitOffset.x, 0.0f, 1.0f), Mathf.Clamp(boardInitOffset.y, 0.0f, 1.0f));
+        boardInitOffsetRightUp = new Vector2(Mathf.Clamp(boardInitOffsetRightUp.x, 0.0f, 1.0f), Mathf.Clamp(boardInitOffsetRightUp.y, 0.0f, 1.0f));
+        boardInitOffsetLeftDown = new Vector2(Mathf.Clamp(boardInitOffsetLeftDown.x, 0.0f, 1.0f), Mathf.Clamp(boardInitOffsetLeftDown.y, 0.0f, 1.0f));
+        if (boardInitOffsetLeftDown.x + boardInitOffsetRightUp.x >= 1.0f)
+            boardInitOffsetLeftDown.x = boardInitOffsetRightUp.x = 0;
+        if (boardInitOffsetLeftDown.y + boardInitOffsetRightUp.y >= 1.0f)
+            boardInitOffsetLeftDown.y = boardInitOffsetRightUp.y = 0;
+
     }
 
     private void Start()
@@ -47,7 +55,7 @@ public class LevelManager : MonoBehaviour
             return;
 
         if (boardManager.BoardCompleted())
-        {            
+        {
             LoadNextLevel();
         }
     }
@@ -73,16 +81,17 @@ public class LevelManager : MonoBehaviour
         if (mainCamera != null)
         {
             float height = mainCamera.orthographicSize * 2, width = height * mainCamera.aspect;
-            float xPos = Mathf.Lerp(-width / 2.0f, width / 2.0f, boardInitOffset.x);
-            height *= (1.0f - boardInitOffset.y);
-            width *= (1.0f - boardInitOffset.x);
+            float xPos = Mathf.Lerp(-width / 2.0f, width / 2.0f, boardInitOffsetLeftDown.x);
+            float yPos = Mathf.Lerp(-height / 2.0f, height / 2.0f, boardInitOffsetLeftDown.y);
+            height *= (1.0f - (boardInitOffsetLeftDown.y + boardInitOffsetRightUp.y));
+            width *= (1.0f - (boardInitOffsetLeftDown.x + boardInitOffsetRightUp.x));
             float boardHeight = (float)boardManager.GetRows(), boardWidth = (float)boardManager.GetColumns();
             float xRatio = width / boardWidth, yRatio = height / boardHeight;
             float ratio = Mathf.Min(xRatio, yRatio);
-            float offsetX = (width - boardWidth * ratio) / 2.0f + 0.5f * ratio, offsetY = (height - boardHeight * ratio) / 2.0f + 0.5f * ratio;
+            float offsetX = (-boardWidth * ratio) / 2.0f + 0.5f * ratio, offsetY = (-boardHeight * ratio) / 2.0f + 0.5f * ratio;
 
             //Fit the board on the screen and resize it
-            boardManager.transform.position = new Vector3(xPos + offsetX, -height / 2.0f + offsetY, 0);
+            boardManager.transform.position = new Vector3(xPos + width / 2.0f + offsetX, yPos + height / 2.0f + offsetY, 0);
             boardManager.transform.localScale = new Vector3(ratio, ratio, 1.0f);
         }
     }
