@@ -1,12 +1,14 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class TutotialInfoHolder : MonoBehaviour, IComparable<TutotialInfoHolder>
+public class TutorialTrigger : MonoBehaviour, IComparable<TutorialTrigger>
 {
     public int priority;
     public TutorialInfo info;
+    public Func<bool> condition;
+
+    public bool destroyOnShowed = false;
+    public bool isSaveCheckpoint = false;
 
     private RectTransform mRectTransform;
     private Renderer mRenderer;
@@ -27,8 +29,16 @@ public class TutotialInfoHolder : MonoBehaviour, IComparable<TutotialInfoHolder>
         return new Rect(Screen.width / 2.0f, Screen.height / 2.0f, 0.0f, 0.0f); ;
     }
 
-    public int CompareTo(TutotialInfoHolder other)
+    public int CompareTo(TutorialTrigger other)
     {
+        if(other.condition != null && condition != null)
+        {
+            bool mCondition = condition.Invoke();
+            bool oCondition = other.condition.Invoke();
+
+            if (mCondition && !oCondition) return -1;
+            if (!mCondition && oCondition) return 1;
+        }
         return priority - other.priority;
     }
 }

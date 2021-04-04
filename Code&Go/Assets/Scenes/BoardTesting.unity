@@ -343,6 +343,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   priority: 0
   info: {fileID: 11400000, guid: cdbcff1072c824141acc72e131c528f8, type: 2}
+  events:
+    condition:
+      m_PersistentCalls:
+        m_Calls: []
 --- !u!114 &1190866502
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -357,6 +361,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   priority: 10
   info: {fileID: 11400000, guid: 296677c93beb9c4438340e8f3ea97789, type: 2}
+  events:
+    condition:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1616481007}
+          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_MethodName: set_isStatic
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 1
 --- !u!114 &1263849617 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1935694178192948144, guid: aac9942121b03f3478da27dd316dd41b, type: 3}
