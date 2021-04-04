@@ -491,6 +491,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 84033317}
   m_CullTransparentMesh: 0
+--- !u!1 &177588916
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 177588917}
+  m_Layer: 0
+  m_Name: Limits
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &177588917
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 177588916}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 190220293}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &190220290
 GameObject:
   m_ObjectHideFlags: 0
@@ -538,11 +568,13 @@ MonoBehaviour:
   cellPrefab: {fileID: 8917401937122784809, guid: 0580e2697c9b8604c97bdbe808bb12d9, type: 3}
   cellsParent: {fileID: 1855209968}
   elementsParent: {fileID: 1587689728}
+  limitsParent: {fileID: 177588917}
   elements:
   - {fileID: 6745913655574259914, guid: 654169683da1cea4ca42c5da680d0f42, type: 3}
   - {fileID: 3282710200332546109, guid: cd1de66bfa755ee41b29024d57df332b, type: 3}
   - {fileID: 2253270791918786396, guid: 5899f23b41ec4354aa4fe5f9316b23ae, type: 3}
   - {fileID: 1727520620708870339, guid: 7055252898c53e4498a269603f29004c, type: 3}
+  limitsPrefab: {fileID: 6745913655574259957, guid: 8f659a6cd11cefa4db8890aae2461e5f, type: 3}
 --- !u!4 &190220293
 Transform:
   m_ObjectHideFlags: 0
@@ -557,6 +589,7 @@ Transform:
   - {fileID: 1855209968}
   - {fileID: 1587689728}
   - {fileID: 780234638}
+  - {fileID: 177588917}
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1961,6 +1994,7 @@ MonoBehaviour:
   currentLevel: {fileID: 11400000, guid: 920da3981f62aeb49bf4f4194b824e0a, type: 2}
   boardInitOffsetLeftDown: {x: 0.55, y: 0.05}
   boardInitOffsetRightUp: {x: 0.05, y: 0.2}
+  buildLimits: 1
   statementManager: {fileID: 1970854168}
   boardManager: {fileID: 190220292}
   mainCamera: {fileID: 56424205}

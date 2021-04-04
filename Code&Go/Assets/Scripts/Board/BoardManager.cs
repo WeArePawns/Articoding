@@ -12,7 +12,9 @@ public class BoardManager : Listener
     [SerializeField] private BoardCell cellPrefab;
     [SerializeField] private Transform cellsParent;
     [SerializeField] private Transform elementsParent;
+    [SerializeField] private Transform limitsParent;
     [SerializeField] private BoardObject[] elements;
+    [SerializeField] private GameObject limitsPrefab;
 
     // Hidden atributtes
     private BoardCell[,] board;
@@ -44,6 +46,29 @@ public class BoardManager : Listener
         nReceiversActive = 0;
     }
 
+    public void GenerateLimits()
+    {
+        if (limitsPrefab == null) return;
+
+        Vector2Int pos = new Vector2Int(-1, -1);
+        Vector2Int[] edges = { new Vector2Int(-1, rows), new Vector2Int(columns, rows), new Vector2Int(columns, -1), new Vector2Int(-1, -1) };
+        int dir = 0;
+        for (int i = 0; i < 2 * columns + 2 * rows + 4; i++)
+        {
+            GameObject limit = Instantiate(limitsPrefab, limitsParent);
+            limit.transform.localPosition = new Vector3(pos.x, pos.y);
+
+            if (dir % 2 == 0) pos.y += ((dir / 2 == 0) ? 1 : -1);
+            else pos.x += ((dir / 2 == 0) ? 1 : -1);
+
+            int j = 0;
+            while (j < edges.Length && pos != edges[j])
+                j++;
+
+            if (j < edges.Length) dir++;
+        }
+    }
+
     private void DestroyBoard()
     {
         foreach (Transform child in cellsParent)
@@ -52,6 +77,11 @@ public class BoardManager : Listener
         }
 
         foreach (Transform child in elementsParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (Transform child in limitsParent)
         {
             Destroy(child.gameObject);
         }
@@ -73,7 +103,7 @@ public class BoardManager : Listener
         return IsInBoardBounds(position.x, position.y);
     }
 
-    public void LoadBoard(TextAsset textAsset)
+    public void LoadBoard(TextAsset textAsset, bool limits = false)
     {
         if (textAsset == null) return;
 
@@ -82,6 +112,7 @@ public class BoardManager : Listener
         rows = state.rows;
         columns = state.columns;
         GenerateBoard();
+        if (limits) GenerateLimits();
 
         //Generate board elements
         foreach (BoardObjectState objectState in state.boardElements)
@@ -160,6 +191,7 @@ public class BoardManager : Listener
         if (IsInBoardBounds(x, y) && boardObject != null)
         {
             board[x, y].PlaceObject(boardObject);
+            if (elementPositions == null) return;
             if (!elementPositions.ContainsKey(boardObject.GetName()))
                 elementPositions[boardObject.GetName()] = new List<Vector2Int>();
             elementPositions[boardObject.GetName()].Add(new Vector2Int(x, y));

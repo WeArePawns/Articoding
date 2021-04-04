@@ -58,7 +58,7 @@ public class LaserEmitter : BoardObject, ILaserEmitter
     override
     public void LoadArgs(string[] args)
     {
-        if (args.Length > 0)
+        if (args != null && args.Length > 0)
             intensity = float.Parse(args[0]);
     }
 

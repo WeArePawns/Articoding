@@ -14,9 +14,13 @@ public class BoardCreator : MonoBehaviour
     [SerializeField] InputField rowsField;
     [SerializeField] InputField fileNameField;
 
+    [SerializeField] Toggle limits;
+
     [SerializeField] GameObject indicatorPrefab;
 
-    [SerializeField] private Vector2 boardInitOffset;
+    [SerializeField] private Vector2 boardInitOffsetLeftDown;
+    [SerializeField] private Vector2 boardInitOffsetRightUp;
+    private bool buildLimits = false;
     [SerializeField] private Camera mainCamera;
 
     private string fileName = "level";
@@ -45,16 +49,19 @@ public class BoardCreator : MonoBehaviour
         if (mainCamera != null)
         {
             float height = mainCamera.orthographicSize * 2, width = height * mainCamera.aspect;
-            float xPos = Mathf.Lerp(-width / 2.0f, width / 2.0f, boardInitOffset.x);
-            height *= (1.0f - boardInitOffset.y);
-            width *= (1.0f - boardInitOffset.x);
-            float boardHeight = (float)board.GetRows(), boardWidth = (float)board.GetColumns();
+            float xPos = Mathf.Lerp(-width / 2.0f, width / 2.0f, boardInitOffsetLeftDown.x);
+            float yPos = Mathf.Lerp(-height / 2.0f, height / 2.0f, boardInitOffsetLeftDown.y);
+            height *= (1.0f - (boardInitOffsetLeftDown.y + boardInitOffsetRightUp.y));
+            width *= (1.0f - (boardInitOffsetLeftDown.x + boardInitOffsetRightUp.x));
+
+            int limits = (buildLimits) ? 2 : 0;
+            float boardHeight = (float)board.GetRows() + limits, boardWidth = (float)board.GetColumns() + limits;
             float xRatio = width / boardWidth, yRatio = height / boardHeight;
             float ratio = Mathf.Min(xRatio, yRatio);
-            float offsetX = (width - boardWidth * ratio) / 2.0f + 0.5f * ratio, offsetY = (height - boardHeight * ratio) / 2.0f + 0.5f * ratio;
+            float offsetX = (-boardWidth * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio, offsetY = (-boardHeight * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio;
 
             //Fit the board on the screen and resize it
-            board.transform.localPosition = new Vector3(xPos + offsetX, -height / 2.0f + offsetY, 0);
+            board.transform.position = new Vector3(xPos + width / 2.0f + offsetX, yPos + height / 2.0f + offsetY, 0);
             board.transform.localScale = new Vector3(ratio, ratio, 1.0f);
         }
     }
@@ -168,12 +175,14 @@ public class BoardCreator : MonoBehaviour
     {
         int columns = int.Parse(columnsField.text), rows = int.Parse(rowsField.text);
         if (columns <= 0 || rows <= 0) return;
+        buildLimits = limits.isOn;
 
         board.SetColumns(columns);
         board.SetRows(rows);
         board.transform.localScale = Vector3.one;
         board.transform.localPosition = Vector3.zero;
         board.GenerateBoard();
+        if (buildLimits) board.GenerateLimits();
 
         DeselectObject();
         cursorPos = Vector2Int.zero;

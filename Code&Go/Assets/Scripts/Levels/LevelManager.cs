@@ -14,6 +14,7 @@ public class LevelManager : MonoBehaviour
     //Values between 0 and 1 that indicate the limits of the board
     [SerializeField] private Vector2 boardInitOffsetLeftDown;
     [SerializeField] private Vector2 boardInitOffsetRightUp;
+    [SerializeField] private bool buildLimits = true;
 
     [Space]
     [SerializeField] private StatementManager statementManager;
@@ -72,7 +73,7 @@ public class LevelManager : MonoBehaviour
         statementManager.Load(currentLevel.statement);
         ActivateLevelBlocks(currentLevel.activeBlocks, currentLevel.allActive);
         LoadInitialBlocks(currentLevel.initialState);
-        boardManager.LoadBoard(currentLevel.levelBoard);
+        boardManager.LoadBoard(currentLevel.levelBoard, buildLimits);
         FitBoard();
     }
 
@@ -85,10 +86,12 @@ public class LevelManager : MonoBehaviour
             float yPos = Mathf.Lerp(-height / 2.0f, height / 2.0f, boardInitOffsetLeftDown.y);
             height *= (1.0f - (boardInitOffsetLeftDown.y + boardInitOffsetRightUp.y));
             width *= (1.0f - (boardInitOffsetLeftDown.x + boardInitOffsetRightUp.x));
-            float boardHeight = (float)boardManager.GetRows(), boardWidth = (float)boardManager.GetColumns();
+
+            int limits = (buildLimits) ? 2 : 0;
+            float boardHeight = (float)boardManager.GetRows() + limits, boardWidth = (float)boardManager.GetColumns() + limits;
             float xRatio = width / boardWidth, yRatio = height / boardHeight;
             float ratio = Mathf.Min(xRatio, yRatio);
-            float offsetX = (-boardWidth * ratio) / 2.0f + 0.5f * ratio, offsetY = (-boardHeight * ratio) / 2.0f + 0.5f * ratio;
+            float offsetX = (-boardWidth * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio, offsetY = (-boardHeight * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio;
 
             //Fit the board on the screen and resize it
             boardManager.transform.position = new Vector3(xPos + width / 2.0f + offsetX, yPos + height / 2.0f + offsetY, 0);
@@ -123,7 +126,7 @@ public class LevelManager : MonoBehaviour
     {
         boardManager.transform.localScale = Vector3.one;
         boardManager.transform.localPosition = Vector3.zero;
-        boardManager.LoadBoard(currentLevel.levelBoard);
+        boardManager.LoadBoard(currentLevel.levelBoard, buildLimits);
         FitBoard();
     }
 

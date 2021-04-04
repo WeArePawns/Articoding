@@ -9,11 +9,13 @@ public abstract class Listener : MonoBehaviour
 
     private void Start()
     {
-        MessageManager.Instance.SubscribeListener(this);
+        if (MessageManager.Instance != null)
+            MessageManager.Instance.SubscribeListener(this);
     }
 
     private void OnDestroy()
     {
-        MessageManager.Instance.UnsubscribeListener(this);
+        if (MessageManager.Instance != null)
+            MessageManager.Instance.UnsubscribeListener(this);
     }
 }
