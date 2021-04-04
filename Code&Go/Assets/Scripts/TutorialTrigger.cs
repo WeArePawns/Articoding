@@ -41,4 +41,15 @@ public class TutorialTrigger : MonoBehaviour, IComparable<TutorialTrigger>
         }
         return priority - other.priority;
     }
+
+    public string GetHash()
+    {
+        return Hash.ToHash(info.popUpData.title + info.popUpData.content, "TutorialTrigger");
+    }
+
+    // Returns true if hash is the same as GetHash()
+    public bool CompareHash(string hash)
+    {
+        return hash == GetHash();
+    }
 }
