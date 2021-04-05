@@ -63,7 +63,11 @@ namespace UBlockly.UGUI
         public void UpdateCount()
         {
             if (countText != null)
-                countText.text = Block.blocksAvailable.ContainsKey(BlockType) ? Block.blocksAvailable[BlockType].ToString() : "0";
+            {
+                countText.text = Block.blocksAvailable.ContainsKey(BlockType) ? Block.blocksAvailable[BlockType].ToString() : "21";
+                if (int.Parse(countText.text) > 20)
+                    countText.text = "∞";
+            }
         }
 
         public void BindModel(Block block)
