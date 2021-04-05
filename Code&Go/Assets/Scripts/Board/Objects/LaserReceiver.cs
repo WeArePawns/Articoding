@@ -7,9 +7,16 @@ public class LaserReceiver : BoardObject, ILaserReceiver
     [SerializeField] private Renderer receiverRenderer;
 
     private bool registered = false;
+
+    [SerializeField] private Material offMaterial;
+    [SerializeField] private Material onMaterial;
+
+    [SerializeField] private ParticleSystem onParticles;
+    [SerializeField] private Light onLight;
+
     private void Awake()
     {
-        typeName = "Receiver";        
+        typeName = "Receiver";
     }
 
     private void Start()
@@ -19,7 +26,8 @@ public class LaserReceiver : BoardObject, ILaserReceiver
 
     public void OnLaserReceived()
     {
-        receiverRenderer.material.color = Color.green;
+        receiverRenderer.material = onMaterial;
+        onParticles.Play();
         Invoke("ReceiverActive", 2.0f);
     }
 
@@ -30,10 +38,11 @@ public class LaserReceiver : BoardObject, ILaserReceiver
 
     public void OnLaserLost()
     {
-        receiverRenderer.material.color = Color.yellow;
+        receiverRenderer.material = offMaterial;
         if (registered)
         {
             boardManager.ReceiverDeactivated();
+            onParticles.Stop();
             registered = false;
         }
         else
