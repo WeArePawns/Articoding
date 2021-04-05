@@ -10,8 +10,10 @@ public class LaserEmitter : BoardObject, ILaserEmitter
     [SerializeField] private LaserRay laserRayPrefab;
     private LaserRay laserRay;
 
+    [SerializeField] private ParticleSystem onParticles;
+
     private void Awake()
-    {        
+    {
         typeName = "Laser";
     }
 
@@ -27,9 +29,15 @@ public class LaserEmitter : BoardObject, ILaserEmitter
 
     public void Emit()
     {
-        if (intensity <= 0.0f) return;
+        if (intensity <= 0.0f)
+        {
+            onParticles.Stop();
+            return;
+        }
 
-        if(laserRay == null)
+        onParticles.Play();
+
+        if (laserRay == null)
             laserRay = LaserManager.Instance.CastLaser(transform.position, transform.right, transform);
 
         foreach (Transform child in laserRay.transform)
@@ -51,7 +59,7 @@ public class LaserEmitter : BoardObject, ILaserEmitter
 
     override
     public string[] GetArgs()
-    { 
+    {
         return new string[] { intensity.ToString() };
     }
 

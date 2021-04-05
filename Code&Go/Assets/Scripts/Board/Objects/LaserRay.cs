@@ -14,7 +14,7 @@ public class LaserRay : MonoBehaviour
     {
         lineRenderer.startWidth = rayWidth;
         lineRenderer.endWidth = rayWidth;
-        lineRenderer.material.color = color;
+        //lineRenderer.material.color = color;
     }
 
     public void Cast(Vector3 from, Vector3 direction, Transform parent)
@@ -22,6 +22,9 @@ public class LaserRay : MonoBehaviour
         List<Vector3> positions = new List<Vector3>();
         ILaserReflector reflector = null;
         ILaserReceiver receiver = null;
+
+        lineRenderer.startWidth = rayWidth * Random.Range(1.0f, 1.5f);
+        lineRenderer.endWidth = rayWidth * Random.Range(1.0f, 1.5f);
 
         positions.Add(from);
         RaycastHit hitInfo;
