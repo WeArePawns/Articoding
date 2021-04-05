@@ -18,7 +18,7 @@ public class TutorialManager : MonoBehaviour
 
     private string dataPath = "";
 
-    [SerializeField] PopUpManager popUpManager;
+    [SerializeField] private PopUpManager popUpManager;
     private BinaryHeap<TutorialTrigger> priorTriggers = null;
     private List<TutorialTrigger> conditionTriggers = null;
 
@@ -94,7 +94,6 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-
     private TutorialTrigger TryPopPriorityTriggers()
     {
         if (priorTriggers.Count == 0) return null;
@@ -123,10 +122,11 @@ public class TutorialManager : MonoBehaviour
         TutorialInfo info = t.info;
         popUpManager.Show(info.popUpData, t.GetRect());
 
-        savePending.Add(t);
+        if (!saved.Contains(t.GetHash())) { 
+            savePending.Add(t);
 
         if(t.isSaveCheckpoint)
-            SavePendingTriggers();
+            SavePendingTriggers();}
 
         if (t.destroyOnShowed)
             Destroy(t);
