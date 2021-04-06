@@ -14,8 +14,6 @@ public class LevelData : ScriptableObject
     public TextAsset statement; // Enunciado en .xml
     public TextAsset initialState; // Estado inicial en .xml
 
-    public BlockData[] availableBlocks; // o cambiar por el enumerator
-
     [Header("Active Blocks")]
     public TextAsset activeBlocks;//Bloques y categorias disponibles    
     public bool allActive = false;

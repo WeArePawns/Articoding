@@ -408,6 +408,7 @@ public class BoardManager : Listener
         string[] args = msg.Split(' ');
         int amount = 0, index = -1, rot = 0;
         float intensity = 0.0f, time = 0.5f;
+        bool active;
         Vector2Int dir;
         switch (type)
         {
@@ -422,7 +423,7 @@ public class BoardManager : Listener
                 amount = int.Parse(args[2]);
                 dir = GetDirectionFromString(args[3]);
                 time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                StartCoroutine(MoveObject(args[0], index, dir, amount, time));
+                StartCoroutine(MoveObject(args[0], index - 1, dir, amount, time));
                 break;
             case MSG_TYPE.ROTATE_LASER:
                 amount = int.Parse(args[0]) * 2;
@@ -435,12 +436,17 @@ public class BoardManager : Listener
                 amount = int.Parse(args[2]) * 2;
                 rot = GetRotationFromString(args[3]);
                 time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                StartCoroutine(RotateObject(args[0], index, rot, amount, time));
+                StartCoroutine(RotateObject(args[0], index - 1, rot, amount, time));
                 break;
             case MSG_TYPE.CHANGE_INTENSITY:
                 index = int.Parse(args[0]);
                 intensity = float.Parse(args[1]);
-                ChangeLaserIntensity(index, intensity);
+                ChangeLaserIntensity(index - 1, intensity);
+                break;
+            case MSG_TYPE.ACTIVATE_DOOR:
+                index = int.Parse(args[0]);
+                active = bool.Parse(args[1]);
+                ActivateDooor(index - 1, active);
                 break;
         }
     }
@@ -453,6 +459,17 @@ public class BoardManager : Listener
             LaserEmitter laser = (LaserEmitter)board[pos.x, pos.y].GetPlacedObject();
             if (laser != null)
                 laser.ChangeIntensity(newIntensity);
+        }
+    }
+
+    private void ActivateDooor(int index, bool active)
+    {
+        if (elementPositions.ContainsKey("Door") && index < elementPositions["Door"].Count)
+        {
+            Vector2Int pos = elementPositions["Door"][index];
+            Door door = (Door)board[pos.x, pos.y].GetPlacedObject();
+            if (door != null)
+                door.SetActive(active);
         }
     }
 }

@@ -169,6 +169,10 @@ public class BoardCreator : MonoBehaviour
         {
             AddObject(3);
         }
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            AddObject(4);
+        }
     }
 
     public void GenerateNewBoard()

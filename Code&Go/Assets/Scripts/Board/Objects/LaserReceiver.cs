@@ -39,10 +39,10 @@ public class LaserReceiver : BoardObject, ILaserReceiver
     public void OnLaserLost()
     {
         receiverRenderer.material = offMaterial;
+        onParticles.Stop();
         if (registered)
         {
             boardManager.ReceiverDeactivated();
-            onParticles.Stop();
             registered = false;
         }
         else

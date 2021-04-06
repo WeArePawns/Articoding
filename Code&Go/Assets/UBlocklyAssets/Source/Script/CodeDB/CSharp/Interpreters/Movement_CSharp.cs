@@ -127,4 +127,23 @@ namespace UBlockly
             yield return new WaitForSeconds(Times.instructionWaitTime);
         }
     }
+
+    [CodeInterpreter(BlockType = "movement_activate_door")]
+    public class Activate_Door_Cmdtor : EnumeratorCmdtor
+    {
+
+        protected override IEnumerator Execute(Block block)
+        {
+            CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "ACTIVE", new DataStruct(0));
+            yield return ctor;
+            DataStruct arg0 = ctor.Data;
+
+            string index = block.GetFieldValue("INDEX");
+
+            string msg = index + " " + arg0.ToString();
+            MessageManager.Instance.SendMessage(msg, MSG_TYPE.ACTIVATE_DOOR);
+
+            yield return new WaitForSeconds(Times.instructionWaitTime);
+        }
+    }
 }
