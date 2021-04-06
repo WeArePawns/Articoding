@@ -11,6 +11,7 @@ public class LaserEmitter : BoardObject, ILaserEmitter
     private LaserRay laserRay;
 
     [SerializeField] private ParticleSystem onParticles;
+    [SerializeField] private GameObject pointLight;
 
     private void Awake()
     {
@@ -32,10 +33,12 @@ public class LaserEmitter : BoardObject, ILaserEmitter
         if (intensity <= 0.0f)
         {
             onParticles.Stop();
+            pointLight.SetActive(false);
             return;
         }
 
         onParticles.Play();
+        pointLight.SetActive(true);
 
         if (laserRay == null)
             laserRay = LaserManager.Instance.CastLaser(transform.position, transform.right, transform);
