@@ -1,0 +1,35 @@
+<xml>
+    <variables>
+        <variable type="" id="(:@w6QQO.{kf)ukk.jZ(">Desplazamiento</variable>
+        <variable type="" id="Ci!XAq|EkQ0R9Cp^9xtD">Activo</variable>
+        <variable type="" id="FiRAHY{xA,A8y4k*A`=4">Objeto</variable>
+    </variables>
+    <block type="variables_set" id="XDio/H.yKB1xC[`7K-}/" x="100" y="-133">
+        <field name="VAR" id="(:@w6QQO.{kf)ukk.jZ(" variableType="">Desplazamiento</field>
+        <value name="VALUE">
+            <block type="math_number" id="pu-Q8)w-gtS4Mj^P8$R5">
+                <field name="NUM">1</field>
+            </block>
+        </value>
+        <next>
+            <block type="variables_set" id="`u)x5C@WQ#`eS#k;TyMB">
+                <field name="VAR" id="Ci!XAq|EkQ0R9Cp^9xtD" variableType="">Activo</field>
+                <value name="VALUE">
+                    <block type="logic_boolean" id="ek@oyJGt%:1k]N^9nktl">
+                        <field name="BOOL">TRUE</field>
+                    </block>
+                </value>
+                <next>
+                    <block type="variables_set" id="C|l/P??d^Dx{y$QHLdp4">
+                        <field name="VAR" id="FiRAHY{xA,A8y4k*A`=4" variableType="">Objeto</field>
+                        <value name="VALUE">
+                            <block type="text" id="|PRg/$Q?js5co/*ry?!~">
+                                <field name="TEXT" />
+                            </block>
+                        </value>
+                    </block>
+                </next>
+            </block>
+        </next>
+    </block>
+</xml>
