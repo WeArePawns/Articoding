@@ -5,7 +5,7 @@ using UnityEngine;
 public class Door : BoardObject
 {
     private bool open = false;
-    [SerializeField] Collider objectCollider;
+    [SerializeField] GameObject objectCollider;
     // DO STUFF I GUESS
     private void Awake()
     {
@@ -33,6 +33,6 @@ public class Door : BoardObject
 
     public void DeactivateCollider()
     {
-        objectCollider.enabled = !open;
+        objectCollider.SetActive(!open);
     }
 }
