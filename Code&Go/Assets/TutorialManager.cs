@@ -19,6 +19,7 @@ public class TutorialManager : MonoBehaviour
     private string dataPath = "";
 
     [SerializeField] private PopUpManager popUpManager;
+    [SerializeField] private bool tutorialsON = true;
     private BinaryHeap<TutorialTrigger> priorTriggers = null;
     private List<TutorialTrigger> conditionTriggers = null;
 
@@ -78,6 +79,8 @@ public class TutorialManager : MonoBehaviour
 
     private void Update()
     {
+        if (!tutorialsON) return;
+
         TutorialTrigger prior = TryPopPriorityTriggers();
         TutorialTrigger cond = TryPopConditionalTriggers();
 
