@@ -140,11 +140,14 @@ public class TutorialManager : MonoBehaviour
         if (t.OnShowed != null)
             t.OnShowed.Invoke();
 
-        if (!saved.Contains(t.GetHash())) { 
+        if (!triggered.Contains(t.GetHash()))
+            triggered.Add(t.GetHash());
+
+        if (!saved.Contains(t.GetHash()))
             savePending.Add(t);
 
         if(t.isSaveCheckpoint)
-            SavePendingTriggers();}
+            SavePendingTriggers();
 
         if (t.destroyOnShowed)
             Destroy(t);
