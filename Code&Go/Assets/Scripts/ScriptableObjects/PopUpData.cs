@@ -8,7 +8,6 @@ public class PopUpData : ScriptableObject
     [TextArea(3, 6)]
     public string content;
     public PopUpData next = null;
-    public UnityEvent OnButtonPressed;
 
     public PopUpData()
     {

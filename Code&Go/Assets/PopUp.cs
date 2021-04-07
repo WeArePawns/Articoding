@@ -44,7 +44,6 @@ public class PopUp : MonoBehaviour
 
         // Set action
         nextButton.onClick.RemoveAllListeners();
-        nextButton.onClick.AddListener(data.OnButtonPressed.Invoke);
         if (data.next == null)
         {
             buttonText.text = "Cerrar";
@@ -105,6 +104,13 @@ public class PopUp : MonoBehaviour
     public void SetTargetPosition(float x, float y)
     {
         SetTargetPositionAndOffset(new Vector2(x, y), Vector2.zero);
+    }
+
+    public void CenterPosition()
+    {
+        Vector2 position = new Vector2(Screen.width / 2.0f, Screen.height / 2.0f);
+        panelRect.pivot = new Vector2(0.5f, 0.5f);
+        panelRect.anchoredPosition = position;
     }
 
     public void AddListener(UnityAction action)

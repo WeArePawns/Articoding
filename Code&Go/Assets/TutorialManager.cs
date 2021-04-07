@@ -120,7 +120,13 @@ public class TutorialManager : MonoBehaviour
         if (t == null) return;
 
         TutorialInfo info = t.info;
-        popUpManager.Show(info.popUpData, t.GetRect());
+        if (t.highlightObject)
+            popUpManager.Show(info.popUpData, t.GetRect());
+        else
+            popUpManager.Show(info.popUpData.title, info.popUpData.content);
+
+        if (t.OnShowed != null)
+            t.OnShowed.Invoke();
 
         if (!saved.Contains(t.GetHash())) { 
             savePending.Add(t);
@@ -150,7 +156,7 @@ public class TutorialManager : MonoBehaviour
     private void Load()
     {
         // Si no existe, se crea
-        if (!File.Exists(Filepath))
+        /*if (!File.Exists(Filepath))
         {
             FileStream file = new FileStream(Filepath, FileMode.Create);
             file.Close();
@@ -176,12 +182,12 @@ public class TutorialManager : MonoBehaviour
             return;
         }
         // Se ha modificado el archivo, empiezas de 0
-        Save();
+        Save();*/
     }
 
     // TODO: modificar cuando se haga el sistema de guardado
     private void Save()
-    {
+    {/*
         string[] array = new string[saved.Count];
         saved.CopyTo(array);
 
@@ -196,7 +202,7 @@ public class TutorialManager : MonoBehaviour
 
         StreamWriter writer = new StreamWriter(Filepath);
         writer.Write(finalJson);
-        writer.Close();
+        writer.Close();*/
     }
 
     private void SavePendingTriggers()

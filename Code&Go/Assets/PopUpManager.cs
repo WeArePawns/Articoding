@@ -29,12 +29,11 @@ public class PopUpManager : MonoBehaviour
         PopUpData data = new PopUpData();
         data.title = title;
         data.content = content;
-        Vector2 position = new Vector2(Screen.width / 2.0f, Screen.height / 2.0f);
 
         imageMaterial.SetVector("_PositionSize", Vector4.zero);
         mainContent.SetActive(true);
         popupPanel.Show(data);
-        popupPanel.SetTargetPositionAndOffset(position, Vector2.zero);
+        popupPanel.CenterPosition();
 
         popupPanel.AddListener(Hide);
     }

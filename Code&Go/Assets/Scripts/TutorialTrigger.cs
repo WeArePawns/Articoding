@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TutorialTrigger : MonoBehaviour, IComparable<TutorialTrigger>
 {
@@ -7,8 +8,11 @@ public class TutorialTrigger : MonoBehaviour, IComparable<TutorialTrigger>
     public TutorialInfo info;
     public Func<bool> condition;
 
+    public bool highlightObject = true;
     public bool destroyOnShowed = false;
     public bool isSaveCheckpoint = false;
+
+    public UnityEvent OnShowed;
 
     private RectTransform mRectTransform;
     private Renderer mRenderer;
