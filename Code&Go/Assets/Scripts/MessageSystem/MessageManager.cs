@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum MSG_TYPE { INSTANTIATE, MOVE};
+public enum MSG_TYPE { MOVE_LASER, MOVE, ROTATE_LASER, ROTATE, CHANGE_INTENSITY, ACTIVATE_DOOR};
 
 public class MessageManager : MonoBehaviour
 {

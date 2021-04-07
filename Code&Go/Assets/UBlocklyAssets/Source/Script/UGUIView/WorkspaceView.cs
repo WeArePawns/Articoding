@@ -129,6 +129,7 @@ namespace UBlockly.UGUI
         {
             BlockView view = BlockViewFactory.CreateView(block);
             view.InToolbox = false;
+            view.ActivateCountText(false);
             view.ViewTransform.SetParent(m_CodingArea, false);
             view.XY = block.XY;
 

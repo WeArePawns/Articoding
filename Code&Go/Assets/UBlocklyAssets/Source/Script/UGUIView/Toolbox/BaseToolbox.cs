@@ -51,6 +51,7 @@ namespace UBlockly.UGUI
         {
             this.activeCategories = activeCategories;
 
+            Block.blocksAvailable = new Dictionary<string, int>();
             //Activate the category if it's not in the active list
             foreach (var category in mConfig.BlockCategoryList)
                 mMenuList[category.CategoryName].gameObject.SetActive(activeCategories.ContainsKey(category.CategoryName.ToLower()));
@@ -68,6 +69,23 @@ namespace UBlockly.UGUI
             }
         }
 
+        protected void SetBlockCount(BlockView block)
+        {
+            //Deactivate the block if it's not in the active list
+            bool active = false;
+            string blockType = block.BlockType;
+            if (activeCategories != null && activeCategories.ContainsKey(mActiveCategory.ToLower()))
+            {
+                CategoryBlocks info = activeCategories[mActiveCategory.ToLower()];
+                active = info.activate == (info.activeBlocks.ContainsKey(blockType));
+                int prevValue = (Block.blocksAvailable.ContainsKey(blockType)) ? Block.blocksAvailable[blockType] : 0;
+                int value = prevValue + (info.activeBlocks.ContainsKey(blockType) ? info.activeBlocks[blockType] : Int16.MaxValue);
+                Block.blocksAvailable[blockType] = value;
+            }
+            block.gameObject.SetActive(allActive || active);
+            block.UpdateCount();
+        }
+
         protected abstract void Build();
         protected virtual void OnPickBlockView() { }
 
@@ -80,6 +98,23 @@ namespace UBlockly.UGUI
 
             mWorkspace.VariableMap.AddObserver(new VariableObserver(this));
             mWorkspace.ProcedureDB.AddObserver(new ProcedureObserver(this));
+        }
+
+        public void Clean()
+        {
+            mActiveCategory = null;
+
+            foreach (GameObject obj in mRootList.Values)
+            {
+                GameObject.Destroy(obj);
+            }
+            mRootList.Clear();
+
+            foreach (Toggle toggle in mMenuList.Values)
+            {
+                GameObject.Destroy(toggle.gameObject);
+            }
+            mMenuList.Clear();
         }
 
         /// <summary>
@@ -116,6 +151,9 @@ namespace UBlockly.UGUI
             if (!BlockViewSettings.Get().MaskedInToolbox)
                 maskTrans.SetAsFirstSibling();
 
+            view.ActivateCountText(view.InToolbox);
+            view.UpdateCount();
+
             return view;
         }
 
@@ -133,7 +171,9 @@ namespace UBlockly.UGUI
 
             // clone a new block view for coding area
             mPickedBlockView = BlocklyUI.WorkspaceView.CloneBlockView(blockView, new Vector2(localPos.x, localPos.y));
+            if (mPickedBlockView.InToolbox) return;
             mPickedBlockView.OnBeginDrag(null);
+            mPickedBlockView.ActivateCountText(false);
 
             //if the max number of blocks have been used disable the block
             if (Block.blocksAvailable.ContainsKey(blockView.BlockType) && Block.blocksAvailable[blockView.BlockType] > 0)
@@ -145,6 +185,7 @@ namespace UBlockly.UGUI
                     blockView.enabled = false;
                 }
             }
+            blockView.UpdateCount();
 
             OnPickBlockView();
         }
@@ -228,7 +269,7 @@ namespace UBlockly.UGUI
             foreach (VariableModel variable in mWorkspace.GetAllVariables())
             {
                 CreateVariableGetterView(variable.Name);
-            }
+            }           
         }
 
         protected void CreateVariableGetterView(string varName)
@@ -244,6 +285,7 @@ namespace UBlockly.UGUI
             block.SetFieldValue("VAR", varName);
             BlockView view = NewBlockView(block, parentObj.transform);
             mVariableGetterViews[varName] = view;
+            SetBlockCount(view);
         }
 
         protected void DeleteVariableGetterView(string varName)
@@ -273,6 +315,7 @@ namespace UBlockly.UGUI
                     block.SetFieldValue("VAR", varName);
                     BlockView view = NewBlockView(block, parentObj.transform);
                     mVariableHelperViews.Add(view);
+                    SetBlockCount(view);
                 }
             }
         }

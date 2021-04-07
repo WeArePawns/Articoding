@@ -17,6 +17,7 @@ public class Tab : MonoBehaviour, IPointerClickHandler
     [Header("Image colors")]
     [SerializeField] Color imageSelectedColor;
     [SerializeField] Color imageDeselectedColor;
+    [SerializeField] Color imageHoverColor;
 
     [System.Serializable]
     public struct TabCallbacks

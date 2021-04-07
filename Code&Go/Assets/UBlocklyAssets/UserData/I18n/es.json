@@ -10,16 +10,31 @@
         "COLOR": "Colores",
         "COROUTINE": "Corrutinas",
         "MESSAGES": "Mensajes",
+        "MOVEMENT": "Movimiento",
         
         /// default name - A simple: general default name for a variable: preferably short.
         "VARIABLES_DEFAULT_NAME": "variable",
         /// button text - Button that sets a calendar to today's date.\n(Identical|Today)
         "TODAY": "Hoy",
-    
-    //Mensajes
-        "MESSAGES_INSTANTIATE_TITLE": "Crea",
-        "MESSAGES_MOVE_TITLE" : "Mueve Objeto %1 %2 unidades",
 
+    //Movimiento Blocks.
+    "MOVEMENT_CHANGE_INTENSITY": "Cambia intensidad a %1",
+
+    "MOVEMENT_MOVE_LASER_TITLE": "Mueve Laser %1 %2",
+    "MOVEMENT_MOVE_TITLE": "Mueve %1 %2 %3",
+
+    "MOVEMENT_DIRECTION_RIGHT" :"Derecha",
+    "MOVEMENT_DIRECTION_DOWN" :"Abajo",
+    "MOVEMENT_DIRECTION_LEFT" :"Izquierda",
+    "MOVEMENT_DIRECTION_UP" :"Arriba",
+
+    "MOVEMENT_ROTATE_LASER_TITLE": "Gira Laser %1 veces %2",
+    "MOVEMENT_ROTATE_TITLE": "Gira %1 %2 veces %3",
+
+    "MOVEMENT_ROTATION_RIGHT":"Horario",
+    "MOVEMENT_ROTATION_LEFT":"Antihorario",
+
+    "MOVEMENT_ACTIVATE_DOOR_TITLE":"Cambia estado puerta %1 a %2",
 
     // Context menus.
         /// context menu - Make a copy of the selected block (and any blocks it contains).\n(Identical|Duplicate)
@@ -237,16 +252,22 @@
         "LOGIC_COMPARE_HELPURL": "https://en.wikipedia.org/wiki/Inequality_(mathematics)",
         /// tooltip - Describes the equals (=) block.
         "LOGIC_COMPARE_TOOLTIP_EQ": "Devuelve verdadero si ambas entradas son iguales entre si.",
+        "LOGIC_COMPARE_EQ": "igual que",
         /// tooltip - Describes the not equals (≠) block.
         "LOGIC_COMPARE_TOOLTIP_NEQ": "Devuelve verdadero si ambas entradas son diferentes entre si.",
+        "LOGIC_COMPARE_NEQ": "distinto de",
         /// tooltip - Describes the less than (<) block.
         "LOGIC_COMPARE_TOOLTIP_LT": "Devuelve verdadero si la primera entrada es menor que la segunda.",
+        "LOGIC_COMPARE_LT": "menor que",
         /// tooltip - Describes the less than or equals (≤) block.
         "LOGIC_COMPARE_TOOLTIP_LTE": "Devuelve verdadero si la primera entrada es menor ó igual que la segunda.",
+        "LOGIC_COMPARE_LTE": "menor o igual que",
         /// tooltip - Describes the greater than (>) block.
         "LOGIC_COMPARE_TOOLTIP_GT": "Devuelve verdadero si la primera entrada es mayor que la segunda.",
+        "LOGIC_COMPARE_GT": "mayor que",
         /// tooltip - Describes the greater than or equals (≥) block.
         "LOGIC_COMPARE_TOOLTIP_GTE": "Devuelve verdadero si la primera entrada es mayor o igual que la segunda.",
+        "LOGIC_COMPARE_GTE": "mayor o igual que",
     
         /// url - Information about the Boolean conjunction ("and") and disjunction ("or") operators.  Consider using the translation of [https://en.wikipedia.org/wiki/Boolean_logic https://en.wikipedia.org/wiki/Boolean_logic]: if it exists in your language.
         "LOGIC_OPERATION_HELPURL": "https://github.com/google/blockly/wiki/Logic#logical-operations",

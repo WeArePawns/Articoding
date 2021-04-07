@@ -2,32 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoardManager : MonoBehaviour
+public class BoardManager : Listener
 {
     private int rows;
     private int columns;
+    private int nReceivers = 0;
+    private int nReceiversActive = 0;
 
     [SerializeField] private BoardCell cellPrefab;
     [SerializeField] private Transform cellsParent;
     [SerializeField] private Transform elementsParent;
+    [SerializeField] private Transform limitsParent;
     [SerializeField] private BoardObject[] elements;
-
-    [SerializeField] private TextAsset boardState;
+    [SerializeField] private GameObject limitsPrefab;
 
     // Hidden atributtes
     private BoardCell[,] board;
 
+    private Dictionary<string, List<Vector2Int>> elementPositions;
+
     private void Awake()
     {
         InitIDs();
-        LoadBoard(boardState);
     }
 
     public void GenerateBoard()
     {
         // If a board already exist, destroy it
         DestroyBoard();
-
         // Initialize board
         board = new BoardCell[columns, rows];
         // Instantiate cells
@@ -39,6 +41,31 @@ public class BoardManager : MonoBehaviour
                 cell.SetPosition(x, y);
                 board[x, y] = cell;
             }
+        }
+        nReceivers = 0;
+        nReceiversActive = 0;
+    }
+
+    public void GenerateLimits()
+    {
+        if (limitsPrefab == null) return;
+
+        Vector2Int pos = new Vector2Int(-1, -1);
+        Vector2Int[] edges = { new Vector2Int(-1, rows), new Vector2Int(columns, rows), new Vector2Int(columns, -1), new Vector2Int(-1, -1) };
+        int dir = 0;
+        for (int i = 0; i < 2 * columns + 2 * rows + 4; i++)
+        {
+            GameObject limit = Instantiate(limitsPrefab, limitsParent);
+            limit.transform.localPosition = new Vector3(pos.x, pos.y);
+
+            if (dir % 2 == 0) pos.y += ((dir / 2 == 0) ? 1 : -1);
+            else pos.x += ((dir / 2 == 0) ? 1 : -1);
+
+            int j = 0;
+            while (j < edges.Length && pos != edges[j])
+                j++;
+
+            if (j < edges.Length) dir++;
         }
     }
 
@@ -53,6 +80,11 @@ public class BoardManager : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+
+        foreach (Transform child in limitsParent)
+        {
+            Destroy(child.gameObject);
+        }
     }
 
     private void InitIDs()
@@ -62,19 +94,6 @@ public class BoardManager : MonoBehaviour
     }
 
 
-    private void LoadBoard(TextAsset textAsset)
-    {
-        if (textAsset == null) return;
-
-        BoardState state = BoardState.FromJson(textAsset.text);
-        rows = state.rows;
-        columns = state.columns;
-        GenerateBoard();
-
-        //Generate board elements
-        foreach (BoardObjectState objectState in state.boardElements)
-            AddBoardObject(objectState.id, objectState.x, objectState.y, objectState.orientation, objectState.args);
-    }
     private bool IsInBoardBounds(int x, int y)
     {
         return y >= 0 && y < rows && x >= 0 && x < columns;
@@ -84,9 +103,45 @@ public class BoardManager : MonoBehaviour
         return IsInBoardBounds(position.x, position.y);
     }
 
+    public void LoadBoard(TextAsset textAsset, bool limits = false)
+    {
+        if (textAsset == null) return;
+
+        elementPositions = new Dictionary<string, List<Vector2Int>>();
+        BoardState state = BoardState.FromJson(textAsset.text);
+        rows = state.rows;
+        columns = state.columns;
+        GenerateBoard();
+        if (limits) GenerateLimits();
+
+        //Generate board elements
+        foreach (BoardObjectState objectState in state.boardElements)
+            AddBoardObject(objectState.id, objectState.x, objectState.y, objectState.orientation, objectState.args);
+    }
+
+    public void RegisterReceiver()
+    {
+        nReceivers++;
+    }
+
+    public void ReceiverActivated()
+    {
+        nReceiversActive++;
+    }
+
+    public void ReceiverDeactivated()
+    {
+        nReceiversActive--;
+    }
+
+    public bool BoardCompleted()
+    {
+        return nReceivers > 0 && nReceiversActive >= nReceivers;
+    }
+
     public void SetRows(int rows)
     {
-       this.rows = rows;
+        this.rows = rows;
     }
 
     public void SetColumns(int columns)
@@ -122,7 +177,7 @@ public class BoardManager : MonoBehaviour
 
     public void AddBoardObject(int id, int x, int y, int orientation = 0, string[] additionalArgs = null)
     {
-        if (id > elements.Length) return;
+        if (id > elements.Length || !IsInBoardBounds(x, y)) return;
 
         BoardObject bObject = Instantiate(elements[id], elementsParent);
         bObject.SetBoard(this);
@@ -134,7 +189,13 @@ public class BoardManager : MonoBehaviour
     public void AddBoardObject(int x, int y, BoardObject boardObject)
     {
         if (IsInBoardBounds(x, y) && boardObject != null)
+        {
             board[x, y].PlaceObject(boardObject);
+            if (elementPositions == null) return;
+            if (!elementPositions.ContainsKey(boardObject.GetName()))
+                elementPositions[boardObject.GetName()] = new List<Vector2Int>();
+            elementPositions[boardObject.GetName()].Add(new Vector2Int(x, y));
+        }
     }
 
     public void RemoveBoardObject(int x, int y)
@@ -181,18 +242,44 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    //Moves an object given its name and index called by the blocks
+    public IEnumerator MoveObject(string name, int index, Vector2Int direction, int amount, float time)
+    {
+        if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
+        {
+            int i = 0;
+            while (i++ < amount && MoveObject(elementPositions[name][index], direction, time))
+            {
+                elementPositions[name][index] += direction;
+                yield return new WaitForSeconds(time + 0.05f);
+            }
+        }
+        yield return null;
+    }
+
+    public IEnumerator RotateObject(string name, int index, int direction, int amount, float time)
+    {
+        if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
+            for (int i = 0; i < amount % 8; i++)
+            {
+                RotateObject(elementPositions[name][index], direction, time);
+                yield return new WaitForSeconds(time + 0.05f);
+            }
+        yield return null;
+    }
+
     // Smooth interpolation, this code must be called by blocks
-    public void MoveObject(Vector2Int origin, Vector2Int direction, float time)
+    public bool MoveObject(Vector2Int origin, Vector2Int direction, float time)
     {
         // Check valid direction
         if (!(direction.magnitude == 1.0f && (Mathf.Abs(direction.x) == 1 || Mathf.Abs(direction.y) == 1)))
-            return;
+            return false;
 
         // Check if origin object exists
-        if (!IsInBoardBounds(origin)) return;
+        if (!IsInBoardBounds(origin)) return false;
 
         BoardObject bObject = board[origin.x, origin.y].GetPlacedObject();
-        if (bObject == null) return; // No object to move
+        if (bObject == null) return false; // No object to move
 
         // Check if direction in valid
         if (IsInBoardBounds(origin + direction))
@@ -201,14 +288,16 @@ public class BoardManager : MonoBehaviour
             BoardCell fromCell = board[origin.x, origin.y];
             BoardCell toCell = board[origin.x + direction.x, origin.y + direction.y];
 
-            if (toCell.GetPlacedObject() != null) return;
+            if (toCell.GetPlacedObject() != null) return false;
 
             StartCoroutine(InternalMoveObject(fromCell, toCell, time));
+            return true;
         }
         else
         {
             // Not a valid direction
             // TODO: hacer que se choque o haga algo
+            return false;
         }
     }
 
@@ -287,5 +376,100 @@ public class BoardManager : MonoBehaviour
 
         // Set final rotation (defensive code)
         bObject.SetDirection(targetDirection);
+    }
+
+    //TODO: Mover esto
+    private Vector2Int GetDirectionFromString(string dir)
+    {
+        dir = dir.ToLower();
+        switch (dir)
+        {
+            case ("down"):
+                return Vector2Int.down;
+            case ("right"):
+                return Vector2Int.right;
+            case ("up"):
+                return Vector2Int.up;
+            case ("left"):
+                return Vector2Int.left;
+            default:
+                return Vector2Int.zero;
+        }
+    }
+
+    private int GetRotationFromString(string rot)
+    {
+        rot = rot.ToLower();
+        return rot == "clockwise" ? 1 : (rot == "anti_clockwise" ? -1 : 0);
+    }
+
+    public override void ReceiveMessage(string msg, MSG_TYPE type)
+    {
+        string[] args = msg.Split(' ');
+        int amount = 0, index = -1, rot = 0;
+        float intensity = 0.0f, time = 0.5f;
+        bool active;
+        Vector2Int dir;
+        switch (type)
+        {
+            case MSG_TYPE.MOVE_LASER:
+                amount = int.Parse(args[0]);
+                dir = GetDirectionFromString(args[1]);
+                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                StartCoroutine(MoveObject("Laser", 0, dir, amount, time));
+                break;
+            case MSG_TYPE.MOVE:
+                index = int.Parse(args[1]);
+                amount = int.Parse(args[2]);
+                dir = GetDirectionFromString(args[3]);
+                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                StartCoroutine(MoveObject(args[0], index - 1, dir, amount, time));
+                break;
+            case MSG_TYPE.ROTATE_LASER:
+                amount = int.Parse(args[0]) * 2;
+                rot = GetRotationFromString(args[1]);
+                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                StartCoroutine(RotateObject("Laser", 0, rot, amount, time));
+                break;
+            case MSG_TYPE.ROTATE:
+                index = int.Parse(args[1]);
+                amount = int.Parse(args[2]) * 2;
+                rot = GetRotationFromString(args[3]);
+                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                StartCoroutine(RotateObject(args[0], index - 1, rot, amount, time));
+                break;
+            case MSG_TYPE.CHANGE_INTENSITY:
+                index = int.Parse(args[0]);
+                intensity = float.Parse(args[1]);
+                ChangeLaserIntensity(index - 1, intensity);
+                break;
+            case MSG_TYPE.ACTIVATE_DOOR:
+                index = int.Parse(args[0]);
+                active = bool.Parse(args[1]);
+                ActivateDooor(index - 1, active);
+                break;
+        }
+    }
+
+    private void ChangeLaserIntensity(int index, float newIntensity)
+    {
+        if (elementPositions.ContainsKey("Laser") && index < elementPositions["Laser"].Count)
+        {
+            Vector2Int pos = elementPositions["Laser"][index];
+            LaserEmitter laser = (LaserEmitter)board[pos.x, pos.y].GetPlacedObject();
+            if (laser != null)
+                laser.ChangeIntensity(newIntensity);
+        }
+    }
+
+    private void ActivateDooor(int index, bool active)
+    {
+        if (elementPositions.ContainsKey("Door") && index < elementPositions["Door"].Count)
+        {
+            Vector2Int pos = elementPositions["Door"][index];
+            Door door = (Door)board[pos.x, pos.y].GetPlacedObject();
+            if (door != null)
+                door.SetActive(active);
+        }
     }
 }

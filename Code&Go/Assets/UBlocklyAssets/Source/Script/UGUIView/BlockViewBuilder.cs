@@ -105,6 +105,10 @@ namespace UBlockly.UGUI
                 {
                     mutatorEntry = child;
                 }
+                else if (childName.StartsWith("block_count"))
+                {
+                    blockView.SetCountText(child.GetComponentInChildren<Text>());
+                }
             }
             
             //check if has mutator entry

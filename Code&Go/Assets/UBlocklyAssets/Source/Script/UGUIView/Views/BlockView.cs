@@ -47,6 +47,29 @@ namespace UBlockly.UGUI
 
         private MemorySafeBlockObserver mBlockObserver;
 
+        private Text countText;
+
+        public void SetCountText(Text text)
+        {
+            countText = text;
+        }
+
+        public void ActivateCountText(bool active)
+        {
+            if (countText != null)
+                countText.transform.parent.gameObject.SetActive(active);
+        }
+
+        public void UpdateCount()
+        {
+            if (countText != null)
+            {
+                countText.text = Block.blocksAvailable.ContainsKey(BlockType) ? Block.blocksAvailable[BlockType].ToString() : "21";
+                if (int.Parse(countText.text) > 20)
+                    countText.text = "∞";
+            }
+        }
+
         public void BindModel(Block block)
         {
             if (mBlock == block) return;
@@ -79,12 +102,15 @@ namespace UBlockly.UGUI
             }
 
             RegisterUIEvents();
+
+            foreach (Transform child in transform)
+                if (child.name.ToLower().StartsWith("block_count"))
+                    SetCountText(child.GetComponentInChildren<Text>());
         }
 
         public void UnBindModel()
         {
             //unbind input and connections
-            int inputIndex = 0;
             foreach (BaseView view in Childs)
             {
                 if (view.Type == ViewType.Connection)
@@ -97,7 +123,6 @@ namespace UBlockly.UGUI
                     foreach (var inputView in groupView.Childs)
                     {
                         ((InputView)inputView).UnBindModel();
-                        inputIndex++;
                     }
                 }
             }
@@ -112,9 +137,34 @@ namespace UBlockly.UGUI
         /// </summary>
         public void Dispose()
         {
+            foreach (BaseView view in Childs)
+            {
+                if (view.Type == ViewType.Connection)
+                {
+                    if (((ConnectionView)view).TargetBlockView != null)
+                        ((ConnectionView)view).TargetBlockView.Dispose();
+                }
+                else if (view.Type == ViewType.LineGroup)
+                {
+                    LineGroupView groupView = view as LineGroupView;
+                    foreach (var inputView in groupView.Childs)
+                    {
+                        if (((InputView)inputView).HasConnection && ((InputView)inputView).GetConnectionView().TargetBlockView != null)
+                            ((InputView)inputView).GetConnectionView().TargetBlockView.Dispose();
+                    }
+                }
+            }
+
+            //Update available blocks
+            if (Block.blocksAvailable.ContainsKey(BlockType))
+                Block.blocksAvailable[BlockType]++;
+            else
+                Block.blocksAvailable[BlockType] = 1;
+            UpdateCount();
+
             Block model = mBlock;
             UnBindModel();
-            GameObject.Destroy(this.gameObject,0.1f);
+            GameObject.Destroy(this.gameObject, 0.1f);
             model.Dispose();
         }
 
@@ -274,6 +324,7 @@ namespace UBlockly.UGUI
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (InToolbox) return;
             mBlock.UnPlug();
             SetOrphan();
 
@@ -286,6 +337,7 @@ namespace UBlockly.UGUI
 
         public void OnDrag(PointerEventData eventData)
         {
+            if (InToolbox) return;
             Vector2 localPos;
             RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)ViewTransform.parent, UnityEngine.Input.mousePosition,
                                                                     BlocklyUI.UICanvas.worldCamera, out localPos);

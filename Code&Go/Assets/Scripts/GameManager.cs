@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public Category exampleCategory;
 
     private Category category;
-    private int levelIndex;
+    public int levelIndex;
 
     void Awake()
     {
@@ -42,16 +42,6 @@ public class GameManager : MonoBehaviour
         this.category = category;
         this.levelIndex = levelIndex;
         LoadScene("LevelScene");
-    }
-
-    public void LoadLevel1()
-    {
-        LoadLevel(exampleCategory, 0);
-    }
-
-    public void LoadLevel2()
-    {
-        LoadLevel(exampleCategory, 1);
     }
 
     public void LoadScene(string name)
