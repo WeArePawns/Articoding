@@ -18,10 +18,17 @@ public class PopUpManager : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
-        imageMaterial = new Material(highlightShader);
-        highlightImage.material = imageMaterial;
-        mainContent.SetActive(false);
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            Instance = this;
+            imageMaterial = new Material(highlightShader);
+            highlightImage.material = imageMaterial;
+            mainContent.SetActive(false);
+            return;
+        }
+        Destroy(gameObject);
     }
 
     public void Show(string title, string content)

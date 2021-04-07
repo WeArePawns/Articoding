@@ -28,6 +28,8 @@ public class TutorialManager : MonoBehaviour
     // Hash format
     private HashSet<string> saved = null; // Stores save data, loaded from file or modified on execution
 
+    private bool needToBeDestroyed = false;
+
     private void Awake()
     {
         if (Instance == null)
@@ -54,11 +56,18 @@ public class TutorialManager : MonoBehaviour
 
             return;
         }
-        Destroy(gameObject);
+        needToBeDestroyed = true;
     }
 
     private void Start()
     {
+        if(needToBeDestroyed)
+        {
+            Instance.Start();
+            Destroy(gameObject);
+            return;
+        }
+
         TutorialTrigger[] aux = FindObjectsOfType<TutorialTrigger>();
         for(int i=0; i < aux.Length; i++)
         {
