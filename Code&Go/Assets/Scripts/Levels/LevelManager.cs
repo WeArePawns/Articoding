@@ -118,7 +118,7 @@ public class LevelManager : MonoBehaviour
         if (++currentLevelIndex < levelSize)
             GameManager.Instance.LoadLevel(currentCategory, currentLevelIndex);
         else
-            SceneManager.LoadScene("MenuScene"); // Por ejemplo
+            LoadMainMenu(); // Por ejemplo
     }
 
     //TODO:Hacer un reset board en vez de volver a cargarla... o no
@@ -134,6 +134,11 @@ public class LevelManager : MonoBehaviour
     {
         LoadLevel(currentLevel);
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void LoadMainMenu()
+    {
+        GameManager.Instance.LoadScene("MenuScene");
     }
 
     // Copiado y modificado (TODO: cambiar de lugar si eso)

@@ -44,16 +44,6 @@ public class GameManager : MonoBehaviour
         LoadScene("LevelScene");
     }
 
-    public void LoadLevel1()
-    {
-        LoadLevel(exampleCategory, 0);
-    }
-
-    public void LoadLevel2()
-    {
-        LoadLevel(exampleCategory, 1);
-    }
-
     public void LoadScene(string name)
     {
         SceneManager.LoadScene(name);

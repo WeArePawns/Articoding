@@ -130,19 +130,7 @@ namespace UBlockly.UGUI
             foreach (string blockType in blockTypes)
             {
                 BlockView block = NewBlockView(blockType, contentTrans);
-
-                //Deactivate the block if it's not in the active list
-                bool active = false;
-                if (activeCategories != null && activeCategories.ContainsKey(mActiveCategory.ToLower()))
-                {
-                    CategoryBlocks info = activeCategories[mActiveCategory.ToLower()];
-                    active = info.activate == (info.activeBlocks.ContainsKey(blockType));
-                    int prevValue = (Block.blocksAvailable.ContainsKey(blockType)) ? Block.blocksAvailable[blockType] : 0;
-                    int value = prevValue + (info.activeBlocks.ContainsKey(blockType) ? info.activeBlocks[blockType] : Int16.MaxValue);
-                    Block.blocksAvailable[blockType] = value;
-                }
-                block.gameObject.SetActive(allActive || active);
-                block.UpdateCount();
+                SetBlockCount(block);
             }
         }
 
@@ -164,23 +152,19 @@ namespace UBlockly.UGUI
         {
             if (CheckBin(blockView))
             {
-                string type = blockView.BlockType;
-                string category = GetCategoryNameOfBlockView(blockView);
-                bool reactivate = Block.blocksAvailable.ContainsKey(type) && Block.blocksAvailable[type] == 0;
                 blockView.Dispose();
 
-                //Update the blockCounter
-                foreach (BlockView bw in mRootList[category].transform.GetComponentsInChildren<BlockView>())
-                    if (bw.BlockType == type)
+                //Update the blockCounter in the Toolbox
+                foreach (GameObject gO in mRootList.Values)
+                    foreach (BlockView bw in gO.transform.GetComponentsInChildren<BlockView>())
                     {
-                        //If the block was disabled we reactivate it
-                        if (reactivate)
+                        if (Block.blocksAvailable.ContainsKey(bw.BlockType) && Block.blocksAvailable[bw.BlockType] > 0)
                         {
+                            //If the block was disabled we reactivate it
                             bw.enabled = true;
                             bw.ChangeBgColor(GetColorOfBlockView(bw));
                         }
                         bw.UpdateCount();
-                        break;
                     }
             }
             m_BinArea.gameObject.SetActive(false);
