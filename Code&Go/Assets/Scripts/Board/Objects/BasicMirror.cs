@@ -13,7 +13,8 @@ public class BasicMirror : BoardObject, ILaserReflector
 
     public void Reflect(Vector3 inFrom, Vector3 inDirection, Vector3 inNormal, out Vector3[] outFrom, out Vector3[] outDirection)
     {
-        if (Mathf.Approximately(1.0f, Vector3.Dot(inNormal, reflectCollider.gameObject.transform.right.normalized))) 
+        float dot = Vector3.Dot(inDirection, reflectCollider.gameObject.transform.up);
+        if (dot <= 0.0f) 
         {
             outFrom = new Vector3[0];
             outDirection = new Vector3[0];
