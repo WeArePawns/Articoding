@@ -121,7 +121,7 @@ namespace UBlockly
             DataStruct arg0 = ctor.Data;
             Number amount = arg0.NumberValue;           
 
-            string msg = "0 " + amount.ToString();
+            string msg = "1 " + amount.ToString();
             MessageManager.Instance.SendMessage(msg, MSG_TYPE.CHANGE_INTENSITY);
 
             yield return new WaitForSeconds(Times.instructionWaitTime);

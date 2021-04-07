@@ -15,8 +15,16 @@
         {
             "categoryName": "variable",
             "blocksInfo": {
-                "activate": false,
-                "activeBlocks": [                       
+                "activate": true,
+                "activeBlocks": [
+                    {
+                        "blockName": "variables_get",
+                        "maxUses": 100
+                    },
+                    {
+                        "blockName": "variables_set",
+                        "maxUses": 100
+                    }                       
                 ]
             }
         },
