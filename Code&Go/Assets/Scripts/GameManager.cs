@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public Category exampleCategory;
 
     private Category category;
-    private int levelIndex;
+    public int levelIndex;
 
     void Awake()
     {

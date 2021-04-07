@@ -6,9 +6,6 @@ public class TweenManager : MonoBehaviour
 {
     public static TweenManager Instance;
 
-    // TODO: quitar
-    public Tween exampleTween;
-
     private void Awake()
     {
         if(Instance == null)
@@ -19,12 +16,6 @@ public class TweenManager : MonoBehaviour
         {
             DestroyImmediate(gameObject);
         }
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-            AddTween(exampleTween);
     }
 
     public void AddTween(Tween tween)

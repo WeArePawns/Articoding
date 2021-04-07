@@ -47,6 +47,29 @@ namespace UBlockly.UGUI
 
         private MemorySafeBlockObserver mBlockObserver;
 
+        private Text countText;
+
+        public void SetCountText(Text text)
+        {
+            countText = text;
+        }
+
+        public void ActivateCountText(bool active)
+        {
+            if (countText != null)
+                countText.transform.parent.gameObject.SetActive(active);
+        }
+
+        public void UpdateCount()
+        {
+            if (countText != null)
+            {
+                countText.text = Block.blocksAvailable.ContainsKey(BlockType) ? Block.blocksAvailable[BlockType].ToString() : "21";
+                if (int.Parse(countText.text) > 20)
+                    countText.text = "∞";
+            }
+        }
+
         public void BindModel(Block block)
         {
             if (mBlock == block) return;
@@ -79,6 +102,10 @@ namespace UBlockly.UGUI
             }
 
             RegisterUIEvents();
+
+            foreach (Transform child in transform)
+                if (child.name.ToLower().StartsWith("block_count"))
+                    SetCountText(child.GetComponentInChildren<Text>());
         }
 
         public void UnBindModel()
@@ -114,7 +141,7 @@ namespace UBlockly.UGUI
         {
             Block model = mBlock;
             UnBindModel();
-            GameObject.Destroy(this.gameObject,0.1f);
+            GameObject.Destroy(this.gameObject, 0.1f);
             model.Dispose();
         }
 
@@ -274,6 +301,7 @@ namespace UBlockly.UGUI
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (InToolbox) return;
             mBlock.UnPlug();
             SetOrphan();
 
@@ -286,6 +314,7 @@ namespace UBlockly.UGUI
 
         public void OnDrag(PointerEventData eventData)
         {
+            if (InToolbox) return;
             Vector2 localPos;
             RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)ViewTransform.parent, UnityEngine.Input.mousePosition,
                                                                     BlocklyUI.UICanvas.worldCamera, out localPos);

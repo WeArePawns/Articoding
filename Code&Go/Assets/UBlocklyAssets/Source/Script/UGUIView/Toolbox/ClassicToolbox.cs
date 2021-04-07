@@ -138,9 +138,11 @@ namespace UBlockly.UGUI
                     CategoryBlocks info = activeCategories[mActiveCategory.ToLower()];
                     active = info.activate == (info.activeBlocks.ContainsKey(blockType));
                     int prevValue = (Block.blocksAvailable.ContainsKey(blockType)) ? Block.blocksAvailable[blockType] : 0;
-                    Block.blocksAvailable[blockType] = prevValue + (info.activeBlocks.ContainsKey(blockType) ? info.activeBlocks[blockType] : Int16.MaxValue);
+                    int value = prevValue + (info.activeBlocks.ContainsKey(blockType) ? info.activeBlocks[blockType] : Int16.MaxValue);
+                    Block.blocksAvailable[blockType] = value;
                 }
                 block.gameObject.SetActive(allActive || active);
+                block.UpdateCount();
             }
         }
 
@@ -172,17 +174,19 @@ namespace UBlockly.UGUI
                 bool reactivate = Block.blocksAvailable.ContainsKey(type) && Block.blocksAvailable[type] == 0;
                 blockView.Dispose();
 
-                //If the block was disabled we reactivate it
-                if (reactivate)
-                {
-                    foreach (BlockView bw in mRootList[category].transform.GetComponentsInChildren<BlockView>())
-                        if (bw.BlockType == type)
+                //Update the blockCounter
+                foreach (BlockView bw in mRootList[category].transform.GetComponentsInChildren<BlockView>())
+                    if (bw.BlockType == type)
+                    {
+                        //If the block was disabled we reactivate it
+                        if (reactivate)
                         {
                             bw.enabled = true;
                             bw.ChangeBgColor(GetColorOfBlockView(bw));
-                            break;
                         }
-                }
+                        bw.UpdateCount();
+                        break;
+                    }
             }
             m_BinArea.gameObject.SetActive(false);
         }

@@ -76,7 +76,7 @@ public class BoardCell : MonoBehaviour
 
         this.state = state;
 
-#if UNITY_EDITOR
+#if CELL_COLORS //UNITY_EDITOR
         if (state == BoardCellState.FREE)
             cellRenderer.material.color = Color.green;
         else if (state == BoardCellState.PARTIALLY_OCUPPIED)

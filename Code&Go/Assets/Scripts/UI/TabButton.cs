@@ -18,6 +18,7 @@ public class TabButton : MonoBehaviour, IPointerClickHandler
     [Space()]
     public Color selectedColor;
     public Color deselectedColor;
+    public Color hoverColor;
 
     [Space()]
     /* Set to default tab */
@@ -77,6 +78,16 @@ public class TabButton : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         Select();
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        image.color = hoverColor;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        image.color = deselectedColor;
     }
 
     private void DoInterpolation()
