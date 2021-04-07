@@ -44,6 +44,8 @@ public class BoardManager : Listener
         }
         nReceivers = 0;
         nReceiversActive = 0;
+
+        GetComponent<FocusPoint>().off = new Vector3(columns / 2.0f, rows / 2.0f, 0);
     }
 
     public void GenerateLimits()

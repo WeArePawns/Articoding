@@ -12,7 +12,7 @@ public class LaserReceiver : BoardObject, ILaserReceiver
     [SerializeField] private Material onMaterial;
 
     [SerializeField] private ParticleSystem onParticles;
-    [SerializeField] private Light onLight;
+    [SerializeField] private GameObject light;
 
     private void Awake()
     {
@@ -28,6 +28,7 @@ public class LaserReceiver : BoardObject, ILaserReceiver
     {
         receiverRenderer.material = onMaterial;
         onParticles.Play();
+        light.SetActive(true);
         Invoke("ReceiverActive", 2.0f);
     }
 
@@ -40,6 +41,8 @@ public class LaserReceiver : BoardObject, ILaserReceiver
     {
         receiverRenderer.material = offMaterial;
         onParticles.Stop();
+        light.SetActive(false);
+
         if (registered)
         {
             boardManager.ReceiverDeactivated();
