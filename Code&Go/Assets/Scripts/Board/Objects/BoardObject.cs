@@ -43,7 +43,7 @@ public class BoardObject : MonoBehaviour
             direction = Direction.RIGHT; // Default
 
         Vector3 lastRot = transform.localEulerAngles;
-        lastRot.z = (int)direction * -45.0f;
+        lastRot.y = (int)direction * 45.0f;
         transform.localEulerAngles = lastRot;
     }
 

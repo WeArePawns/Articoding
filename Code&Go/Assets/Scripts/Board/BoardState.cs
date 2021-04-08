@@ -2,6 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[System.Serializable]
+public class BoardCellState
+{
+    public int id;
+    public int x;
+    public int y;
+    public string[] args;
+}
+
 [System.Serializable]
 public class BoardObjectState
 {
@@ -18,12 +28,14 @@ public class BoardState
     public int rows = 0;
     public int columns = 0;
 
+    public BoardCellState[,] cells = { };
     public BoardObjectState[] boardElements = { };
 
     public BoardState(int rows, int cols, int nElements)
     {
         this.rows = rows;
         this.columns = cols;
+        cells = new BoardCellState[rows, cols];
         boardElements = new BoardObjectState[nElements];
     }
 
