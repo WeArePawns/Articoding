@@ -217,6 +217,7 @@ GameObject:
   - component: {fileID: 850825221287016111}
   - component: {fileID: 9027443423130848431}
   - component: {fileID: 4575154855674989143}
+  - component: {fileID: 6240023251168824179}
   m_Layer: 0
   m_Name: Block_movement_laser_change_intensity
   m_TagString: Untagged
@@ -311,6 +312,26 @@ MonoBehaviour:
   - {fileID: 9027443423130848431}
   - {fileID: 924635253839917891}
   - {fileID: 5644018491662230650}
+--- !u!114 &6240023251168824179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2783548254004940391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 170
+  info: {fileID: 11400000, guid: 546a962f8a455a04f832a5cff75dc3f2, type: 2}
+  highlightObject: 1
+  destroyOnShowed: 1
+  isSaveCheckpoint: 0
+  OnShowed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3926757362508541429
 GameObject:
   m_ObjectHideFlags: 0

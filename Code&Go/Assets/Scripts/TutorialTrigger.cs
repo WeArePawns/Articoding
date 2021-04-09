@@ -25,6 +25,12 @@ public class TutorialTrigger : MonoBehaviour, IComparable<TutorialTrigger>
         if ((mCollider = GetComponent<Collider>()) != null) return;
     }
 
+    public void Start()
+    {
+        if (TutorialManager.Instance != null)
+            TutorialManager.Instance.AddTutorialTrigger(this, true);
+    }
+
     public Rect GetRect()
     {
         if (mRectTransform != null) return RectUtils.RectTransformToScreenSpace(mRectTransform);
@@ -35,7 +41,7 @@ public class TutorialTrigger : MonoBehaviour, IComparable<TutorialTrigger>
 
     public int CompareTo(TutorialTrigger other)
     {
-        if(other.condition != null && condition != null)
+        if (other.condition != null && condition != null)
         {
             bool mCondition = condition.Invoke();
             bool oCondition = other.condition.Invoke();

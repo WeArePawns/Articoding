@@ -69,12 +69,12 @@ public class TutorialManager : MonoBehaviour
             return;
         }
 
-        TutorialTrigger[] aux = FindObjectsOfType<TutorialTrigger>();
-        for(int i=0; i < aux.Length; i++)
-        {
-            AddTutorialTrigger(aux[i], true);
-        }
-        conditionTriggers.Sort();
+        //TutorialTrigger[] aux = FindObjectsOfType<TutorialTrigger>();
+        //for(int i=0; i < aux.Length; i++)
+        //{
+        //    AddTutorialTrigger(aux[i], true);
+        //}
+        //conditionTriggers.Sort();
     }
 
     private void Update()

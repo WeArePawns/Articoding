@@ -41,7 +41,7 @@ namespace UBlockly.UGUI
                 Directory.CreateDirectory(BlockResMgr.Get().BlockViewPrefabPath);
             
             BlockResMgr.Get().ClearBlockViewPrefabs();
-
+            BlockResMgr.Get().LoadBlockTutorials();
             try
             {
                 int index = 0;
@@ -55,6 +55,7 @@ namespace UBlockly.UGUI
 
                     string path = BlockResMgr.Get().BlockViewPrefabPath + obj.name + ".prefab";
                     GameObject prefab = PrefabUtility.CreatePrefab(path, obj, ReplacePrefabOptions.Default);
+                    BlockResMgr.Get().CreateTutorialTrigger(name, prefab);
                     BlockResMgr.Get().AddBlockViewPrefab(prefab);
 
                     GameObject.DestroyImmediate(obj);

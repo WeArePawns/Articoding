@@ -38,7 +38,7 @@ namespace UBlockly
         /// </summary>
         Assetbundle = 3,
     }
-    
+
     [Serializable]
     public class BlockResParam
     {
@@ -51,13 +51,31 @@ namespace UBlockly
     {
         public GameObject Prefab;
     }
-    
+
     [Serializable]
     public class BlockTextResParam : BlockResParam
     {
         public TextAsset TextFile;
     }
-    
+
+    [Serializable]
+    public class BlockTutorialTriggerInfo
+    {
+        public TutorialInfo Tutorial;
+        public int Priority;
+        public bool Highlight;
+        public bool DestroyOnShow;
+        public bool IsSaveCheckpoint;
+    }
+
+    [Serializable]
+    public class BlockTutorialParam
+    {
+        public string BlockType;
+        public BlockTutorialTriggerInfo Tutorial;
+    }
+
+
     /// <summary>
     /// manage all resources. 
     /// This can be customized according to resources management in each project 
@@ -69,10 +87,13 @@ namespace UBlockly
         [SerializeField] private List<BlockTextResParam> m_I18nFiles;
         [SerializeField] private List<BlockTextResParam> m_BlockJsonFiles;
         [SerializeField] private List<BlockTextResParam> m_ToolboxFiles;
+        [SerializeField] private List<BlockTutorialParam> m_BlockTutorials;
+        private Dictionary<string, BlockTutorialTriggerInfo> m_BlockTutorialsDictionary;
 
         [SerializeField] public string m_BlockViewPrefabPath;
         [SerializeField] private List<BlockObjectParam> m_BlockViewPrefabs;
-        
+
+
         [SerializeField] private List<BlockObjectParam> m_DialogPrefabs;
 
         public BlockResLoadType LoadType
@@ -154,7 +175,7 @@ namespace UBlockly
         #endregion
 
         #region Block Json Files
-        
+
         public void LoadJsonDefinitions()
         {
             if (m_BlockJsonFiles == null || m_BlockJsonFiles.Count == 0)
@@ -187,7 +208,7 @@ namespace UBlockly
         }
 
         #endregion
-        
+
         #region Toolbox Config Files
 
         public UGUI.ToolboxConfig LoadToolboxConfig(string configName)
@@ -220,7 +241,7 @@ namespace UBlockly
                         toolboxConfig = JsonUtility.FromJson<UGUI.ToolboxConfig>(textAsset.text);
                         if (m_LoadType == BlockResLoadType.Assetbundle && mABUnload != null)
                             mABUnload(resParam.ResName);
-                    }    
+                    }
                     break;
                 }
             }
@@ -230,7 +251,31 @@ namespace UBlockly
         #endregion
 
         #region Block View Prefabs
-        
+
+        public void LoadBlockTutorials()
+        {
+            m_BlockTutorialsDictionary = new Dictionary<string, BlockTutorialTriggerInfo>();
+            foreach (BlockTutorialParam bT in m_BlockTutorials)
+            {
+                m_BlockTutorialsDictionary[bT.BlockType] = bT.Tutorial;
+            }
+        }
+
+        public void CreateTutorialTrigger(string block, GameObject blockPrefab)
+        {
+            //Add tutorials to blocks          
+            if (m_BlockTutorialsDictionary.ContainsKey(block))
+            {
+                TutorialTrigger trigger = blockPrefab.AddComponent<TutorialTrigger>();
+                BlockTutorialTriggerInfo triggerInfo = m_BlockTutorialsDictionary[block];
+                trigger.info = triggerInfo.Tutorial;
+                trigger.priority = triggerInfo.Priority;
+                trigger.highlightObject = triggerInfo.Highlight;
+                trigger.destroyOnShowed = triggerInfo.DestroyOnShow;
+                trigger.isSaveCheckpoint = triggerInfo.IsSaveCheckpoint;
+            }
+        }
+
         public GameObject LoadBlockViewPrefab(string blockType)
         {
             if (m_BlockViewPrefabs == null || m_BlockViewPrefabs.Count == 0)
@@ -285,16 +330,16 @@ namespace UBlockly
             resParam.ResName = prefabName;
             if (m_LoadType == BlockResLoadType.Serialized)
                 resParam.Prefab = blockPrefab;
-            m_BlockViewPrefabs.Add(resParam);
+            m_BlockViewPrefabs.Add(resParam);            
         }
 
         public void ClearBlockViewPrefabs()
         {
             m_BlockViewPrefabs.Clear();
         }
-        
+
         #endregion
-        
+
         #region Dialog Prefabs
 
         public GameObject LoadDialogPrefab(string dialogId)
@@ -305,7 +350,7 @@ namespace UBlockly
             BlockObjectParam resParam = m_DialogPrefabs.Find(o => o.IndexName.Equals(dialogId));
             if (resParam == null)
                 return null;
-            
+
             GameObject dialogPrefab = null;
             switch (m_LoadType)
             {
@@ -351,14 +396,14 @@ namespace UBlockly
                 mABUnload(texName);
         }
 
-        private static BlockResMgr mInstance = null; 
+        private static BlockResMgr mInstance = null;
         public static BlockResMgr Get()
         {
             if (mInstance == null)
                 mInstance = Resources.Load<BlockResMgr>("BlockResSettings");
             if (mInstance == null)
                 throw new Exception("There is no \"BlockResSettings\" ScriptObject under Resources folder");
-                
+
             return mInstance;
         }
 

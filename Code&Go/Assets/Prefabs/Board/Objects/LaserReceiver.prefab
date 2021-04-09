@@ -5171,6 +5171,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6745913655574259915}
   - component: {fileID: 2253270791918786396}
+  - component: {fileID: 2394034483971868941}
+  - component: {fileID: 8940864393495206333}
   m_Layer: 0
   m_Name: LaserReceiver
   m_TagString: Untagged
@@ -5216,6 +5218,39 @@ MonoBehaviour:
   onMaterial: {fileID: 2100000, guid: 5095a231456470a4d86fc42de9c646ad, type: 2}
   onParticles: {fileID: 8198882527104937746}
   light: {fileID: 5060309628750351423}
+--- !u!65 &2394034483971868941
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6745913655574259957}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8940864393495206333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6745913655574259957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 160
+  info: {fileID: 11400000, guid: e78d0a6d169ed0443a3bfa7b033c95f0, type: 2}
+  highlightObject: 1
+  destroyOnShowed: 1
+  isSaveCheckpoint: 0
+  OnShowed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8274680665098290404
 GameObject:
   m_ObjectHideFlags: 0
