@@ -81,6 +81,11 @@ namespace UBlockly.UGUI
                 int prevValue = (Block.blocksAvailable.ContainsKey(blockType)) ? Block.blocksAvailable[blockType] : 0;
                 int value = prevValue + (info.activeBlocks.ContainsKey(blockType) ? info.activeBlocks[blockType] : Int16.MaxValue);
                 Block.blocksAvailable[blockType] = value;
+                if(value <= 0)
+                {
+                    block.enabled = false;
+                    block.ChangeBgColor(Color.grey);
+                }
             }
             block.gameObject.SetActive(allActive || active);
             block.UpdateCount();

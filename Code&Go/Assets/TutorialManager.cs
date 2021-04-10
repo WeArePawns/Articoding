@@ -131,11 +131,11 @@ public class TutorialManager : MonoBehaviour
     {
         if (t == null) return;
 
-        TutorialInfo info = t.info;
+        PopUpData info = t.info;
         if (t.highlightObject)
-            popUpManager.Show(info.popUpData, t.GetRect());
+            popUpManager.Show(info, t.GetRect());
         else
-            popUpManager.Show(info.popUpData.title, info.popUpData.content);
+            popUpManager.Show(info.title, info.content);
 
         if (t.OnShowed != null)
             t.OnShowed.Invoke();

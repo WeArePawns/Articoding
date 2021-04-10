@@ -5,7 +5,7 @@ using UnityEngine.Events;
 public class TutorialTrigger : MonoBehaviour, IComparable<TutorialTrigger>
 {
     public int priority;
-    public TutorialInfo info;
+    public PopUpData info;
     public Func<bool> condition;
 
     public bool highlightObject = true;
@@ -54,7 +54,7 @@ public class TutorialTrigger : MonoBehaviour, IComparable<TutorialTrigger>
 
     public string GetHash()
     {
-        return Hash.ToHash(info.popUpData.title + info.popUpData.content, "TutorialTrigger");
+        return Hash.ToHash(info.title + info.content, "TutorialTrigger");
     }
 
     // Returns true if hash is the same as GetHash()

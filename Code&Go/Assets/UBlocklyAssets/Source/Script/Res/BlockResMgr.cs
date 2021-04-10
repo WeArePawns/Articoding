@@ -61,7 +61,7 @@ namespace UBlockly
     [Serializable]
     public class BlockTutorialTriggerInfo
     {
-        public TutorialInfo Tutorial;
+        public PopUpData Tutorial;
         public int Priority;
         public bool Highlight;
         public bool DestroyOnShow;
