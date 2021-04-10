@@ -8,4 +8,9 @@ public class NormalCell : BoardCell
     {
         
     }
+
+    public override string[] GetArgs()
+    {
+        return new string[0];
+    }
 }

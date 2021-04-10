@@ -4,8 +4,8 @@ using UnityEngine;
 
 public abstract class BoardCell : MonoBehaviour
 {
-    static Dictionary<string, int> IDs = new Dictionary<string, int>();
-    static int numIDs = 0;
+    protected static Dictionary<string, int> IDs = new Dictionary<string, int>();
+    protected static int numIDs = 0;
 
     public enum BoardCellState
     {
@@ -38,7 +38,7 @@ public abstract class BoardCell : MonoBehaviour
     {
         x = position.x;
         y = position.y;
-        transform.position = new Vector2(x, y);
+        transform.position = new Vector3(x, 0.0f, y);
     }
 
     public Vector2Int GetPosition()
@@ -84,7 +84,7 @@ public abstract class BoardCell : MonoBehaviour
         return state;
     }
 
-    public int GetObjectID()
+    public virtual int GetObjectID()
     {
         if (!IDs.ContainsKey(this.GetType().Name))
             IDs[this.GetType().Name] = numIDs++;
@@ -97,4 +97,6 @@ public abstract class BoardCell : MonoBehaviour
     }
 
     public abstract void OnObjectPlaced();
+
+    public abstract string[] GetArgs();
 }

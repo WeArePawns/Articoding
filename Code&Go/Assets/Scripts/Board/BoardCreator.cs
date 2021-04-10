@@ -61,8 +61,8 @@ public class BoardCreator : MonoBehaviour
             float offsetX = (-boardWidth * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio, offsetY = (-boardHeight * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio;
 
             //Fit the board on the screen and resize it
-            board.transform.position = new Vector3(xPos + width / 2.0f + offsetX, yPos + height / 2.0f + offsetY, 0);
-            board.transform.localScale = new Vector3(ratio, ratio, 1.0f);
+            board.transform.position = new Vector3(xPos + width / 2.0f + offsetX, 0, yPos + height / 2.0f + offsetY);
+            board.transform.localScale = new Vector3(ratio, 1.0f, ratio);
         }
     }
 
@@ -75,7 +75,7 @@ public class BoardCreator : MonoBehaviour
         int nY = Input.GetKeyDown(KeyCode.S) ? -1 : (Input.GetKeyDown(KeyCode.W) ? 1 : 0);
         cursorPos.x = ((cursorPos.x + nX) + columns) % columns;
         cursorPos.y = ((cursorPos.y + nY) + rows) % rows;
-        transform.localPosition = new Vector3(cursorPos.x + offset.x, cursorPos.y + offset.y, 0);
+        transform.localPosition = new Vector3(cursorPos.x + offset.x, 0, cursorPos.y + offset.y);
     }
 
     private void AddObject(int id)
@@ -173,6 +173,26 @@ public class BoardCreator : MonoBehaviour
         {
             AddObject(4);
         }
+        else if(Input.GetKeyDown(KeyCode.Keypad1))
+        {
+            ReplaceCell(0, cursorPos.x, cursorPos.y);
+        }
+        else if (Input.GetKeyDown(KeyCode.Keypad2))
+        {
+            ReplaceCell(1, cursorPos.x, cursorPos.y);
+        }
+        else if (Input.GetKeyDown(KeyCode.Keypad3))
+        {
+            ReplaceCell(2, cursorPos.x, cursorPos.y);
+        }
+        else if (Input.GetKeyDown(KeyCode.Keypad4))
+        {
+            ReplaceCell(3, cursorPos.x, cursorPos.y);
+        }
+        else if (Input.GetKeyDown(KeyCode.Keypad5))
+        {
+            ReplaceCell(4, cursorPos.x, cursorPos.y);
+        }
     }
 
     public void GenerateNewBoard()
@@ -204,5 +224,10 @@ public class BoardCreator : MonoBehaviour
             outputFile.Write(board.GetBoardState());
         }
         Console.WriteLine("Archivo Guardado");
+    }
+
+    private void ReplaceCell(int id, int x, int y)
+    {
+        board.ReplaceCell(id, x, y);
     }
 }

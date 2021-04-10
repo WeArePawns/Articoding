@@ -12,4 +12,9 @@ public class EmptyCell : BoardCell
         // Mandar señal de GameOver o lo que sea
         //boardManager.DoStuff();
     }
+
+    public override string[] GetArgs()
+    {
+        return new string[0];
+    }
 }

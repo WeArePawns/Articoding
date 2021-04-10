@@ -5,11 +5,11 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class ColoredCell : BoardCell
 {
-    [SerializeField] private Color color;
-    [SerializeField] private Material cellMaterial;
+    [SerializeField] protected Color color;
+    [SerializeField] protected Material cellMaterial;
 
-    [SerializeField] private Renderer mRenderer;
-    private Material mMaterial;
+    [SerializeField] protected Renderer mRenderer;
+    protected Material mMaterial;
 
 #if UNITY_EDITOR
 
@@ -30,8 +30,11 @@ public class ColoredCell : BoardCell
     }
 #endif
 
-    public override void OnObjectPlaced()
+
+    public override string[] GetArgs()
     {
-        
+        return new string[0];
     }
+
+    public override void OnObjectPlaced() { }
 }
