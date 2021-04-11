@@ -9,6 +9,7 @@ public class LevelCard : MonoBehaviour
 
     [SerializeField] private Text title;
     [SerializeField] private GameObject[] stars;
+    [SerializeField] private Image cardImage;
 
     [HideInInspector] public Button button;
 
@@ -42,5 +43,10 @@ public class LevelCard : MonoBehaviour
         this.level = level;
         this.numLevel = numLevel;
         Configure();
+    }
+
+    public void DeactivateCard()
+    {
+        cardImage.color = Color.grey;
     }
 }

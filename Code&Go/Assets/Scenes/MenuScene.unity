@@ -591,6 +591,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 104135532}
   m_CullTransparentMesh: 1
+--- !u!1 &133054520
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 133054522}
+  - component: {fileID: 133054521}
+  m_Layer: 0
+  m_Name: ProgressManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!114 &133054521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133054520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e93305e47f6ee24da74bb5830f0643c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  categories:
+  - {fileID: 11400000, guid: d2d79d66c825b0d4381e69a341e007b1, type: 2}
+  - {fileID: 11400000, guid: 429dd984d41841c44ac1d20a3cffe63c, type: 2}
+  - {fileID: 11400000, guid: 1551a70821a098d4b9b503bf0737536e, type: 2}
+  - {fileID: 11400000, guid: f8813661cd4ae1d418060fe98cb5e90b, type: 2}
+  - {fileID: 11400000, guid: 89c31b3656429ac45b6ce63672e44ad8, type: 2}
+--- !u!4 &133054522
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133054520}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &147216425
 GameObject:
   m_ObjectHideFlags: 0
@@ -820,7 +869,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000091552734}
+  m_AnchoredPosition: {x: 0, y: -0.000061035156}
   m_SizeDelta: {x: 222.37, y: 1600}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &196621381
@@ -1744,7 +1793,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33007a6211cc84a4589764811b7ac8f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exampleCategory: {fileID: 0}
+  categories: []
   levelIndex: 0
 --- !u!4 &301250665
 Transform:

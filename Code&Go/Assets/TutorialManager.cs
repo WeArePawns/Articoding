@@ -3,20 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-[System.Serializable]
-public class TutorialSaveData
-{
-    public string[] tutorials;
-    public string hash;
-}
 
 public class TutorialManager : MonoBehaviour
 {
     public static TutorialManager Instance;
-    private string filename = "tutorial_sd.json";
-    private static string Filepath = "";
-
-    private string dataPath = "";
 
     [SerializeField] private PopUpManager popUpManager;
     [SerializeField] private bool tutorialsON = true;
@@ -37,13 +27,6 @@ public class TutorialManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            dataPath =
-#if UNITY_EDITOR
-            Application.dataPath;
-#else
-            Application.persistentDataPath;
-#endif
-            Filepath = Path.Combine(dataPath, filename);
 
             priorTriggers = new BinaryHeap<TutorialTrigger>();
             conditionTriggers = new List<TutorialTrigger>();
@@ -53,8 +36,6 @@ public class TutorialManager : MonoBehaviour
             savePending = new List<TutorialTrigger>();
             saved = new HashSet<string>();
 
-            Load();
-
             return;
         }
         needToBeDestroyed = true;
@@ -62,7 +43,7 @@ public class TutorialManager : MonoBehaviour
 
     private void Start()
     {
-        if(needToBeDestroyed)
+        if (needToBeDestroyed)
         {
             Instance.Start();
             Destroy(gameObject);
@@ -84,7 +65,7 @@ public class TutorialManager : MonoBehaviour
         TutorialTrigger prior = TryPopPriorityTriggers();
         TutorialTrigger cond = TryPopConditionalTriggers();
 
-        if(prior != null && cond != null)
+        if (prior != null && cond != null)
         {
             if (prior.CompareTo(cond) <= 0)
             {
@@ -96,11 +77,11 @@ public class TutorialManager : MonoBehaviour
             ShowTutorialInfo(cond);
             AddTutorialTrigger(prior);
         }
-        else if(prior != null)
+        else if (prior != null)
         {
             ShowTutorialInfo(prior);
         }
-        else if(cond != null)
+        else if (cond != null)
         {
             ShowTutorialInfo(cond);
         }
@@ -146,7 +127,7 @@ public class TutorialManager : MonoBehaviour
         if (!saved.Contains(t.GetHash()))
             savePending.Add(t);
 
-        if(t.isSaveCheckpoint)
+        if (t.isSaveCheckpoint)
             SavePendingTriggers();
 
         if (t.destroyOnShowed)
@@ -167,57 +148,23 @@ public class TutorialManager : MonoBehaviour
             priorTriggers.Add(t);
     }
 
-   // TODO: modificar cuando se haga el sistema de guardado
-    private void Load()
+    public void Load(TutorialSaveData data)
     {
-        // Si no existe, se crea
-        /*if (!File.Exists(Filepath))
+        for (int i = 0; i < data.tutorials.Length; i++)
         {
-            FileStream file = new FileStream(Filepath, FileMode.Create);
-            file.Close();
-            Save();
-            return;
+            saved.Add(data.tutorials[i]);
+            triggered.Add(data.tutorials[i]);
         }
-
-        StreamReader reader = new StreamReader(Filepath);
-        string readerData = reader.ReadToEnd();
-        reader.Close();
-
-        // Leemos
-        TutorialSaveData data = JsonUtility.FromJson<TutorialSaveData>(readerData);
-
-        // Verificamos
-        if (Hash.ToHash(data.tutorials.ToString(), "") == data.hash)
-        {
-            for (int i = 0; i < data.tutorials.Length; i++)
-            {
-                saved.Add(data.tutorials[i]);
-                triggered.Add(data.tutorials[i]);
-            }
-            return;
-        }
-        // Se ha modificado el archivo, empiezas de 0
-        Save();*/
     }
 
-    // TODO: modificar cuando se haga el sistema de guardado
-    private void Save()
-    {/*
+    public TutorialSaveData Save()
+    {
         string[] array = new string[saved.Count];
         saved.CopyTo(array);
 
         TutorialSaveData data = new TutorialSaveData();
         data.tutorials = array;
-        data.hash = Hash.ToHash(array.ToString(), "");
-
-        string finalJson = JsonUtility.ToJson(data);
-        // Se crea de nuevo
-        FileStream file = new FileStream(Filepath, FileMode.Create);
-        file.Close();
-
-        StreamWriter writer = new StreamWriter(Filepath);
-        writer.Write(finalJson);
-        writer.Close();*/
+        return data;
     }
 
     private void SavePendingTriggers()

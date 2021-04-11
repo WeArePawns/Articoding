@@ -5,10 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
-
-    // TODO: quitar
-    public Category exampleCategory;
+    public static GameManager Instance;    
+    [SerializeField] private Category[] categories;
 
     private Category category;
     public int levelIndex;
@@ -19,6 +17,8 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            SaveManager.Init();
+            SaveManager.Load();
         }
         else
         {
@@ -39,6 +39,8 @@ public class GameManager : MonoBehaviour
     // Esto habra que moverlo al MenuManager o algo asi
     public void LoadLevel(Category category, int levelIndex)
     {
+        ProgressManager.Instance.LevelStarted(category, levelIndex);
+        SaveManager.Save();
         this.category = category;
         this.levelIndex = levelIndex;
         LoadScene("LevelScene");
@@ -47,5 +49,11 @@ public class GameManager : MonoBehaviour
     public void LoadScene(string name)
     {
         SceneManager.LoadScene(name);
+    }
+
+    public void OnDestroy()
+    {
+        if (Instance == this)
+            SaveManager.Save();
     }
 }

@@ -30,7 +30,7 @@ public class LaserManager : MonoBehaviour
         receivers.Clear();
 
 
-        foreach(ILaserEmitter emitter in emitters)
+        foreach (ILaserEmitter emitter in emitters)
         {
             emitter.Emit();
             // TODO: expandir si es necesario
@@ -46,9 +46,9 @@ public class LaserManager : MonoBehaviour
         }
 
         // Si los antiguos receptores no se encuentran en los actuales, entonces han dejado de recibir
-        foreach(ILaserReceiver receiver in oldReceivers)
+        foreach (ILaserReceiver receiver in oldReceivers)
         {
-            if (!receivers.Contains(receiver))
+            if (!receivers.Contains(receiver) && receiver != null)
                 receiver.OnLaserLost();
         }
     }

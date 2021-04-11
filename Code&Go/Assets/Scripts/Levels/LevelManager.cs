@@ -29,8 +29,6 @@ public class LevelManager : MonoBehaviour
         if (gameManager != null)
         {
             currentCategory = gameManager.GetCurrentCategory();
-            if (currentCategory == null)
-                currentCategory = gameManager.exampleCategory;
             currentLevelIndex = gameManager.GetCurrentLevelIndex();
             currentLevel = currentCategory.levels[currentLevelIndex];
         }
@@ -57,6 +55,7 @@ public class LevelManager : MonoBehaviour
 
         if (boardManager.BoardCompleted())
         {
+            ProgressManager.Instance.LevelCompleted(0x111);
             LoadNextLevel();
         }
     }

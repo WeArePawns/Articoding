@@ -77,18 +77,21 @@ public class CategoryManager : MonoBehaviour
             LevelData levelData = category.levels[i];
             LevelCard levelCard = Instantiate(levelCardPrefab, levelsParent.transform);
             levelCard.ConfigureLevel(levelData, i + 1);
-            levelCard.button.onClick.AddListener(() =>
+            if (ProgressManager.Instance.IsLevelUnlocked(currentCategory, i))
             {
-                currentLevel = index;
-                levelName.text = levelData.levelName;
-                levelDescription.text = levelData.description;
-            });
-
+                levelCard.button.onClick.AddListener(() =>
+                {
+                    currentLevel = index;
+                    levelName.text = levelData.levelName;
+                    levelDescription.text = levelData.description;
+                });
+            }
+            else
+                levelCard.DeactivateCard();
             // TODO: cargar progreso y poner estrellas
         }
 
         // TODO: seleccionar primer level sin completar
-
     }
 
     public void HideLevels()
@@ -101,7 +104,7 @@ public class CategoryManager : MonoBehaviour
         currentCategoryPanel.SetActive(true);
         currentLevelPanel.SetActive(false);
 
-        while(levelsParent.transform.childCount != 0)
+        while (levelsParent.transform.childCount != 0)
             DestroyImmediate(levelsParent.transform.GetChild(0).gameObject);
 
     }
