@@ -1,9 +1,6 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using System.Xml;
 using UBlockly.UGUI;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
@@ -21,6 +18,9 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private BoardManager boardManager;
     [SerializeField] private Camera mainCamera;
+
+    public GameObject endPanel;
+    public GameObject blackRect;
 
     private void Awake()
     {
@@ -43,6 +43,8 @@ public class LevelManager : MonoBehaviour
         if (boardInitOffsetLeftDown.y + boardInitOffsetRightUp.y >= 1.0f)
             boardInitOffsetLeftDown.y = boardInitOffsetRightUp.y = 0;
 
+        endPanel.SetActive(false);
+        blackRect.SetActive(false);
     }
 
     private void Start()
@@ -57,7 +59,9 @@ public class LevelManager : MonoBehaviour
 
         if (boardManager.BoardCompleted())
         {
-            LoadNextLevel();
+            //LoadNextLevel();
+            endPanel.SetActive(true);
+            blackRect.SetActive(true);
         }
     }
 
@@ -112,7 +116,7 @@ public class LevelManager : MonoBehaviour
     }
 
     // It is called when the current level is completed
-    private void LoadNextLevel()
+    public void LoadNextLevel()
     {
         int levelSize = currentCategory.levels.Length;
         if (++currentLevelIndex < levelSize)
