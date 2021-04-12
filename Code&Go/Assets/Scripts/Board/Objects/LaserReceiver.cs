@@ -21,7 +21,8 @@ public class LaserReceiver : BoardObject, ILaserReceiver
 
     private void Start()
     {
-        boardManager.RegisterReceiver();
+        if (boardManager != null)
+            boardManager.RegisterReceiver();
     }
 
     public void OnLaserReceived()

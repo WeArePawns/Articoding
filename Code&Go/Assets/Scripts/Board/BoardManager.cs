@@ -45,7 +45,8 @@ public class BoardManager : Listener
         nReceivers = 0;
         nReceiversActive = 0;
 
-        GetComponent<FocusPoint>().off = new Vector3(columns / 2.0f, rows / 2.0f, 0);
+        if (GetComponent<FocusPoint>() != null)
+            GetComponent<FocusPoint>().off = new Vector3(columns / 2.0f, rows / 2.0f, 0);
     }
 
     public void GenerateLimits()
@@ -177,33 +178,39 @@ public class BoardManager : Listener
         return state.ToJson();
     }
 
-    public void AddBoardObject(int id, int x, int y, int orientation = 0, string[] additionalArgs = null)
+    public bool AddBoardObject(int id, int x, int y, int orientation = 0, string[] additionalArgs = null)
     {
-        if (id > elements.Length || !IsInBoardBounds(x, y)) return;
+        if (id > elements.Length || !IsInBoardBounds(x, y)) return false;
 
         BoardObject bObject = Instantiate(elements[id], elementsParent);
         bObject.SetBoard(this);
         bObject.SetDirection((BoardObject.Direction)orientation);
         bObject.LoadArgs(additionalArgs);
-        AddBoardObject(x, y, bObject);
+        return AddBoardObject(x, y, bObject);
     }
 
-    public void AddBoardObject(int x, int y, BoardObject boardObject)
+    public bool AddBoardObject(int x, int y, BoardObject boardObject)
     {
         if (IsInBoardBounds(x, y) && boardObject != null)
         {
-            board[x, y].PlaceObject(boardObject);
-            if (elementPositions == null) return;
-            if (!elementPositions.ContainsKey(boardObject.GetName()))
-                elementPositions[boardObject.GetName()] = new List<Vector2Int>();
-            elementPositions[boardObject.GetName()].Add(new Vector2Int(x, y));
+            bool placed = board[x, y].PlaceObject(boardObject);
+            if (boardObject.transform.parent != elementsParent)
+                boardObject.transform.SetParent(elementsParent);
+            if (elementPositions != null)
+            {
+                if (!elementPositions.ContainsKey(boardObject.GetName()))
+                    elementPositions[boardObject.GetName()] = new List<Vector2Int>();
+                elementPositions[boardObject.GetName()].Add(new Vector2Int(x, y));
+            }
+            return placed;
         }
+        return false;
     }
 
-    public void RemoveBoardObject(int x, int y)
+    public void RemoveBoardObject(int x, int y, bool delete = true)
     {
         if (IsInBoardBounds(x, y))
-            board[x, y].RemoveObject();
+            board[x, y].RemoveObject(delete);
     }
 
     public void MoveBoardObject(Vector2Int from, Vector2Int to)
@@ -319,6 +326,11 @@ public class BoardManager : Listener
         if (bObject.GetDirection() == BoardObject.Direction.PARTIAL) return;
 
         StartCoroutine(InternalRotateObject(bObject, direction, time));
+    }
+
+    public Vector3 GetLocalPosition(Vector3 position)
+    {
+        return transform.InverseTransformPoint(position);
     }
 
     // We assume, all are valid arguments

@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class BoardCreator : MonoBehaviour
 {
     [SerializeField] BoardManager board;
+    [SerializeField] ElementSelection elementSelection;
     [SerializeField] Material material;
 
     [SerializeField] InputField columnsField;
@@ -63,6 +64,9 @@ public class BoardCreator : MonoBehaviour
             //Fit the board on the screen and resize it
             board.transform.position = new Vector3(xPos + width / 2.0f + offsetX, yPos + height / 2.0f + offsetY, 0);
             board.transform.localScale = new Vector3(ratio, ratio, 1.0f);
+
+            elementSelection.transform.position = board.transform.position + (Vector3.left * elementSelection.GetColumns());
+            elementSelection.transform.localScale = new Vector3(ratio, ratio, 1.0f);
         }
     }
 
@@ -187,6 +191,8 @@ public class BoardCreator : MonoBehaviour
         board.transform.localPosition = Vector3.zero;
         board.GenerateBoard();
         if (buildLimits) board.GenerateLimits();
+
+        elementSelection.GenerateSelector();
 
         DeselectObject();
         cursorPos = Vector2Int.zero;
