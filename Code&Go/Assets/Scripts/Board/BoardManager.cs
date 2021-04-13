@@ -15,6 +15,7 @@ public class BoardManager : Listener
     [SerializeField] private Transform limitsParent;
     [SerializeField] private BoardObject[] elements;
     [SerializeField] private GameObject limitsPrefab;
+    [SerializeField] private bool modifiable = false;
 
     // Hidden atributtes
     private BoardCell[,] board;
@@ -40,6 +41,8 @@ public class BoardManager : Listener
                 BoardCell cell = Instantiate(cellPrefab, cellsParent);
                 cell.SetPosition(x, y);
                 board[x, y] = cell;
+
+                if (modifiable) cell.gameObject.AddComponent<ModifiableBoardCell>();
             }
         }
         nReceivers = 0;

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DraggableObject : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class DraggableObject : MonoBehaviour, IMouseListener
 {
     private BoardManager board;
+    private ArgumentLoader argumentLoader = null;
     private BoardObject boardObject;
+
     private Vector3 mouseOffset;
     Vector2Int lastPos = -Vector2Int.one;
     private float zCoord;
@@ -27,7 +29,10 @@ public class DraggableObject : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     private void Update()
     {
         if (dragging)
+        {
             transform.position = GetMouseWorldPos() + mouseOffset;
+            print("Dragging\n");
+        }
     }
 
     public void SetBoard(BoardManager board)
@@ -35,28 +40,38 @@ public class DraggableObject : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         this.board = board;
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public void SetArgumentLoader(ArgumentLoader loader)
     {
-        if (eventData.button == PointerEventData.InputButton.Left)
-        {
-            zCoord = Camera.main.WorldToScreenPoint(transform.position).z;
-            mouseOffset = transform.position - GetMouseWorldPos();
-            dragging = true;
-        }
-        else if (eventData.button == PointerEventData.InputButton.Right)
-            boardObject.Rotate(1);
+        this.argumentLoader = loader;
     }
 
-    public void OnPointerUp(PointerEventData eventData)
+    private void OnLeftDown()
+    {       
+        if (boardObject == null) boardObject = GetComponent<BoardObject>();
+        argumentLoader.SetBoardObject(boardObject);
+
+        zCoord = Camera.main.WorldToScreenPoint(transform.position).z;
+        mouseOffset = transform.position - GetMouseWorldPos();
+        dragging = true;
+    }
+
+    private void OnRightDown()
     {
-        if (eventData.button == PointerEventData.InputButton.Left)
+        if (boardObject == null) boardObject = GetComponent<BoardObject>();
+        argumentLoader.SetBoardObject(boardObject);
+
+        boardObject.Rotate(1);
+    }
+
+    private void OnLeftUp()
+    {
+        if (dragging)
         {
             dragging = false;
             Vector3 pos = board.GetLocalPosition(transform.position);
             pos = new Vector3(Mathf.Round(pos.x), Mathf.Round(pos.y), Mathf.Round(pos.z));
             if (boardObject != null && pos.x < board.GetColumns() && pos.x >= 0 && pos.y < board.GetRows() && pos.y >= 0)
             {
-
                 if (pos.x == lastPos.x && pos.y == lastPos.y)
                     transform.localPosition = new Vector3(lastPos.x, lastPos.y, transform.position.z);
                 else if (!board.AddBoardObject((int)pos.x, (int)pos.y, boardObject))
@@ -67,5 +82,19 @@ public class DraggableObject : MonoBehaviour, IPointerDownHandler, IPointerUpHan
             else
                 Destroy(gameObject, 0.1f);
         }
+    }
+
+    public void OnMouseButtonDown(int index)
+    {
+        if (index == 0)
+            OnLeftDown();
+        else if (index == 1)
+            OnRightDown();
+    }
+
+    public void OnMouseButtonUp(int index)
+    {
+        if (index == 0)
+            OnLeftUp();
     }
 }

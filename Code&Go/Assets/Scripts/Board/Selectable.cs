@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Selectable : MonoBehaviour, IPointerDownHandler
+public class Selectable : MonoBehaviour, IMouseListener
 {
     private BoardManager board;
     private BoardObject myBoardObject = null;
+    private ArgumentLoader argumentLoader = null;
 
     private void Start()
     {
@@ -18,15 +19,26 @@ public class Selectable : MonoBehaviour, IPointerDownHandler
         this.board = board;
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public void SetArgumentLoader(ArgumentLoader loader)
     {
-        if (eventData.button != PointerEventData.InputButton.Left) return;
+        this.argumentLoader = loader;
+    }
+
+    public void OnMouseButtonDown(int index)
+    {
+        if (index != 0) return;
 
         BoardObject boardObject = Instantiate(myBoardObject, transform.position + Vector3.back, Quaternion.identity);
         Destroy(boardObject.gameObject.GetComponent<Selectable>());
         DraggableObject draggable = boardObject.gameObject.AddComponent<DraggableObject>();
         draggable.SetBoard(board);
+        draggable.SetArgumentLoader(argumentLoader);
 
-        draggable.OnPointerDown(eventData);
+        draggable.OnMouseButtonDown(index);
+    }
+
+    public void OnMouseButtonUp(int index)
+    {
+        //throw new System.NotImplementedException();
     }
 }

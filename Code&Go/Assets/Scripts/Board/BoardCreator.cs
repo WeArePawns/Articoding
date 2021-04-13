@@ -21,9 +21,10 @@ public class BoardCreator : MonoBehaviour
 
     [SerializeField] private Vector2 boardInitOffsetLeftDown;
     [SerializeField] private Vector2 boardInitOffsetRightUp;
-    private bool buildLimits = false;
     [SerializeField] private Camera mainCamera;
+    [SerializeField] private bool keyBoardControls = false;
 
+    private bool buildLimits = false;
     private string fileName = "level";
     private int nLevel = 1;
     private string filePath = "";
@@ -65,13 +66,14 @@ public class BoardCreator : MonoBehaviour
             board.transform.position = new Vector3(xPos + width / 2.0f + offsetX, yPos + height / 2.0f + offsetY, 0);
             board.transform.localScale = new Vector3(ratio, ratio, 1.0f);
 
-            elementSelection.transform.position = board.transform.position + (Vector3.left * elementSelection.GetColumns());
+            elementSelection.transform.position = board.transform.position + (1.5f*Vector3.left * elementSelection.GetColumns() * ratio);
             elementSelection.transform.localScale = new Vector3(ratio, ratio, 1.0f);
         }
     }
 
     private void Update()
     {
+        if (!keyBoardControls) return;
         ManageInput();
 
         //CursorMovement
@@ -192,6 +194,8 @@ public class BoardCreator : MonoBehaviour
         board.GenerateBoard();
         if (buildLimits) board.GenerateLimits();
 
+        elementSelection.transform.localScale = Vector3.one;
+        elementSelection.transform.localPosition = Vector3.zero;
         elementSelection.GenerateSelector();
 
         DeselectObject();
