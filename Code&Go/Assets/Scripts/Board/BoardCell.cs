@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoardCell : MonoBehaviour
+public abstract class BoardCell : MonoBehaviour
 {
+    protected static Dictionary<string, int> IDs = new Dictionary<string, int>();
+    protected static int numIDs = 0;
+
     public enum BoardCellState
     {
         NONE,
@@ -12,13 +15,12 @@ public class BoardCell : MonoBehaviour
         OCUPPIED
     }
 
-    private int x;
-    private int y;
-    private BoardObject placedObject;
+    protected int x;
+    protected int y;
+    protected BoardManager boardManager;
+    protected BoardObject placedObject;
 
     private BoardCellState state = BoardCellState.NONE;
-
-    [SerializeField] private Renderer cellRenderer;
 
     private void Awake()
     {
@@ -29,14 +31,14 @@ public class BoardCell : MonoBehaviour
     {
         this.x = x;
         this.y = y;
-        transform.position = new Vector2(x, y);
+        transform.position = new Vector3(x, 0.0f, y);
     }
 
     public void SetPosition(Vector2Int position)
     {
         x = position.x;
         y = position.y;
-        transform.position = new Vector2(x, y);
+        transform.position = new Vector3(x, 0.0f, y);
     }
 
     public Vector2Int GetPosition()
@@ -51,6 +53,7 @@ public class BoardCell : MonoBehaviour
         placedObject = boardObject;
         placedObject.transform.position = transform.position;
         SetState(BoardCellState.OCUPPIED);
+        OnObjectPlaced();
         return true;
     }
 
@@ -73,21 +76,27 @@ public class BoardCell : MonoBehaviour
     public void SetState(BoardCellState state)
     {
         if (this.state == state) return;
-
         this.state = state;
-
-#if CELL_COLORS //UNITY_EDITOR
-        if (state == BoardCellState.FREE)
-            cellRenderer.material.color = Color.green;
-        else if (state == BoardCellState.PARTIALLY_OCUPPIED)
-            cellRenderer.material.color = Color.yellow;
-        else if (state == BoardCellState.OCUPPIED)
-            cellRenderer.material.color = Color.red;
-#endif
     }
 
     public BoardCellState GetState()
     {
         return state;
     }
+
+    public virtual int GetObjectID()
+    {
+        if (!IDs.ContainsKey(this.GetType().Name))
+            IDs[this.GetType().Name] = numIDs++;
+        return IDs[this.GetType().Name];
+    }
+
+    public void SetBoardManager(BoardManager board)
+    {
+        boardManager = board;
+    }
+
+    public abstract void OnObjectPlaced();
+
+    public abstract string[] GetArgs();
 }

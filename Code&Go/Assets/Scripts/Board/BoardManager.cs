@@ -9,11 +9,11 @@ public class BoardManager : Listener
     private int nReceivers = 0;
     private int nReceiversActive = 0;
 
-    [SerializeField] private BoardCell cellPrefab;
     [SerializeField] private Transform cellsParent;
     [SerializeField] private Transform elementsParent;
     [SerializeField] private Transform limitsParent;
-    [SerializeField] private BoardObject[] elements;
+    [SerializeField] private BoardCell[] cellPrefabs;
+    [SerializeField] private BoardObject[] boardObjectPrefabs;
     [SerializeField] private GameObject limitsPrefab;
     [SerializeField] private bool modifiable = false;
 
@@ -38,8 +38,9 @@ public class BoardManager : Listener
         {
             for (int x = 0; x < columns; x++)
             {
-                BoardCell cell = Instantiate(cellPrefab, cellsParent);
+                BoardCell cell = Instantiate(cellPrefabs[0], cellsParent);
                 cell.SetPosition(x, y);
+                cell.SetBoardManager(this);
                 board[x, y] = cell;
 
                 if (modifiable) cell.gameObject.AddComponent<ModifiableBoardCell>();
@@ -48,8 +49,9 @@ public class BoardManager : Listener
         nReceivers = 0;
         nReceiversActive = 0;
 
-        if (GetComponent<FocusPoint>() != null)
-            GetComponent<FocusPoint>().off = new Vector3(columns / 2.0f, rows / 2.0f, 0);
+        FocusPoint fPoint = GetComponent<FocusPoint>();
+        if(fPoint != null)
+            fPoint.off = new Vector3(columns / 2.0f, 0.0f, rows / 2.0f);
     }
 
     public void GenerateLimits()
@@ -62,7 +64,7 @@ public class BoardManager : Listener
         for (int i = 0; i < 2 * columns + 2 * rows + 4; i++)
         {
             GameObject limit = Instantiate(limitsPrefab, limitsParent);
-            limit.transform.localPosition = new Vector3(pos.x, pos.y);
+            limit.transform.localPosition = new Vector3(pos.x, 0, pos.y);
 
             if (dir % 2 == 0) pos.y += ((dir / 2 == 0) ? 1 : -1);
             else pos.x += ((dir / 2 == 0) ? 1 : -1);
@@ -95,10 +97,11 @@ public class BoardManager : Listener
 
     private void InitIDs()
     {
-        foreach (BoardObject element in elements)
+        foreach (BoardObject element in boardObjectPrefabs)
+            element.GetObjectID();
+        foreach (BoardCell element in cellPrefabs)
             element.GetObjectID();
     }
-
 
     private bool IsInBoardBounds(int x, int y)
     {
@@ -117,12 +120,32 @@ public class BoardManager : Listener
         BoardState state = BoardState.FromJson(textAsset.text);
         rows = state.rows;
         columns = state.columns;
-        GenerateBoard();
-        if (limits) GenerateLimits();
 
-        //Generate board elements
+        // Generate board cells
+        if (state.cells == null)
+            GenerateBoard();
+        else
+        {
+            // If a board already exist, destroy it
+            DestroyBoard();
+            // Initialize board
+            board = new BoardCell[columns, rows];
+            // Instantiate cells
+            foreach (BoardCellState cellState in state.cells)
+                AddBoardCell(cellState.id, cellState.x, cellState.y, cellState.args);
+
+            nReceivers = 0;
+            nReceiversActive = 0;
+        }
+
+        if (limits) GenerateLimits();
+        // Generate board elements
         foreach (BoardObjectState objectState in state.boardElements)
             AddBoardObject(objectState.id, objectState.x, objectState.y, objectState.orientation, objectState.args);
+
+        FocusPoint fPoint = GetComponent<FocusPoint>();
+        if (fPoint != null)
+            fPoint.off = new Vector3(columns / 2.0f, 0.0f, rows / 2.0f);
     }
 
     public void RegisterReceiver()
@@ -175,17 +198,29 @@ public class BoardManager : Listener
         BoardState state = new BoardState(rows, columns, elementsParent.childCount);
         int i = 0;
         foreach (BoardCell cell in board)
+        {
+            state.SetBoardCell(cell);
             if (i < elementsParent.childCount && cell.GetState() == BoardCell.BoardCellState.OCUPPIED)
                 state.SetBoardObject(i++, cell);
+        }
 
         return state.ToJson();
     }
 
-    public bool AddBoardObject(int id, int x, int y, int orientation = 0, string[] additionalArgs = null)
+    public void AddBoardCell(int id, int x, int y, string[] args = null)
     {
-        if (id > elements.Length || !IsInBoardBounds(x, y)) return false;
+        if (id >= cellPrefabs.Length || !IsInBoardBounds(x, y)) return;
 
-        BoardObject bObject = Instantiate(elements[id], elementsParent);
+        BoardCell cell = Instantiate(cellPrefabs[id], cellsParent);
+        cell.SetPosition(x, y);
+        cell.SetBoardManager(this);
+        board[x, y] = cell;
+    }
+    public void AddBoardObject(int id, int x, int y, int orientation = 0, string[] additionalArgs = null)
+    {
+        if (id >= boardObjectPrefabs.Length || !IsInBoardBounds(x, y)) return;
+
+        BoardObject bObject = Instantiate(boardObjectPrefabs[id], elementsParent);
         bObject.SetBoard(this);
         bObject.SetDirection((BoardObject.Direction)orientation);
         bObject.LoadArgs(additionalArgs);
@@ -252,6 +287,25 @@ public class BoardManager : Listener
 
             bObject.SetDirection(direction);
         }
+    }
+
+    public void ReplaceCell(int id, int x, int y)
+    {
+        if (!IsInBoardBounds(x, y)) return;
+        BoardCell currentCell = board[x, y];
+        BoardObject boardObject = currentCell.GetPlacedObject();
+        currentCell.RemoveObject(false);
+
+        BoardCell cell = Instantiate(cellPrefabs[id], cellsParent);
+
+        board[x, y] = cell;
+        cell.SetPosition(currentCell.GetPosition());
+        cell.transform.position = currentCell.transform.position;
+        cell.SetBoardManager(this);
+        if (boardObject != null)
+            cell.PlaceObject(boardObject);
+
+        Destroy(currentCell.gameObject);
     }
 
     //Moves an object given its name and index called by the blocks
@@ -345,14 +399,14 @@ public class BoardManager : Listener
 
         BoardObject bObject = from.GetPlacedObject();
 
-        Vector2 fromPos = bObject.transform.position;
-        Vector2 toPos = to.transform.position;
+        Vector3 fromPos = bObject.transform.position;
+        Vector3 toPos = to.transform.position;
 
         // Interpolate movement
         float auxTimer = 0.0f;
         while (auxTimer < time)
         {
-            Vector2 lerpPos = Vector2.Lerp(fromPos, toPos, auxTimer / time);
+            Vector3 lerpPos = Vector3.Lerp(fromPos, toPos, auxTimer / time);
             bObject.transform.position = lerpPos;
             auxTimer += Time.deltaTime;
             yield return null;
@@ -377,9 +431,9 @@ public class BoardManager : Listener
         bObject.SetDirection(BoardObject.Direction.PARTIAL, false);
 
         Vector3 fromAngles = bObject.transform.localEulerAngles;
-        fromAngles.z = (int)currentDirection * -45.0f;
+        fromAngles.y = (int)currentDirection * 45.0f;
         Vector3 toAngles = bObject.transform.localEulerAngles;
-        toAngles.z = ((int)currentDirection + direction) * -45.0f;
+        toAngles.y = ((int)currentDirection + direction) * 45.0f;
 
         // Interpolate movement
         float auxTimer = 0.0f;
