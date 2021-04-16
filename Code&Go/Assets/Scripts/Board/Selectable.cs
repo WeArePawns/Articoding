@@ -28,7 +28,7 @@ public class Selectable : MonoBehaviour, IMouseListener
     {
         if (index != 0) return;
 
-        BoardObject boardObject = Instantiate(myBoardObject, transform.position + Vector3.back, Quaternion.identity);
+        BoardObject boardObject = Instantiate(myBoardObject, transform.position, Quaternion.identity);
         Destroy(boardObject.gameObject.GetComponent<Selectable>());
         DraggableObject draggable = boardObject.gameObject.AddComponent<DraggableObject>();
         draggable.SetBoard(board);

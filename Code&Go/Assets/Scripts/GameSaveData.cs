@@ -21,6 +21,7 @@ public class ProgressSaveData
 {
     public CategorySaveData[] categoriesInfo;
     public int hintsRemaining;
+    public int lastCategoryUnlocked;
     public int coins;
 }
 

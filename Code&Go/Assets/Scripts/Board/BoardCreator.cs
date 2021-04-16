@@ -43,6 +43,7 @@ public class BoardCreator : MonoBehaviour
         rows = board.GetRows();
         columns = board.GetColumns();
         material.color = Color.yellow;
+        GetComponent<MeshRenderer>().enabled = keyBoardControls;
         FitBoard();
     }
 
@@ -56,18 +57,18 @@ public class BoardCreator : MonoBehaviour
             height *= (1.0f - (boardInitOffsetLeftDown.y + boardInitOffsetRightUp.y));
             width *= (1.0f - (boardInitOffsetLeftDown.x + boardInitOffsetRightUp.x));
 
-            int limits = (buildLimits) ? 2 : 0;
+            int limits = (buildLimits) ? 0 : 0;//Ver si queremos que se tenga en cuenta para el fit
             float boardHeight = (float)board.GetRows() + limits, boardWidth = (float)board.GetColumns() + limits;
             float xRatio = width / boardWidth, yRatio = height / boardHeight;
             float ratio = Mathf.Min(xRatio, yRatio);
             float offsetX = (-boardWidth * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio, offsetY = (-boardHeight * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio;
 
             //Fit the board on the screen and resize it
-            board.transform.position = new Vector3(xPos + width / 2.0f + offsetX, yPos + height / 2.0f + offsetY, 0);
-            board.transform.localScale = new Vector3(ratio, ratio, 1.0f);
+            board.transform.position = new Vector3(xPos + width / 2.0f + offsetX, 0, yPos + height / 2.0f + offsetY);
+            board.transform.localScale = new Vector3(ratio, 1.0f, ratio);
 
-            elementSelection.transform.position = board.transform.position + (1.5f*Vector3.left * elementSelection.GetColumns() * ratio);
-            elementSelection.transform.localScale = new Vector3(ratio, ratio, 1.0f);
+            elementSelection.transform.position = board.transform.position + (1.5f * Vector3.left * elementSelection.GetColumns() * ratio) + Vector3.forward * ratio;
+            elementSelection.transform.localScale = new Vector3(ratio, 1.0f, ratio);
         }
     }
 
@@ -179,7 +180,7 @@ public class BoardCreator : MonoBehaviour
         {
             AddObject(4);
         }
-        else if(Input.GetKeyDown(KeyCode.Keypad1))
+        else if (Input.GetKeyDown(KeyCode.Keypad1))
         {
             ReplaceCell(0, cursorPos.x, cursorPos.y);
         }
@@ -212,6 +213,7 @@ public class BoardCreator : MonoBehaviour
         board.transform.localScale = Vector3.one;
         board.transform.localPosition = Vector3.zero;
         board.GenerateBoard();
+        board.GenerateHoles();
         if (buildLimits) board.GenerateLimits();
 
         elementSelection.transform.localScale = Vector3.one;
@@ -221,8 +223,8 @@ public class BoardCreator : MonoBehaviour
         DeselectObject();
         cursorPos = Vector2Int.zero;
         transform.localPosition = Vector3.zero;
-        this.rows = rows;
-        this.columns = columns;
+        this.rows = board.GetRows();
+        this.columns = board.GetColumns();
         FitBoard();
     }
     public void SaveBoard()
@@ -231,6 +233,7 @@ public class BoardCreator : MonoBehaviour
         if (fileName == "") fileName = "level";
         using (StreamWriter outputFile = new StreamWriter(filePath + fileName + nLevel++.ToString() + ".json"))
         {
+            board.ClearHoles();
             outputFile.Write(board.GetBoardState());
         }
         Console.WriteLine("Archivo Guardado");

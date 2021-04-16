@@ -7,7 +7,8 @@ public class EmptyCell : BoardCell
     public override void OnObjectPlaced()
     {
         Rigidbody rb = placedObject.gameObject.AddComponent<Rigidbody>();
-        rb.isKinematic = false;
+        if (rb != null)
+            rb.isKinematic = false;
         // Do stuff
         // Mandar señal de GameOver o lo que sea
         //boardManager.DoStuff();

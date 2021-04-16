@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ public class BoardManager : Listener
     [SerializeField] private Transform cellsParent;
     [SerializeField] private Transform elementsParent;
     [SerializeField] private Transform limitsParent;
+    [SerializeField] private Transform holesParent;
     [SerializeField] private BoardCell[] cellPrefabs;
     [SerializeField] private BoardObject[] boardObjectPrefabs;
     [SerializeField] private GameObject limitsPrefab;
@@ -32,26 +34,17 @@ public class BoardManager : Listener
         // If a board already exist, destroy it
         DestroyBoard();
         // Initialize board
-        board = new BoardCell[columns, rows];
+        board = new BoardCell[columns + 2, rows + 2];
         // Instantiate cells
-        for (int y = 0; y < rows; y++)
+        for (int y = 1; y <= rows; y++)
         {
-            for (int x = 0; x < columns; x++)
+            for (int x = 1; x <= columns; x++)
             {
-                BoardCell cell = Instantiate(cellPrefabs[0], cellsParent);
-                cell.SetPosition(x, y);
-                cell.SetBoardManager(this);
-                board[x, y] = cell;
-
-                if (modifiable) cell.gameObject.AddComponent<ModifiableBoardCell>();
+                AddBoardCell(0, x, y);
             }
         }
         nReceivers = 0;
         nReceiversActive = 0;
-
-        FocusPoint fPoint = GetComponent<FocusPoint>();
-        if(fPoint != null)
-            fPoint.off = new Vector3(columns / 2.0f, 0.0f, rows / 2.0f);
     }
 
     public void GenerateLimits()
@@ -77,9 +70,52 @@ public class BoardManager : Listener
         }
     }
 
+    public void GenerateHoles()
+    {
+        if (cellPrefabs[1] == null) return;
+
+        Vector2Int pos = new Vector2Int(0, 0);
+        Vector2Int[] edges = { new Vector2Int(0, rows + 1), new Vector2Int(columns + 1, rows + 1), new Vector2Int(columns + 1, 0), new Vector2Int(0, 0) };
+        int dir = 0;
+        for (int i = 0; i < 2 * columns + 2 * rows + 4; i++)
+        {
+            BoardCell hole = Instantiate(cellPrefabs[1], holesParent);
+            hole.transform.localPosition = new Vector3(pos.x, 0, pos.y);
+            hole.SetPosition(pos.x, pos.y);
+            hole.SetBoardManager(this);
+            board[pos.x, pos.y] = hole;
+
+            if (dir % 2 == 0) pos.y += ((dir / 2 == 0) ? 1 : -1);
+            else pos.x += ((dir / 2 == 0) ? 1 : -1);
+
+            int j = 0;
+            while (j < edges.Length && pos != edges[j])
+                j++;
+
+            if (j < edges.Length) dir++;
+        }
+        rows += 2;
+        columns += 2;
+    }
+
+    public void ClearHoles()
+    {
+        foreach (Transform child in holesParent)
+        {
+            BoardCell hole = child.gameObject.GetComponent<BoardCell>();
+            board[hole.GetPosition().x, hole.GetPosition().y] = null;
+            Destroy(child.gameObject);
+        }
+    }
+
     private void DestroyBoard()
     {
         foreach (Transform child in cellsParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (Transform child in holesParent)
         {
             Destroy(child.gameObject);
         }
@@ -105,7 +141,7 @@ public class BoardManager : Listener
 
     private bool IsInBoardBounds(int x, int y)
     {
-        return y >= 0 && y < rows && x >= 0 && x < columns;
+        return y >= 0 && y < board.GetLength(1) && x >= 0 && x < board.GetLength(0);
     }
     private bool IsInBoardBounds(Vector2Int position)
     {
@@ -129,7 +165,7 @@ public class BoardManager : Listener
             // If a board already exist, destroy it
             DestroyBoard();
             // Initialize board
-            board = new BoardCell[columns, rows];
+            board = new BoardCell[columns + 2, rows + 2];
             // Instantiate cells
             foreach (BoardCellState cellState in state.cells)
                 AddBoardCell(cellState.id, cellState.x, cellState.y, cellState.args);
@@ -137,7 +173,7 @@ public class BoardManager : Listener
             nReceivers = 0;
             nReceiversActive = 0;
         }
-
+        GenerateHoles();
         if (limits) GenerateLimits();
         // Generate board elements
         foreach (BoardObjectState objectState in state.boardElements)
@@ -195,10 +231,11 @@ public class BoardManager : Listener
 
     public string GetBoardState()
     {
-        BoardState state = new BoardState(rows, columns, elementsParent.childCount);
+        BoardState state = new BoardState(rows - 2, columns - 2, elementsParent.childCount);
         int i = 0;
         foreach (BoardCell cell in board)
         {
+            if (cell == null) continue;
             state.SetBoardCell(cell);
             if (i < elementsParent.childCount && cell.GetState() == BoardCell.BoardCellState.OCUPPIED)
                 state.SetBoardObject(i++, cell);
@@ -215,10 +252,12 @@ public class BoardManager : Listener
         cell.SetPosition(x, y);
         cell.SetBoardManager(this);
         board[x, y] = cell;
+
+        if (modifiable) cell.gameObject.AddComponent<ModifiableBoardCell>().SetBoardManager(this);
     }
-    public void AddBoardObject(int id, int x, int y, int orientation = 0, string[] additionalArgs = null)
+    public bool AddBoardObject(int id, int x, int y, int orientation = 0, string[] additionalArgs = null)
     {
-        if (id >= boardObjectPrefabs.Length || !IsInBoardBounds(x, y)) return;
+        if (id >= boardObjectPrefabs.Length || !IsInBoardBounds(x, y)) return false;
 
         BoardObject bObject = Instantiate(boardObjectPrefabs[id], elementsParent);
         bObject.SetBoard(this);
@@ -302,6 +341,7 @@ public class BoardManager : Listener
         cell.SetPosition(currentCell.GetPosition());
         cell.transform.position = currentCell.transform.position;
         cell.SetBoardManager(this);
+        if (modifiable) cell.gameObject.AddComponent<ModifiableBoardCell>().SetBoardManager(this);
         if (boardObject != null)
             cell.PlaceObject(boardObject);
 

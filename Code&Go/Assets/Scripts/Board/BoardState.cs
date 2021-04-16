@@ -52,7 +52,7 @@ public class BoardState
         cellState.y = y;
         cellState.args = cell.GetArgs();
 
-        cells[y + x * columns] = cellState;
+        cells[(x-1) + (y-1) * columns] = cellState;
     }
 
     public void SetBoardObject(int i, BoardCell elementCell)

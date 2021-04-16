@@ -31,7 +31,8 @@ public class DraggableObject : MonoBehaviour, IMouseListener
         if (dragging)
         {
             transform.position = GetMouseWorldPos() + mouseOffset;
-            print("Dragging\n");
+            if (Input.GetMouseButtonUp(0))
+                OnLeftUp();
         }
     }
 
@@ -46,7 +47,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
     }
 
     private void OnLeftDown()
-    {       
+    {
         if (boardObject == null) boardObject = GetComponent<BoardObject>();
         argumentLoader.SetBoardObject(boardObject);
 
@@ -70,14 +71,14 @@ public class DraggableObject : MonoBehaviour, IMouseListener
             dragging = false;
             Vector3 pos = board.GetLocalPosition(transform.position);
             pos = new Vector3(Mathf.Round(pos.x), Mathf.Round(pos.y), Mathf.Round(pos.z));
-            if (boardObject != null && pos.x < board.GetColumns() && pos.x >= 0 && pos.y < board.GetRows() && pos.y >= 0)
+            if (boardObject != null && pos.x < board.GetColumns() && pos.x >= 0 && pos.z < board.GetRows() && pos.z >= 0)
             {
-                if (pos.x == lastPos.x && pos.y == lastPos.y)
-                    transform.localPosition = new Vector3(lastPos.x, lastPos.y, transform.position.z);
-                else if (!board.AddBoardObject((int)pos.x, (int)pos.y, boardObject))
+                if (pos.x == lastPos.x && pos.z == lastPos.y)
+                    transform.localPosition = new Vector3(lastPos.x, transform.position.y, lastPos.y);
+                else if (!board.AddBoardObject((int)pos.x, (int)pos.z, boardObject))
                     Destroy(gameObject, 0.1f);
                 board.RemoveBoardObject(lastPos.x, lastPos.y, false);
-                lastPos = new Vector2Int((int)pos.x, (int)pos.y);
+                lastPos = new Vector2Int((int)pos.x, (int)pos.z);
             }
             else
                 Destroy(gameObject, 0.1f);
@@ -94,7 +95,6 @@ public class DraggableObject : MonoBehaviour, IMouseListener
 
     public void OnMouseButtonUp(int index)
     {
-        if (index == 0)
-            OnLeftUp();
+
     }
 }

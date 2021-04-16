@@ -91,6 +91,11 @@ public abstract class BoardCell : MonoBehaviour
         return IDs[this.GetType().Name];
     }
 
+    public virtual int GetNextID()
+    {
+        return (GetObjectID() + 1) % numIDs;
+    }
+
     public void SetBoardManager(BoardManager board)
     {
         boardManager = board;

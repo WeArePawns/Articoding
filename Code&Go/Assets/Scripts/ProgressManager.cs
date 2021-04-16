@@ -14,7 +14,7 @@ public class ProgressManager : MonoBehaviour
     private int coins = 10;
 
     private CategorySaveData currentCategory = null;
-    private int currentLevel = 0;
+    private int currentLevel = 0, lastCategoryUnlocked = 0;
 
     private void Awake()
     {
@@ -32,7 +32,7 @@ public class ProgressManager : MonoBehaviour
         for (int i = 0; i < categoriesData.Length; i++)
         {
             CategorySaveData data = new CategorySaveData();
-            data.lastLevelUnlocked = 0;
+            data.lastLevelUnlocked = i <= lastCategoryUnlocked ? 0 : -1;
             data.totalStars = 0;
             data.levelsData = new LevelSaveData[categories[i].levels.Length];
             for (int j = 0; j < data.levelsData.Length; j++)
@@ -51,11 +51,20 @@ public class ProgressManager : MonoBehaviour
     //---------
     public void LevelCompleted(uint starsAchieved)
     {
-        currentCategory.levelsData[currentLevel].stars = starsAchieved;
-        currentCategory.totalStars += GetNStars(starsAchieved);
+        uint newStarsAchieved = ~currentCategory.levelsData[currentLevel].stars & starsAchieved;
+        currentCategory.levelsData[currentLevel].stars = currentCategory.levelsData[currentLevel].stars | starsAchieved;
+        currentCategory.totalStars += GetNStars(newStarsAchieved);
 
         if (currentLevel >= currentCategory.lastLevelUnlocked)
-            currentCategory.lastLevelUnlocked = currentLevel+1;
+        {
+            if (currentLevel + 1 >= currentCategory.levelsData.Length && lastCategoryUnlocked < categories.Count)
+            {
+                lastCategoryUnlocked++;
+                categoriesData[lastCategoryUnlocked].lastLevelUnlocked = 0;
+            }
+            currentCategory.lastLevelUnlocked = currentLevel + 1;
+        }
+
     }
 
     public void LevelStarted(int categoryIndex, int level)
@@ -89,6 +98,11 @@ public class ProgressManager : MonoBehaviour
     {
         return (categoryIndex < categoriesData.Length && level < categoriesData[categoryIndex].levelsData.Length &&
             level <= categoriesData[categoryIndex].lastLevelUnlocked);
+    }
+
+    public bool IsCategoryUnlocked(int categoryIndex)
+    {
+        return (categoryIndex <= lastCategoryUnlocked);
     }
 
     public uint GetLevelStars(int categoryIndex, int level)
@@ -125,6 +139,7 @@ public class ProgressManager : MonoBehaviour
         ProgressSaveData data = new ProgressSaveData();
         data.categoriesInfo = categoriesData;
         data.hintsRemaining = hintsRemaining;
+        data.lastCategoryUnlocked = lastCategoryUnlocked;
         data.coins = coins;
         return data;
     }
@@ -133,14 +148,15 @@ public class ProgressManager : MonoBehaviour
     {
         categoriesData = data.categoriesInfo;
         hintsRemaining = data.hintsRemaining;
+        lastCategoryUnlocked = data.lastCategoryUnlocked;
         coins = data.coins;
     }
 
     //Returns how many bits are active
     private uint GetNStars(uint stars)
-    {      
+    {
         uint c; // c accumulates the total bits set in v
-        for (c = 0; stars!=0; c++)
+        for (c = 0; stars != 0; c++)
         {
             stars &= stars - 1; // clear the least significant bit set
         }

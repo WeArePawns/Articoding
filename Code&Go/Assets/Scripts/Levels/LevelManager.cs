@@ -86,15 +86,15 @@ public class LevelManager : MonoBehaviour
             height *= (1.0f - (boardInitOffsetLeftDown.y + boardInitOffsetRightUp.y));
             width *= (1.0f - (boardInitOffsetLeftDown.x + boardInitOffsetRightUp.x));
 
-            int limits = (buildLimits) ? 2 : 0;
+            int limits = (buildLimits) ? 0 : 0;//Ver si queremos que se tenga en cuenta para el fit
             float boardHeight = (float)boardManager.GetRows() + limits, boardWidth = (float)boardManager.GetColumns() + limits;
             float xRatio = width / boardWidth, yRatio = height / boardHeight;
             float ratio = Mathf.Min(xRatio, yRatio);
             float offsetX = (-boardWidth * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio, offsetY = (-boardHeight * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio;
 
             //Fit the board on the screen and resize it
-            boardManager.transform.position = new Vector3(xPos + width / 2.0f + offsetX, yPos + height / 2.0f + offsetY, 0);
-            boardManager.transform.localScale = new Vector3(ratio, ratio, ratio);
+            boardManager.transform.position = new Vector3(xPos + width / 2.0f + offsetX, 0, yPos + height / 2.0f + offsetY);
+            boardManager.transform.localScale = new Vector3(ratio, 1.0f, ratio);
         }
     }
 
