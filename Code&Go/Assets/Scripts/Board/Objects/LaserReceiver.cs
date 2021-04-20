@@ -17,6 +17,7 @@ public class LaserReceiver : BoardObject, ILaserReceiver
     private void Awake()
     {
         typeName = "Receiver";
+        argsNames = new string[0];
     }
 
     private void Start()
@@ -56,6 +57,7 @@ public class LaserReceiver : BoardObject, ILaserReceiver
     private void ReceiverActive()
     {
         registered = true;
-        boardManager.ReceiverActivated();
+        if (boardManager != null)
+            boardManager.ReceiverActivated();
     }
 }

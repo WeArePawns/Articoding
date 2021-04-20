@@ -94,7 +94,7 @@ public class LevelManager : MonoBehaviour
 
             //Fit the board on the screen and resize it
             boardManager.transform.position = new Vector3(xPos + width / 2.0f + offsetX, 0, yPos + height / 2.0f + offsetY);
-            boardManager.transform.localScale = new Vector3(ratio, 1.0f, ratio);
+            boardManager.transform.localScale = new Vector3(ratio, ratio, ratio);
         }
     }
 

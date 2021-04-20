@@ -9,6 +9,7 @@ public class BasicMirror : BoardObject, ILaserReflector
     private void Awake()
     {
         typeName = "Espejo";
+        argsNames = new string[0];
     }
 
     public void Reflect(Vector3 inFrom, Vector3 inDirection, Vector3 inNormal, out Vector3[] outFrom, out Vector3[] outDirection)

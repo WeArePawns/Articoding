@@ -15,6 +15,7 @@ public class BoardObject : MonoBehaviour
 
     protected BoardManager boardManager;
     protected string typeName = "";
+    protected string[] argsNames;
 
     public void SetBoard(BoardManager board)
     {
@@ -31,6 +32,11 @@ public class BoardObject : MonoBehaviour
     public string GetName()
     {
         return typeName;
+    }
+
+    public string[] GetArgsNames()
+    {
+        return argsNames;
     }
 
     public void SetDirection(Direction direction, bool rotate = true)

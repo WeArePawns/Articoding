@@ -6,7 +6,8 @@ public class EmptyCell : BoardCell
 {
     public override void OnObjectPlaced()
     {
-        Rigidbody rb = placedObject.gameObject.AddComponent<Rigidbody>();
+        Rigidbody rb = placedObject.GetComponent<Rigidbody>();
+        if (rb == null) placedObject.gameObject.AddComponent<Rigidbody>();
         if (rb != null)
             rb.isKinematic = false;
         // Do stuff

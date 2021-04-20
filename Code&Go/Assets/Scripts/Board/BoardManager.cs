@@ -229,6 +229,11 @@ public class BoardManager : Listener
         return IsInBoardBounds(x, y) ? board[x, y] : null;
     }
 
+    public int GetBoardCellType(int x, int y)
+    {
+        return IsInBoardBounds(x, y) ? board[x, y].GetObjectID() : -1;
+    }
+
     public string GetBoardState()
     {
         BoardState state = new BoardState(rows - 2, columns - 2, elementsParent.childCount);

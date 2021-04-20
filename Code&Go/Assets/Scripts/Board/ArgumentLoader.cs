@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class ArgumentLoader : MonoBehaviour
 {
-    [SerializeField] private InputField[] argsText;
+    [SerializeField] private ArgInput[] inputs;
     [SerializeField] private Text text;
 
     private BoardObject currentObject;
@@ -17,16 +17,27 @@ public class ArgumentLoader : MonoBehaviour
         currentObject = newObject;
         gameObject.SetActive(true);
         text.text = currentObject.GetName();
+
+        string[] argsNames = currentObject.GetArgsNames();
+        if (argsNames.Length == 0) gameObject.SetActive(false);
+        for (int i = 0; i < inputs.Length; i++)
+        {
+            if (i < argsNames.Length)
+                inputs[i].FillArg(argsNames[i]);
+            else
+                inputs[i].gameObject.SetActive(false);
+        }
     }
 
     public void LoadArgs()
     {
         if (currentObject == null) return;
 
-        string[] args = new string[argsText.Length];
+        string[] args = new string[inputs.Length];
         for (int i = 0; i < args.Length; i++)
         {
-            args[i] = argsText[i].text;
+            if (inputs[i].gameObject.activeSelf)
+                args[i] = inputs[i].GetInput();
         }
 
         currentObject.LoadArgs(args);
@@ -35,6 +46,6 @@ public class ArgumentLoader : MonoBehaviour
     private void Update()
     {
         if (currentObject == null && gameObject.activeSelf)
-            gameObject.SetActive(false);        
+            gameObject.SetActive(false);
     }
 }
