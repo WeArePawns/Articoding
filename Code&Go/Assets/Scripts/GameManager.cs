@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;    
     [SerializeField] private Category[] categories;
 
-    private Category category;
+    [SerializeField] private Category category;
     public int levelIndex;
 
     void Awake()

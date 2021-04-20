@@ -34,7 +34,7 @@ public class PopUpManager : MonoBehaviour
 
     public void Show(string title, string content)
     {
-        PopUpData data = new PopUpData();
+        PopUpData data = ScriptableObject.CreateInstance<PopUpData>();
         data.title = title;
         data.content = content;
 
