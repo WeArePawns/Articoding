@@ -146,4 +146,23 @@ namespace UBlockly
             yield return new WaitForSeconds(Times.instructionWaitTime);
         }
     }
+
+    [CodeInterpreter(BlockType = "movement_cells_occupied")]
+    public class Cells_Occupied_Cmdor : EnumeratorCmdtor
+    {
+
+        protected override IEnumerator Execute(Block block)
+        {
+            string colour = block.GetFieldValue("TYPE");
+
+            string msg = (colour == "RED" ? 2 : (colour == "GREEN" ? 3 : 4)).ToString();
+
+            DataStruct returnData = new DataStruct(false);
+            returnData.BooleanValue = MessageManager.Instance.SendBoolMessage(msg, MSG_TYPE.CELL_OCCUPIED);
+
+            yield return new WaitForSeconds(Times.instructionWaitTime);
+
+            ReturnData(returnData);
+        }
+    }
 }

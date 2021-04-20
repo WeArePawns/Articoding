@@ -21,11 +21,14 @@ public class BoardManager : Listener
 
     // Hidden atributtes
     private BoardCell[,] board;
+    public enum CellColors { NORMAL, GREEN, }
 
     private Dictionary<string, List<Vector2Int>> elementPositions;
+    private List<List<BoardCell>> cells;
 
     private void Awake()
     {
+        cells = new List<List<BoardCell>>();
         InitIDs();
     }
 
@@ -129,6 +132,11 @@ public class BoardManager : Listener
         {
             Destroy(child.gameObject);
         }
+
+        foreach (List<BoardCell> cellsList in cells)
+        {
+            cellsList.Clear();
+        }
     }
 
     private void InitIDs()
@@ -136,7 +144,10 @@ public class BoardManager : Listener
         foreach (BoardObject element in boardObjectPrefabs)
             element.GetObjectID();
         foreach (BoardCell element in cellPrefabs)
+        {
             element.GetObjectID();
+            cells.Add(new List<BoardCell>());
+        }
     }
 
     private bool IsInBoardBounds(int x, int y)
@@ -249,9 +260,9 @@ public class BoardManager : Listener
         return state.ToJson();
     }
 
-    public void AddBoardCell(int id, int x, int y, string[] args = null)
+    public BoardCell AddBoardCell(int id, int x, int y, string[] args = null)
     {
-        if (id >= cellPrefabs.Length || !IsInBoardBounds(x, y)) return;
+        if (id >= cellPrefabs.Length || !IsInBoardBounds(x, y)) return null;
 
         BoardCell cell = Instantiate(cellPrefabs[id], cellsParent);
         cell.SetPosition(x, y);
@@ -259,6 +270,10 @@ public class BoardManager : Listener
         board[x, y] = cell;
 
         if (modifiable) cell.gameObject.AddComponent<ModifiableBoardCell>().SetBoardManager(this);
+
+        cells[id].Add(cell);
+
+        return cell;
     }
     public bool AddBoardObject(int id, int x, int y, int orientation = 0, string[] additionalArgs = null)
     {
@@ -335,21 +350,16 @@ public class BoardManager : Listener
 
     public void ReplaceCell(int id, int x, int y)
     {
-        if (!IsInBoardBounds(x, y)) return;
+        if (!IsInBoardBounds(x, y) || id == board[x, y].GetObjectID()) return;
         BoardCell currentCell = board[x, y];
         BoardObject boardObject = currentCell.GetPlacedObject();
         currentCell.RemoveObject(false);
 
-        BoardCell cell = Instantiate(cellPrefabs[id], cellsParent);
+        BoardCell cell = AddBoardCell(id, x, y);
 
-        board[x, y] = cell;
-        cell.SetPosition(currentCell.GetPosition());
-        cell.transform.position = currentCell.transform.position;
-        cell.SetBoardManager(this);
-        if (modifiable) cell.gameObject.AddComponent<ModifiableBoardCell>().SetBoardManager(this);
-        if (boardObject != null)
-            cell.PlaceObject(boardObject);
+        if (boardObject != null) cell.PlaceObject(boardObject);
 
+        if (cells[id].Contains(currentCell)) cells[id].Remove(currentCell);
         Destroy(currentCell.gameObject);
     }
 
@@ -586,6 +596,29 @@ public class BoardManager : Listener
             Door door = (Door)board[pos.x, pos.y].GetPlacedObject();
             if (door != null)
                 door.SetActive(active);
+        }
+    }
+
+    public bool CellsOccupied(int id)
+    {
+        if (id >= cells.Count || cells[id].Count == 0) return false;
+
+        int i = 0;
+        while (i < cells[id].Count && cells[id][i].GetState() == BoardCell.BoardCellState.OCUPPIED)
+            i++;
+
+        return i >= cells[id].Count;
+    }
+
+    public override bool ReceiveBoolMessage(string msg, MSG_TYPE type)
+    {
+        string[] args = msg.Split(' ');
+        switch (type)
+        {
+            case MSG_TYPE.CELL_OCCUPIED:
+                return CellsOccupied(int.Parse(args[0]));
+            default:
+                return false;
         }
     }
 }

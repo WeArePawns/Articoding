@@ -6,6 +6,7 @@ using UnityEngine;
 public abstract class Listener : MonoBehaviour
 {
     public abstract void ReceiveMessage(string msg, MSG_TYPE type);
+    public abstract bool ReceiveBoolMessage(string msg, MSG_TYPE type);
 
     private void Start()
     {

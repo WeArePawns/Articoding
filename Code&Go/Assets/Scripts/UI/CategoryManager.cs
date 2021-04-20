@@ -42,6 +42,9 @@ public class CategoryManager : MonoBehaviour
             {
                 SelectCategory(index);
             });
+            //If it's not unlocked it can't be selected
+            if (!ProgressManager.Instance.IsCategoryUnlocked(index)) card.button.enabled = false;
+            //TODO: Poner icono de candado o algo
         }
 
         HideLevels();
@@ -51,6 +54,8 @@ public class CategoryManager : MonoBehaviour
 
     private void SelectCategory(int index)
     {
+        if (!ProgressManager.Instance.IsCategoryUnlocked(index)) return;
+
         if (index >= 0 && index < categories.Length)
         {
             currentCategory = index;
@@ -62,6 +67,8 @@ public class CategoryManager : MonoBehaviour
 
     public void ShowLevels()
     {
+        if (!ProgressManager.Instance.IsCategoryUnlocked(currentCategory)) return;
+
         Category category = categories[currentCategory];
         currentCategoryLevelsText.text = "Levels - " + category.name_id;
 
@@ -106,7 +113,6 @@ public class CategoryManager : MonoBehaviour
 
         while (levelsParent.transform.childCount != 0)
             DestroyImmediate(levelsParent.transform.GetChild(0).gameObject);
-
     }
 
     public void PlaySelectedLevel()

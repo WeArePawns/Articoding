@@ -1,0 +1,38 @@
+<xml>
+    <variables>
+        <variable type="" id="n:WsN1pJ9hJ.ue!#m#{U">Objeto</variable>
+        <variable type="" id="An]Sn_i2fD:nVJ/Y]5_A">Desplazamiento</variable>
+    </variables>
+    <block type="variables_set" id="q7*vM`_bKyO/@ED6M%Pz" x="34" y="-140">
+        <field name="VAR" id="n:WsN1pJ9hJ.ue!#m#{U" variableType="">Objeto</field>
+        <value name="VALUE">
+            <block type="text" id="Kgf)VE~u~}-+:C5+)WJi">
+                <field name="TEXT" />
+            </block>
+        </value>
+        <next>
+            <block type="variables_set" id="%wfzC[9p(,l=~`R:|wRb">
+                <field name="VAR" id="An]Sn_i2fD:nVJ/Y]5_A" variableType="">Desplazamiento</field>
+                <value name="VALUE">
+                    <block type="math_number" id="gy6Zv}mXv(ro1e!#^[Yf">
+                        <field name="NUM">0</field>
+                    </block>
+                </value>
+                <next>
+                    <block type="movement_activate_door" id="ubc+V+_j`EHvn77wWltN">
+                        <field name="INDEX">1</field>
+                        <value name="ACTIVE">
+                            <block type="logic_negate" id="XcZ]f6/Ui{J`d@|YXHO2">
+                                <value name="BOOL">
+                                    <block type="movement_cells_occupied" id=":TjB!1C}(bE4Ij/h|3yb">
+                                        <field name="TYPE">RED</field>
+                                    </block>
+                                </value>
+                            </block>
+                        </value>
+                    </block>
+                </next>
+            </block>
+        </next>
+    </block>
+</xml>
