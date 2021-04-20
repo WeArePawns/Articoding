@@ -21,6 +21,7 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private BoardManager boardManager;
     [SerializeField] private Camera mainCamera;
+    [SerializeField] private CameraFit cameraFit;
 
     private void Awake()
     {
@@ -73,7 +74,8 @@ public class LevelManager : MonoBehaviour
         ActivateLevelBlocks(currentLevel.activeBlocks, currentLevel.allActive);
         LoadInitialBlocks(currentLevel.initialState);
         boardManager.LoadBoard(currentLevel.levelBoard, buildLimits);
-        FitBoard();
+        cameraFit.FitBoard(boardManager.GetRows(), boardManager.GetColumns());
+        //FitBoard();
     }
 
     private void FitBoard()
@@ -126,7 +128,8 @@ public class LevelManager : MonoBehaviour
         boardManager.transform.localScale = Vector3.one;
         boardManager.transform.localPosition = Vector3.zero;
         boardManager.LoadBoard(currentLevel.levelBoard, buildLimits);
-        FitBoard();
+        cameraFit.FitBoard(boardManager.GetRows(), boardManager.GetColumns());
+        //FitBoard();
     }
 
     public void ReloadLevel()

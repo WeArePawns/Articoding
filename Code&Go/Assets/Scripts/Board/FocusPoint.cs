@@ -17,7 +17,7 @@ public class FocusPoint : MonoBehaviour
     private float _pitchLimit = 45;
 
     [HideInInspector]
-    public Vector3 off;
+    public Vector3 offset;
 
     public float YawLimit { get { return _yawLimit; } }
     public float PitchLimit { get { return _pitchLimit; } }

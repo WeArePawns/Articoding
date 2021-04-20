@@ -181,7 +181,7 @@ public class BoardManager : Listener
 
         FocusPoint fPoint = GetComponent<FocusPoint>();
         if (fPoint != null)
-            fPoint.off = new Vector3(columns / 2.0f, 0.0f, rows / 2.0f);
+            fPoint.offset = new Vector3(columns / 2.0f - 0.5f, 0.0f, rows / 2.0f - 0.5f);
     }
 
     public void RegisterReceiver()
