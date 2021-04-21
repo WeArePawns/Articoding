@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using UBlockly.UGUI;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
@@ -34,6 +35,13 @@ public class LevelManager : MonoBehaviour
             currentLevel = currentCategory.levels[currentLevelIndex];
         }
 
+        AnalyticsResult result = Analytics.CustomEvent("LevelStart", new Dictionary<string, object>
+        {
+            { "category_id", currentCategory.name_id },
+            { "level_id", currentLevelIndex }
+        });
+        Debug.Log("Analystics result: " + result);
+
         //Clamp values between 0 and 1
         boardInitOffsetRightUp = new Vector2(Mathf.Clamp(boardInitOffsetRightUp.x, 0.0f, 1.0f), Mathf.Clamp(boardInitOffsetRightUp.y, 0.0f, 1.0f));
         boardInitOffsetLeftDown = new Vector2(Mathf.Clamp(boardInitOffsetLeftDown.x, 0.0f, 1.0f), Mathf.Clamp(boardInitOffsetLeftDown.y, 0.0f, 1.0f));
@@ -57,6 +65,17 @@ public class LevelManager : MonoBehaviour
         if (boardManager.BoardCompleted())
         {
             ProgressManager.Instance.LevelCompleted(0x111);
+
+            AnalyticsResult result = Analytics.CustomEvent("LevelEnd", new Dictionary<string, object>
+            {
+                { "category_id", currentCategory.name_id },
+                { "level_id", currentLevelIndex },
+                { "first_execution", true }, // Estrellas
+                { "optimal_solution", true },
+                { "no_hints", true }
+            });
+            Debug.Log("Analystics result: " + result);
+
             LoadNextLevel();
         }
     }

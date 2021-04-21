@@ -19,6 +19,7 @@ limitations under the License.
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
@@ -181,7 +182,13 @@ namespace UBlockly.UGUI
         {
             if (mRunCodeEvent != null)
                 mRunCodeEvent.Invoke();
-            
+
+            AnalyticsResult result = Analytics.CustomEvent("RunButton", new Dictionary<string, object>()
+            {
+                { "workspace", mWorkspace.GetTopBlocks(true).ToString() }
+            });
+            Debug.Log("Analytics result: " + result);
+
 //            Lua.Interpreter.Run(mWorkspace);
             CSharp.Interpreter.Run(mWorkspace);
             m_StatusView.enabled = true;
