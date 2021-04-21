@@ -9,6 +9,8 @@ public class PanelControl : MonoBehaviour
     [SerializeField] private UnityEvent onDisable;
     [SerializeField] private GameObject panel;
 
+    private bool disappearEnabled = false;
+
     private void Start()
     {
         if (panel == null)
@@ -23,7 +25,7 @@ public class PanelControl : MonoBehaviour
 
     private void HideIfClickedOutside()
     {
-        if (Input.GetMouseButton(0) &&
+        if (!disappearEnabled && Input.GetMouseButton(0) &&
             !RectTransformUtility.RectangleContainsScreenPoint(
                 GetComponent<RectTransform>(),
                 Input.mousePosition,
@@ -37,5 +39,10 @@ public class PanelControl : MonoBehaviour
     public void Appear()
     {
         panel.SetActive(!gameObject.activeSelf);
+    }
+
+    public void DisableDissapear(bool enabled)
+    {
+        disappearEnabled = enabled;
     }
 }

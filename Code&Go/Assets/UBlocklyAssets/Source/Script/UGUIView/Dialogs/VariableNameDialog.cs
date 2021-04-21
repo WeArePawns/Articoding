@@ -25,9 +25,10 @@ namespace UBlockly.UGUI
     {
         [SerializeField] private Text m_InputLabel;
         [SerializeField] private InputField m_Input;
+        private PanelControl inventoryControl;
 
         private bool mIsRename = false;
-        
+
         private string mOldVarName;
         public void Rename(string varName)
         {
@@ -38,15 +39,23 @@ namespace UBlockly.UGUI
 
         protected override void OnInit()
         {
+            inventoryControl = GameObject.Find("OpenArea").GetComponent<PanelControl>();
             m_InputLabel.text = I18n.Get(MsgDefine.NEW_VARIABLE);
+            inventoryControl.DisableDissapear(true);
 
             AddCloseEvent(() =>
             {
+                inventoryControl.DisableDissapear(false);
                 if (mIsRename)
                     BlocklyUI.WorkspaceView.Workspace.RenameVariable(mOldVarName, m_Input.text);
                 else
                     BlocklyUI.WorkspaceView.Workspace.CreateVariable(m_Input.text);
             });
+        }
+
+        private void OnDestroy()
+        {
+            inventoryControl.DisableDissapear(false);
         }
     }
 }
