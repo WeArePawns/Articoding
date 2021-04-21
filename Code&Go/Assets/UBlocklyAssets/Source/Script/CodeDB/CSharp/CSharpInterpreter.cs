@@ -173,6 +173,13 @@ namespace UBlockly
         public CustomEnumerator ValueReturn(Block block, string name, DataStruct defaultData)
         {
             CustomEnumerator etor = ValueReturn(block, name);
+
+            /*if(defaultData == null)
+            {
+                Debug.Log("ha petao");
+                return null;
+            }*/
+
             etor.Cmdtor.DefaultData = defaultData;
             return etor;
         }

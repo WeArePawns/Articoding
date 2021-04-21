@@ -22,6 +22,12 @@ public class LevelManager : MonoBehaviour
     public GameObject endPanel;
     public GameObject blackRect;
 
+    public GameObject endPanelMinimized;
+    public GameObject debugPanel;
+
+    public GameObject gameOverPanel;
+    public GameObject gameOverMinimized;
+
     private void Awake()
     {
         GameManager gameManager = GameManager.Instance;
@@ -44,7 +50,7 @@ public class LevelManager : MonoBehaviour
             boardInitOffsetLeftDown.y = boardInitOffsetRightUp.y = 0;
 
         endPanel.SetActive(false);
-        blackRect.SetActive(false);
+        //blackRect.SetActive(false);
     }
 
     private void Start()
@@ -57,7 +63,7 @@ public class LevelManager : MonoBehaviour
         if (boardManager == null)
             return;
 
-        if (boardManager.BoardCompleted())
+        if (boardManager.BoardCompleted() && !endPanel.activeSelf && !endPanelMinimized.activeSelf)
         {
             //LoadNextLevel();
             endPanel.SetActive(true);
@@ -125,11 +131,38 @@ public class LevelManager : MonoBehaviour
             LoadMainMenu(); // Por ejemplo
     }
 
+    public void RetryLevel()
+    {
+        ResetLevel();
+        gameOverPanel.SetActive(false);
+        blackRect.SetActive(false);
+        gameOverMinimized.SetActive(false);
+    }
+
+    public void MinimizeEndPanel()
+    {
+        endPanelMinimized.SetActive(true);
+        gameOverPanel.SetActive(false);
+        endPanel.SetActive(false);
+        blackRect.SetActive(false);
+        debugPanel.SetActive(false);
+    }
+
+    public void MinimizeGameOverPanel()
+    {
+        gameOverMinimized.SetActive(true);
+        gameOverPanel.SetActive(false);
+        //endPanel.SetActive(false);
+        blackRect.SetActive(false);
+        debugPanel.SetActive(false);
+    }
+
     //TODO:Hacer un reset board en vez de volver a cargarla... o no
     public void ResetLevel()
     {
         boardManager.transform.localScale = Vector3.one;
         boardManager.transform.localPosition = Vector3.zero;
+        debugPanel.SetActive(true);
         boardManager.LoadBoard(currentLevel.levelBoard, buildLimits);
         FitBoard();
     }

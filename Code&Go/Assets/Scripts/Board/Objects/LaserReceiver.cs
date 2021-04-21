@@ -29,7 +29,7 @@ public class LaserReceiver : BoardObject, ILaserReceiver
         receiverRenderer.material = onMaterial;
         onParticles.Play();
         light.SetActive(true);
-        Invoke("ReceiverActive", 2.0f);
+        Invoke("ReceiverActive", 1.0f);
     }
 
     public void OnLaserReceiving()

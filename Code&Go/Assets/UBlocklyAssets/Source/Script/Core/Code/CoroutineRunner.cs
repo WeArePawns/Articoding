@@ -27,12 +27,28 @@ namespace UBlockly
     /// </summary>
     public class CoroutineRunner : MonoBehaviour
     {
+        private GameObject blackRect;
+        private GameObject gameOverPanel;
+        private GameObject debugPanel;
+
+        private void Init()
+        {
+            GameObject canvas = GameObject.Find("Canvas");
+
+            blackRect = canvas.transform.Find("BlackRect").gameObject;
+            gameOverPanel = canvas.transform.Find("GameOverPanel").gameObject;
+            debugPanel = canvas.transform.Find("Content").Find("Header").Find("DebugPanel").gameObject;
+        }
+
         public static CoroutineRunner Create(string runnerName, bool dontDestroyOnLoad = false)
         {
             GameObject runnerObj = new GameObject(runnerName);
             if (dontDestroyOnLoad)
                 GameObject.DontDestroyOnLoad(runnerObj);
-            return runnerObj.AddComponent<CoroutineRunner>();
+
+            CoroutineRunner run = runnerObj.AddComponent<CoroutineRunner>();
+            run.Init();
+            return run;
         }
 
         internal struct CoroutineStruct
@@ -69,7 +85,12 @@ namespace UBlockly
             }
 
             Debug.LogFormat("<color=green>[CodeRunner]Start process {0}.</color>", itorFunc);
-            
+
+
+            Init();
+
+            debugPanel.SetActive(false);
+
             value = new CoroutineStruct(StartCoroutine(SimulateCoroutine(itorFunc)), false);
             mCoroutineDict[itorFunc] = value;
             return true;
@@ -182,6 +203,11 @@ namespace UBlockly
 
             mCoroutineDict.Remove(itorFunc);
             Debug.LogFormat("<color=green>[CodeRunner]SimulateCoroutine: end - time: {0}.</color>", Time.time);
+
+            yield return new WaitForSeconds(1.0f);
+
+            blackRect.SetActive(true);
+            gameOverPanel.SetActive(true);
         }
     }
 }
