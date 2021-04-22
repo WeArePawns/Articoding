@@ -171,6 +171,8 @@ namespace UBlockly
             
             Debug.LogFormat("<color=green>[CodeRunner]SimulateCoroutine: begin - time: {0}.</color>", Time.time);
 
+            //FindObjectOfType<StarsController>().deactivatePrimeraEjecucionStar();
+
             Stack<IEnumerator> stack = new Stack<IEnumerator>();
             stack.Push(itorFunc);
 
@@ -204,7 +206,7 @@ namespace UBlockly
             mCoroutineDict.Remove(itorFunc);
             Debug.LogFormat("<color=green>[CodeRunner]SimulateCoroutine: end - time: {0}.</color>", Time.time);
 
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(1.5f);
 
             blackRect.SetActive(true);
             gameOverPanel.SetActive(true);

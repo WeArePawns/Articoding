@@ -28,6 +28,10 @@ public class LevelManager : MonoBehaviour
     public GameObject gameOverPanel;
     public GameObject gameOverMinimized;
 
+    public StarsController starsController;
+
+    private int minimosPasos = 0;
+
     private void Awake()
     {
         GameManager gameManager = GameManager.Instance;
@@ -39,6 +43,7 @@ public class LevelManager : MonoBehaviour
                 currentCategory = gameManager.exampleCategory;
             currentLevelIndex = gameManager.GetCurrentLevelIndex();
             currentLevel = currentCategory.levels[currentLevelIndex];
+            minimosPasos = currentLevel.minimosPasos;
         }
 
         //Clamp values between 0 and 1
@@ -62,6 +67,11 @@ public class LevelManager : MonoBehaviour
     {
         if (boardManager == null)
             return;
+
+        if (boardManager.GetCurrentPasos() > minimosPasos)
+        {
+            starsController.deactivateMinimoStar();
+        }
 
         if (boardManager.BoardCompleted() && !endPanel.activeSelf && !endPanelMinimized.activeSelf)
         {
@@ -137,6 +147,8 @@ public class LevelManager : MonoBehaviour
         gameOverPanel.SetActive(false);
         blackRect.SetActive(false);
         gameOverMinimized.SetActive(false);
+
+        starsController.deactivatePrimeraEjecucionStar();
     }
 
     public void MinimizeEndPanel()

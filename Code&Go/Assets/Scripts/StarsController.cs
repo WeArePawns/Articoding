@@ -9,8 +9,6 @@ public class StarsController : MonoBehaviour
     public Image primeraEjecucionStar;
     public Image noPistasStar;
 
-    public GameObject continueButton;
-
     public int getStars()
     {
         int nStars = 3;

@@ -1162,7 +1162,7 @@ GameObject:
   - component: {fileID: 245747985}
   - component: {fileID: 245747984}
   m_Layer: 5
-  m_Name: Statement Button
+  m_Name: HintsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1230,25 +1230,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1651692279}
-        m_TargetAssemblyTypeName: LevelUIController, Assembly-CSharp
-        m_MethodName: Open
-        m_Mode: 2
+      - m_Target: {fileID: 1885510894}
+        m_TargetAssemblyTypeName: StarsController, Assembly-CSharp
+        m_MethodName: deactivateNoPistasStar
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 1970854165}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.RectTransform, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1651692279}
-        m_TargetAssemblyTypeName: LevelUIController, Assembly-CSharp
-        m_MethodName: Close
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 1739018485}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.RectTransform, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -3495,6 +3483,7 @@ MonoBehaviour:
   debugPanel: {fileID: 314227718}
   gameOverPanel: {fileID: 1219248984}
   gameOverMinimized: {fileID: 610898750}
+  starsController: {fileID: 1885510894}
 --- !u!4 &783960783
 Transform:
   m_ObjectHideFlags: 0
@@ -4820,8 +4809,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 612.49036, y: -25}
-  m_SizeDelta: {x: 461.57806, y: 50}
+  m_AnchoredPosition: {x: 615.8007, y: -25}
+  m_SizeDelta: {x: 466.0555, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1187875160
 MonoBehaviour:
@@ -4956,6 +4945,7 @@ GameObject:
   - component: {fileID: 1219248988}
   - component: {fileID: 1219248987}
   - component: {fileID: 1219248986}
+  - component: {fileID: 1219248989}
   m_Layer: 5
   m_Name: GameOverPanel
   m_TagString: Untagged
@@ -5049,6 +5039,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1219248984}
   m_CullTransparentMesh: 0
+--- !u!95 &1219248989
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219248984}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 179d582b00acaac40bf3cd34f3dc85c1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1224227199
 GameObject:
   m_ObjectHideFlags: 0
@@ -5690,8 +5699,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 190.85066, y: -25}
-  m_SizeDelta: {x: 381.70132, y: 50}
+  m_AnchoredPosition: {x: 191.38649, y: -25}
+  m_SizeDelta: {x: 382.77298, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1450844634
 MonoBehaviour:
@@ -5747,6 +5756,7 @@ GameObject:
   - component: {fileID: 1464331591}
   - component: {fileID: 1464331590}
   - component: {fileID: 1464331592}
+  - component: {fileID: 1464331593}
   m_Layer: 5
   m_Name: EndPanel
   m_TagString: Untagged
@@ -5842,6 +5852,25 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
+--- !u!95 &1464331593
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1464331588}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3e033de5999ffb34c9cd22164081bdd6, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1468243586
 GameObject:
   m_ObjectHideFlags: 0
@@ -7747,10 +7776,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa66335f93c8f54ea12564d64865f14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimoStar: {fileID: 0}
-  primeraEjecucionStar: {fileID: 0}
-  noPistasStar: {fileID: 0}
-  continueButton: {fileID: 0}
+  minimoStar: {fileID: 283044347}
+  primeraEjecucionStar: {fileID: 288990326}
+  noPistasStar: {fileID: 586603504}
 --- !u!4 &1885510895
 Transform:
   m_ObjectHideFlags: 0
@@ -8201,8 +8229,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 986.7957, y: -25}
-  m_SizeDelta: {x: 287.0326, y: 50}
+  m_AnchoredPosition: {x: 989.5702, y: -25}
+  m_SizeDelta: {x: 281.4834, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2015711617
 MonoBehaviour:
