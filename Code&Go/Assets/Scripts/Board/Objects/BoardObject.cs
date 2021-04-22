@@ -13,6 +13,7 @@ public class BoardObject : MonoBehaviour
 
     Direction objectDirection;
 
+    [SerializeField] protected Animator anim;
     protected BoardManager boardManager;
     protected string typeName = "";
     protected string[] argsNames;
@@ -62,6 +63,11 @@ public class BoardObject : MonoBehaviour
     {
         Direction newDir = (Direction)((((int)objectDirection + dir) + 8) % 8);
         SetDirection(newDir);
+    }
+
+    public Animator GetAnimator()
+    {
+        return anim;
     }
 
     //Virtual method for seralization of additional arguments in child classes

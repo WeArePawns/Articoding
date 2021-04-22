@@ -72,7 +72,8 @@ public class LevelManager : MonoBehaviour
         statementManager.Load(currentLevel.statement);
         ActivateLevelBlocks(currentLevel.activeBlocks, currentLevel.allActive);
         LoadInitialBlocks(currentLevel.initialState);
-        boardManager.LoadBoard(currentLevel.levelBoard, buildLimits);
+        BoardState state = BoardState.FromJson(currentLevel.levelBoard.text);
+        boardManager.LoadBoard(state, buildLimits);
         FitBoard();
     }
 
@@ -123,10 +124,9 @@ public class LevelManager : MonoBehaviour
     //TODO:Hacer un reset board en vez de volver a cargarla... o no
     public void ResetLevel()
     {
-        boardManager.transform.localScale = Vector3.one;
-        boardManager.transform.localPosition = Vector3.zero;
-        boardManager.LoadBoard(currentLevel.levelBoard, buildLimits);
-        FitBoard();
+        boardManager.DeleteBoardElements();
+        BoardState state = BoardState.FromJson(currentLevel.levelBoard.text);
+        boardManager.GenerateBoardElements(state);
     }
 
     public void ReloadLevel()

@@ -11,18 +11,23 @@ public class LaserEmitter : BoardObject, ILaserEmitter
     private LaserRay laserRay;
 
     [SerializeField] private ParticleSystem onParticles;
+    [SerializeField] private ParticleSystem moveParticles;
     [SerializeField] private GameObject pointLight;
 
     private void Awake()
     {
         typeName = "Laser";
-        argsNames = new string[1] { "Intensidad" };
+        argsNames = new string[1] { "Intensidad" };        
     }
 
     public void Start()
     {
         LaserManager.Instance.AddLaserEmitter(this);
+
+        moveParticles.gameObject.SetActive(true);
+        moveParticles.Play();
     }
+
 
     private void OnDestroy()
     {
