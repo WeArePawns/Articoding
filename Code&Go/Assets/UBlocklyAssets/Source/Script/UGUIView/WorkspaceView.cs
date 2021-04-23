@@ -18,6 +18,7 @@ limitations under the License.
 
 
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.Events;
@@ -183,11 +184,17 @@ namespace UBlockly.UGUI
             if (mRunCodeEvent != null)
                 mRunCodeEvent.Invoke();
 
-            AnalyticsResult result = Analytics.CustomEvent("RunButton", new Dictionary<string, object>()
-            {
-                { "workspace", mWorkspace.GetTopBlocks(true).ToString() }
-            });
-            Debug.Log("Analytics result: " + result);
+            XmlNode dom = UBlockly.Xml.WorkspaceToDom(BlocklyUI.WorkspaceView.Workspace);
+            string text = UBlockly.Xml.DomToText(dom);
+            int splitSize = 300;
+            for (int i = 0; i < Mathf.CeilToInt(text.Length / (float)splitSize); i++) {
+                AnalyticsResult result = Analytics.CustomEvent("RunButton", new Dictionary<string, object>()
+                {
+                    { "workspace_" + i.ToString(), text.Substring(i * splitSize, i * splitSize + splitSize < text.Length ? splitSize : i * splitSize + splitSize - text.Length) }
+                });
+                Debug.Log("Analytics result: " + result);
+
+            }
 
 //            Lua.Interpreter.Run(mWorkspace);
             CSharp.Interpreter.Run(mWorkspace);
