@@ -332,6 +332,10 @@ public class BoardManager : Listener
                 if (!elementPositions.ContainsKey(boardObject.GetName()))
                     elementPositions[boardObject.GetName()] = new List<Vector2Int>();
                 elementPositions[boardObject.GetName()].Add(new Vector2Int(x, y));
+
+                FollowingText text = boardObject.GetComponent<FollowingText>();
+                if (text != null)
+                    text.SetName(boardObject.GetName() + " " + elementPositions[boardObject.GetName()].Count.ToString());
             }
             return placed;
         }

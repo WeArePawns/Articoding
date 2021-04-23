@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 // Base class of all board objects
 public class BoardObject : MonoBehaviour
 {
