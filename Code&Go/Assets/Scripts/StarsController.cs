@@ -12,13 +12,13 @@ public class StarsController : MonoBehaviour
 
     public uint GetStars()
     {
-        uint nStars = 0x7;
+        uint nStars = 3;
         if (primeraEjecucionStar.color == deactivatedColor)
-            nStars &= 0x3;
+            nStars --;
         if (noPistasStar.color == deactivatedColor)
-            nStars &= 0x5;
+            nStars --;
         if (minimoStar.color == deactivatedColor)
-            nStars &= 0x6;
+            nStars --;
 
         return nStars;
     }

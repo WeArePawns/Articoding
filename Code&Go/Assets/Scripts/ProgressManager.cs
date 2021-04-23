@@ -51,9 +51,9 @@ public class ProgressManager : MonoBehaviour
     //---------
     public void LevelCompleted(uint starsAchieved)
     {
-        uint newStarsAchieved = ~currentCategory.levelsData[currentLevel].stars & starsAchieved;
-        currentCategory.levelsData[currentLevel].stars = currentCategory.levelsData[currentLevel].stars | starsAchieved;
-        currentCategory.totalStars += GetNStars(newStarsAchieved);
+        uint newStarsAchieved = (uint)Mathf.Clamp((float)starsAchieved - (float)currentCategory.levelsData[currentLevel].stars, 0.0f, 3.0f);
+        currentCategory.levelsData[currentLevel].stars = currentCategory.levelsData[currentLevel].stars + newStarsAchieved;
+        currentCategory.totalStars += newStarsAchieved;
 
         if (currentLevel >= currentCategory.lastLevelUnlocked)
         {
@@ -155,16 +155,5 @@ public class ProgressManager : MonoBehaviour
         hintsRemaining = data.hintsRemaining;
         lastCategoryUnlocked = data.lastCategoryUnlocked;
         coins = data.coins;
-    }
-
-    //Returns how many bits are active
-    private uint GetNStars(uint stars)
-    {
-        uint c; // c accumulates the total bits set in v
-        for (c = 0; stars != 0; c++)
-        {
-            stars &= stars - 1; // clear the least significant bit set
-        }
-        return c;
     }
 }

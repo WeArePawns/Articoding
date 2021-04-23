@@ -75,6 +75,7 @@ public class LevelManager : MonoBehaviour
         {
             endPanel.SetActive(true);
             blackRect.SetActive(true);
+            ProgressManager.Instance.LevelCompleted(starsController.GetStars());
         }
     }
 
@@ -131,9 +132,7 @@ public class LevelManager : MonoBehaviour
 
     // It is called when the current level is completed
     public void LoadNextLevel()
-    {
-        
-        ProgressManager.Instance.LevelCompleted(starsController.GetStars());
+    {        
         int levelSize = currentCategory.levels.Length;
         if (++currentLevelIndex < levelSize)
             GameManager.Instance.LoadLevel(currentCategory, currentLevelIndex);
