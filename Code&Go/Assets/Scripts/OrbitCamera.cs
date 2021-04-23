@@ -32,6 +32,7 @@ public class OrbitCamera : MonoBehaviour
     public float minFov, maxFov;
     public float sensitivity;
     private float fov = -1;
+    private float initSize = -1;
 
     public FocusPoint Target
     {
@@ -62,6 +63,7 @@ public class OrbitCamera : MonoBehaviour
     {
         _yaw = _iniYaw;
         _pitch = _iniPitch;
+        fov = initSize;
     }
 
     private void ApplyConstraints()
@@ -108,7 +110,10 @@ public class OrbitCamera : MonoBehaviour
 
         // Zoom con la rueda del ratón
         if (fov == -1) // Tiene que ir aqui porque el CameraFit tambien toca el ortographicSize
+        {
             fov = cam.orthographicSize;
+            initSize = cam.orthographicSize;
+        }
         fov -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
         fov = Mathf.Clamp(fov, minFov, maxFov);
     }
