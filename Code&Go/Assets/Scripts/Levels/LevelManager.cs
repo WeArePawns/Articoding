@@ -1,9 +1,6 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using System.Xml;
 using UBlockly.UGUI;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
@@ -22,6 +19,19 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private BoardManager boardManager;
     [SerializeField] private Camera mainCamera;
 
+    public GameObject endPanel;
+    public GameObject blackRect;
+
+    public GameObject endPanelMinimized;
+    public GameObject debugPanel;
+
+    public GameObject gameOverPanel;
+    public GameObject gameOverMinimized;
+
+    public StarsController starsController;
+
+    private int minimosPasos = 0;
+
     private void Awake()
     {
         GameManager gameManager = GameManager.Instance;
@@ -31,6 +41,7 @@ public class LevelManager : MonoBehaviour
             currentCategory = gameManager.GetCurrentCategory();
             currentLevelIndex = gameManager.GetCurrentLevelIndex();
             currentLevel = currentCategory.levels[currentLevelIndex];
+            minimosPasos = currentLevel.minimosPasos;
         }
 
         //Clamp values between 0 and 1
@@ -41,6 +52,8 @@ public class LevelManager : MonoBehaviour
         if (boardInitOffsetLeftDown.y + boardInitOffsetRightUp.y >= 1.0f)
             boardInitOffsetLeftDown.y = boardInitOffsetRightUp.y = 0;
 
+        endPanel.SetActive(false);
+        //blackRect.SetActive(false);
     }
 
     private void Start()
@@ -53,10 +66,16 @@ public class LevelManager : MonoBehaviour
         if (boardManager == null)
             return;
 
-        if (boardManager.BoardCompleted())
+        if (boardManager.GetCurrentPasos() > minimosPasos)
         {
-            ProgressManager.Instance.LevelCompleted(0x111);
-            LoadNextLevel();
+            starsController.deactivateMinimoStar();
+        }
+
+        if (boardManager.BoardCompleted() && !endPanel.activeSelf && !endPanelMinimized.activeSelf)
+        {
+            //LoadNextLevel();
+            endPanel.SetActive(true);
+            blackRect.SetActive(true);
         }
     }
 
@@ -112,13 +131,42 @@ public class LevelManager : MonoBehaviour
     }
 
     // It is called when the current level is completed
-    private void LoadNextLevel()
+    public void LoadNextLevel()
     {
+        ProgressManager.Instance.LevelCompleted(0x111);
         int levelSize = currentCategory.levels.Length;
         if (++currentLevelIndex < levelSize)
             GameManager.Instance.LoadLevel(currentCategory, currentLevelIndex);
         else
             LoadMainMenu(); // Por ejemplo
+    }
+
+    public void RetryLevel()
+    {
+        ResetLevel();
+        gameOverPanel.SetActive(false);
+        blackRect.SetActive(false);
+        gameOverMinimized.SetActive(false);
+
+        starsController.deactivatePrimeraEjecucionStar();
+    }
+
+    public void MinimizeEndPanel()
+    {
+        endPanelMinimized.SetActive(true);
+        gameOverPanel.SetActive(false);
+        endPanel.SetActive(false);
+        blackRect.SetActive(false);
+        debugPanel.SetActive(false);
+    }
+
+    public void MinimizeGameOverPanel()
+    {
+        gameOverMinimized.SetActive(true);
+        gameOverPanel.SetActive(false);
+        //endPanel.SetActive(false);
+        blackRect.SetActive(false);
+        debugPanel.SetActive(false);
     }
 
     //TODO:Hacer un reset board en vez de volver a cargarla... o no
@@ -127,6 +175,7 @@ public class LevelManager : MonoBehaviour
         boardManager.DeleteBoardElements();
         BoardState state = BoardState.FromJson(currentLevel.levelBoard.text);
         boardManager.GenerateBoardElements(state);
+        debugPanel.SetActive(true);
     }
 
     public void ReloadLevel()

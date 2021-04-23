@@ -26,10 +26,18 @@ public class BoardManager : Listener
     private Dictionary<string, List<Vector2Int>> elementPositions;
     private List<List<BoardCell>> cells;
 
+    private int currentPasos = 0;
+
     private void Awake()
     {
         cells = new List<List<BoardCell>>();
         InitIDs();
+        //currentPasos = 0;
+    }
+
+    public int GetCurrentPasos()
+    {
+        return currentPasos;
     }
 
     public void GenerateBoard()
@@ -48,6 +56,10 @@ public class BoardManager : Listener
         }
         nReceivers = 0;
         nReceiversActive = 0;
+
+        FocusPoint fPoint = GetComponent<FocusPoint>();
+        if (fPoint != null)
+            fPoint.off = new Vector3(columns / 2.0f, 0.0f, rows / 2.0f);
     }
 
     public void GenerateLimits()
@@ -394,11 +406,15 @@ public class BoardManager : Listener
     public IEnumerator RotateObject(string name, int index, int direction, int amount, float time)
     {
         if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
+        {
+            currentPasos += amount / 2;
+
             for (int i = 0; i < amount % 8; i++)
             {
                 RotateObject(elementPositions[name][index], direction, time);
                 yield return new WaitForSeconds(time + 0.05f);
             }
+        }
         yield return null;
     }
 
@@ -429,6 +445,8 @@ public class BoardManager : Listener
                     bObject.GetAnimator().Play("Collision");
                 return false;
             }
+
+            currentPasos++;
 
             StartCoroutine(InternalMoveObject(fromCell, toCell, time));
             return true;
@@ -554,6 +572,7 @@ public class BoardManager : Listener
         float intensity = 0.0f, time = 0.5f;
         bool active;
         Vector2Int dir;
+
         switch (type)
         {
             case MSG_TYPE.MOVE_LASER:
@@ -602,7 +621,10 @@ public class BoardManager : Listener
             Vector2Int pos = elementPositions["Laser"][index];
             LaserEmitter laser = (LaserEmitter)board[pos.x, pos.y].GetPlacedObject();
             if (laser != null)
+            {
                 laser.ChangeIntensity(newIntensity);
+                currentPasos++;
+            }
         }
     }
 
@@ -613,7 +635,10 @@ public class BoardManager : Listener
             Vector2Int pos = elementPositions["Door"][index];
             Door door = (Door)board[pos.x, pos.y].GetPlacedObject();
             if (door != null)
+            {
                 door.SetActive(active);
+                currentPasos++;
+            }
         }
     }
 

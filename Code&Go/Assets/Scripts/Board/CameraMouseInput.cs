@@ -10,7 +10,7 @@ public class CameraMouseInput : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     private Vector3 _prevMousePos;
 
-    public bool mousePressed;
+    private bool mousePressed;
 
     public void OnPointerDown(PointerEventData eventData)
     {

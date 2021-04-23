@@ -37,6 +37,7 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "AMOUNT", new DataStruct(0));
+
             yield return ctor;
             DataStruct arg0 = ctor.Data;
 
