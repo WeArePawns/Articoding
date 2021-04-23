@@ -130,7 +130,7 @@ namespace UBlockly
             }
 
             Debug.LogFormat("<color=green>[CodeRunner]Pause process {0}.</color>", itorFunc);
-            
+
             CoroutineStruct value = mCoroutineDict[itorFunc];
             value.paused = true;
             mCoroutineDict[itorFunc] = value;
@@ -151,7 +151,7 @@ namespace UBlockly
             }
 
             Debug.LogFormat("<color=green>[CodeRunner]Resume process {0}.</color>", itorFunc);
-            
+
             CoroutineStruct value = mCoroutineDict[itorFunc];
             value.paused = false;
             mCoroutineDict[itorFunc] = value;
@@ -168,7 +168,7 @@ namespace UBlockly
         {
             //wait for one frame to get the coroutine returned, for dictionary check.
             yield return null;
-            
+
             Debug.LogFormat("<color=green>[CodeRunner]SimulateCoroutine: begin - time: {0}.</color>", Time.time);
 
             //FindObjectOfType<StarsController>().deactivatePrimeraEjecucionStar();
@@ -185,11 +185,11 @@ namespace UBlockly
                     //Debug.LogFormat("<color=green>[CodeRunner]SimulateCoroutine: current - {0}, time: {1}</color>", itor.Current, Time.time);
                     if (itor.Current is IEnumerator)
                     {
-                        stack.Push((IEnumerator) itor.Current);
+                        stack.Push((IEnumerator)itor.Current);
                         finished = false;
                         break;
                     }
-                    
+
                     yield return itor.Current;
 
                     //pause
@@ -208,8 +208,10 @@ namespace UBlockly
 
             yield return new WaitForSeconds(1.5f);
 
-            blackRect.SetActive(true);
-            gameOverPanel.SetActive(true);
+            if (blackRect != null)
+                blackRect.SetActive(true);
+            if (gameOverPanel != null)
+                gameOverPanel.SetActive(true);
         }
     }
 }

@@ -13,7 +13,8 @@ public class PopUpManager : MonoBehaviour
     [SerializeField] private Image highlightImage;
     [Space]
     [SerializeField] private Shader highlightShader;
-    [SerializeField] [Min(0.0f)] private float highlightPadding; 
+    [SerializeField] [Min(0.0f)] private float highlightPadding;
+    [SerializeField] private PanelControl inventoryArea;
     private Material imageMaterial;
 
 
@@ -29,6 +30,7 @@ public class PopUpManager : MonoBehaviour
             mainContent.SetActive(false);
             return;
         }
+        Instance.inventoryArea = inventoryArea;
         Destroy(gameObject);
     }
 
@@ -37,6 +39,7 @@ public class PopUpManager : MonoBehaviour
         PopUpData data = new PopUpData();
         data.title = title;
         data.content = content;
+        if (inventoryArea != null) inventoryArea.DisableDissapear(true);
 
         imageMaterial.SetVector("_PositionSize", Vector4.zero);
         mainContent.SetActive(true);
@@ -55,6 +58,7 @@ public class PopUpManager : MonoBehaviour
         float yPadding = highlightPadding * Screen.height / canvasScaler.referenceResolution.y;
         Vector2 position = new Vector2(rect.x + rect.width / 2.0f, rect.y + rect.height / 2.0f);
         Vector2 offset = new Vector2(rect.width / 2.0f + xPadding, rect.height / 2.0f + yPadding);
+        if (inventoryArea != null) inventoryArea.DisableDissapear(true);
 
         imageMaterial.SetVector("_PositionSize", new Vector4(rect.x, rect.y, rect.width, rect.height));
 
@@ -74,6 +78,7 @@ public class PopUpManager : MonoBehaviour
         float yPadding = highlightPadding * Screen.height / canvasScaler.referenceResolution.y;
         Vector2 position = new Vector2(rect.x + rect.width / 2.0f, rect.y + rect.height / 2.0f);
         Vector2 offset = new Vector2(rect.width / 2.0f + xPadding, rect.height / 2.0f + yPadding);
+        if (inventoryArea != null) inventoryArea.DisableDissapear(true);
 
         imageMaterial.SetVector("_PositionSize", new Vector4(rect.x, rect.y, rect.width, rect.height));
 
@@ -90,6 +95,7 @@ public class PopUpManager : MonoBehaviour
 
     public void Hide()
     {
+        if(inventoryArea != null) inventoryArea.DisableDissapear(false);
         mainContent.SetActive(false);
         popupPanel.Hide();
     }
