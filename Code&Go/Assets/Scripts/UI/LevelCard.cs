@@ -6,9 +6,10 @@ using UnityEngine;
 public class LevelCard : MonoBehaviour
 {
     private LevelData level;
+    private Category category;
 
     [SerializeField] private Text title;
-    [SerializeField] private GameObject[] stars;
+    [SerializeField] private Image[] stars;
     [SerializeField] private Image cardImage;
 
     [HideInInspector] public Button button;
@@ -34,14 +35,23 @@ public class LevelCard : MonoBehaviour
 
         title.text = numLevel.ToString();
 
-        // TODO: cambiar el color de las estrellas que ha conseguido el jugador en el nivel
+        uint levelStars = ProgressManager.Instance.GetLevelStars(category, numLevel);
 
+        // TODO: cambiar el color de las estrellas que ha conseguido el jugador en el nivel
+        uint a = 0x1;
+        for (int i = 0; i < 3; i++)
+        {
+            if ((levelStars & a) == 0)
+                stars[i].color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+            a <<= 1;
+        }
     }
 
-    public void ConfigureLevel(LevelData level, int numLevel)
+    public void ConfigureLevel(LevelData level, Category category, int numLevel)
     {
         this.level = level;
         this.numLevel = numLevel;
+        this.category = category;
         Configure();
     }
 

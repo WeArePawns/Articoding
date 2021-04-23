@@ -225,6 +225,15 @@ public class BoardManager : Listener
         nReceivers++;
     }
 
+    public void Reset()
+    {
+        nReceivers = 0;
+        nReceiversActive = 0;
+        DeleteBoardElements();
+        elementPositions.Clear();
+        currentPasos = 0;
+    }
+
     public void ReceiverActivated()
     {
         nReceiversActive++;

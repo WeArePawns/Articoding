@@ -68,7 +68,7 @@ public class LevelManager : MonoBehaviour
 
         if (boardManager.GetCurrentPasos() > minimosPasos)
         {
-            starsController.deactivateMinimoStar();
+            starsController.DeactivateMinimoStar();
         }
 
         if (boardManager.BoardCompleted() && !endPanel.activeSelf && !endPanelMinimized.activeSelf)
@@ -132,7 +132,8 @@ public class LevelManager : MonoBehaviour
     // It is called when the current level is completed
     public void LoadNextLevel()
     {
-        ProgressManager.Instance.LevelCompleted(0x111);
+        
+        ProgressManager.Instance.LevelCompleted(starsController.GetStars());
         int levelSize = currentCategory.levels.Length;
         if (++currentLevelIndex < levelSize)
             GameManager.Instance.LoadLevel(currentCategory, currentLevelIndex);
@@ -147,7 +148,7 @@ public class LevelManager : MonoBehaviour
         blackRect.SetActive(false);
         gameOverMinimized.SetActive(false);
 
-        starsController.deactivatePrimeraEjecucionStar();
+        starsController.DeactivatePrimeraEjecucionStar();
     }
 
     public void MinimizeEndPanel()
@@ -171,7 +172,7 @@ public class LevelManager : MonoBehaviour
     //TODO:Hacer un reset board en vez de volver a cargarla... o no
     public void ResetLevel()
     {
-        boardManager.DeleteBoardElements();
+        boardManager.Reset();
         BoardState state = BoardState.FromJson(currentLevel.levelBoard.text);
         boardManager.GenerateBoardElements(state);
         debugPanel.SetActive(true);

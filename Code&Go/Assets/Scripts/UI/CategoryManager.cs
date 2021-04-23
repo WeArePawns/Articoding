@@ -83,7 +83,7 @@ public class CategoryManager : MonoBehaviour
             int index = i;
             LevelData levelData = category.levels[i];
             LevelCard levelCard = Instantiate(levelCardPrefab, levelsParent.transform);
-            levelCard.ConfigureLevel(levelData, i + 1);
+            levelCard.ConfigureLevel(levelData, category, i + 1);
             if (ProgressManager.Instance.IsLevelUnlocked(currentCategory, i))
             {
                 levelCard.button.onClick.AddListener(() =>

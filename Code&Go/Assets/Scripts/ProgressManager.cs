@@ -111,6 +111,11 @@ public class ProgressManager : MonoBehaviour
         return categoriesData[categoryIndex].levelsData[level].stars;
     }
 
+    public uint GetLevelStars(Category category, int level)
+    {
+        return GetLevelStars(categories.IndexOf(category), level);
+    }
+
     public uint GetCategoryProgress(int categoryIndex)
     {
         if (categoryIndex >= categoriesData.Length) return 0;
