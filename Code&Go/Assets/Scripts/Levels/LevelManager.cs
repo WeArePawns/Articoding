@@ -73,7 +73,6 @@ public class LevelManager : MonoBehaviour
 
         if (boardManager.BoardCompleted() && !endPanel.activeSelf && !endPanelMinimized.activeSelf)
         {
-            //LoadNextLevel();
             endPanel.SetActive(true);
             blackRect.SetActive(true);
         }
