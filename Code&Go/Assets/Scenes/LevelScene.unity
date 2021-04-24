@@ -429,19 +429,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 67460334}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
-        m_MethodName: ResetLevel
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &67460334
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -583,7 +571,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1854766111}
         m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
         m_MethodName: LoadNextLevel
         m_Mode: 1
@@ -1702,7 +1690,7 @@ GameObject:
   - component: {fileID: 380465386}
   - component: {fileID: 380465385}
   m_Layer: 5
-  m_Name: CloseButton
+  m_Name: ResetViewButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1771,20 +1759,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 56424207}
         m_TargetAssemblyTypeName: OrbitCamera, Assembly-CSharp
-        m_MethodName: Reset
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: CameraZoom, Assembly-CSharp
         m_MethodName: Reset
         m_Mode: 1
         m_Arguments:
@@ -1864,10 +1840,10 @@ RectTransform:
   m_Father: {fileID: 314227719}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 333.33334, y: -62.5}
+  m_SizeDelta: {x: 626.6667, y: 125}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &452226614
 GameObject:
@@ -1950,7 +1926,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1854766111}
         m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
         m_MethodName: LoadMainMenu
         m_Mode: 1
@@ -3439,7 +3415,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1854766111}
         m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
         m_MethodName: RetryLevel
         m_Mode: 1
@@ -6000,10 +5976,10 @@ RectTransform:
   m_Father: {fileID: 314227719}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 960, y: -62.5}
+  m_SizeDelta: {x: 626.6667, y: 125}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1481666636
 GameObject:
@@ -6576,7 +6552,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1854766111}
         m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
         m_MethodName: MinimizeGameOverPanel
         m_Mode: 1
@@ -6759,7 +6735,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1854766111}
         m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
         m_MethodName: LoadNextLevel
         m_Mode: 1
@@ -7589,7 +7565,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1854766111}
         m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
         m_MethodName: MinimizeEndPanel
         m_Mode: 1
@@ -7804,6 +7780,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 16.3, y: -30, z: 0}
+--- !u!114 &1854766111 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2411621852826482954, guid: da67a30aee492a24ea85ddecd86eb910, type: 3}
+  m_PrefabInstance: {fileID: 1184214071}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b38413b47f0343f479ad73c35dccaa2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1855209967
 GameObject:
   m_ObjectHideFlags: 0
@@ -8076,6 +8063,10 @@ PrefabInstance:
       propertyPath: popUpManager
       value: 
       objectReference: {fileID: 1301297751}
+    - target: {fileID: 8678186673926732497, guid: ff7d0fd4926e04e4a80cc863cba6283f, type: 3}
+      propertyPath: tutorialsON
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff7d0fd4926e04e4a80cc863cba6283f, type: 3}
 --- !u!1001 &1938465505
@@ -8238,7 +8229,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1854766111}
         m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
         m_MethodName: RetryLevel
         m_Mode: 1
@@ -8567,10 +8558,10 @@ RectTransform:
   m_Father: {fileID: 314227719}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1586.6667, y: -62.5}
+  m_SizeDelta: {x: 626.6667, y: 125}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2083501356
 GameObject:
