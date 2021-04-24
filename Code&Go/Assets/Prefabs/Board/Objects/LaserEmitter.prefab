@@ -9823,6 +9823,7 @@ GameObject:
   - component: {fileID: 3282710200332546109}
   - component: {fileID: -8262248528175507582}
   - component: {fileID: 5028265636973379375}
+  - component: {fileID: 2986789661682027681}
   m_Layer: 0
   m_Name: LaserEmitter
   m_TagString: Untagged
@@ -9861,9 +9862,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de25b5a46f801a94c985dd0dd4f95655, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  anim: {fileID: 0}
   intensity: 0
   laserRayPrefab: {fileID: -6798905577125967761, guid: 8dc4eeecfdbd1884dbd7a3bfcd21ff14, type: 3}
   onParticles: {fileID: 843139509730862598}
+  moveParticles: {fileID: 295343302353364800}
   pointLight: {fileID: 490577500768018479}
 --- !u!114 &-8262248528175507582
 MonoBehaviour:
@@ -9898,6 +9901,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2986789661682027681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6745913655574259957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ce61d51f2b329d42886323b46f2a94a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameTextPrefab: {fileID: 0}
 --- !u!1001 &6560707611259990167
 PrefabInstance:
   m_ObjectHideFlags: 0

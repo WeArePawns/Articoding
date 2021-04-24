@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum MSG_TYPE { MOVE_LASER, MOVE, ROTATE_LASER, ROTATE, CHANGE_INTENSITY, ACTIVATE_DOOR};
+public enum MSG_TYPE { MOVE_LASER, MOVE, ROTATE_LASER, ROTATE, CHANGE_INTENSITY, ACTIVATE_DOOR, CELL_OCCUPIED };
 
 public class MessageManager : MonoBehaviour
 {
@@ -34,5 +34,13 @@ public class MessageManager : MonoBehaviour
     {
         foreach (Listener l in listeners)
             l.ReceiveMessage(msg, type);
+    }
+
+    public bool SendBoolMessage(string msg, MSG_TYPE type)
+    {
+        int i = 0;
+        while (i < listeners.Count && listeners[i].ReceiveBoolMessage(msg, type))
+            i++;
+        return i >= listeners.Count;
     }
 }

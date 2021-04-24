@@ -29,11 +29,6 @@ public class OrbitCamera : MonoBehaviour
 
     private Camera cam;
 
-    public float minFov, maxFov;
-    public float sensitivity;
-    private float fov = -1;
-    private float initSize = -1;
-
     public FocusPoint Target
     {
         get { return _target; }
@@ -63,12 +58,10 @@ public class OrbitCamera : MonoBehaviour
     {
         _yaw = _iniYaw;
         _pitch = _iniPitch;
-        fov = initSize;
     }
 
     private void ApplyConstraints()
     {
-
         Quaternion targetYaw = Quaternion.Euler(0, _target.transform.rotation.eulerAngles.y, 0);
         Quaternion targetPitch = Quaternion.Euler(_target.transform.rotation.eulerAngles.x, 0, 0);
 
@@ -82,7 +75,6 @@ public class OrbitCamera : MonoBehaviour
         // This way we don't need to worry about wether we need to move left or right, up or down.
         if (yawOverflow > 0) { _yaw = Quaternion.Slerp(_yaw, targetYaw, yawOverflow / yawDifference); }
         if (pitchOverflow > 0) { _pitch = Quaternion.Slerp(_pitch, targetPitch, pitchOverflow / pitchDifference); }
-
     }
 
     void Awake()
@@ -107,19 +99,5 @@ public class OrbitCamera : MonoBehaviour
         // offset the camera at distance from the target position.
         Vector3 offset = transform.rotation * (-Vector3.forward * _distance);
         transform.position = _target.transform.position + offset + _target.offset;
-
-        // Zoom con la rueda del ratón
-        if (fov == -1) // Tiene que ir aqui porque el CameraFit tambien toca el ortographicSize
-        {
-            fov = cam.orthographicSize;
-            initSize = cam.orthographicSize;
-        }
-        fov -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
-        fov = Mathf.Clamp(fov, minFov, maxFov);
-    }
-
-    private void LateUpdate()
-    {
-        cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, fov, Time.deltaTime * 3.0f);
     }
 }

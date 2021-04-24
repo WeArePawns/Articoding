@@ -19,7 +19,7 @@ public class ElementSelection : MonoBehaviour
         DestroySelector();
 
         rows = Mathf.Min(board.GetRows(), elements.Length);
-        columns = elements.Length / rows;
+        columns = Mathf.CeilToInt(elements.Length / (float)rows);
         int elementIndex = 0;
         columns = Mathf.Clamp(columns, 1, int.MaxValue);
         for (int y = 0; y < rows; y++)

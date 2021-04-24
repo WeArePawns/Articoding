@@ -17,6 +17,7 @@ public class LaserReceiver : BoardObject, ILaserReceiver
     private void Awake()
     {
         typeName = "Receiver";
+        argsNames = new string[0];
     }
 
     private void Start()
@@ -30,7 +31,7 @@ public class LaserReceiver : BoardObject, ILaserReceiver
         receiverRenderer.material = onMaterial;
         onParticles.Play();
         light.SetActive(true);
-        Invoke("ReceiverActive", 2.0f);
+        Invoke("ReceiverActive", 1.0f);
     }
 
     public void OnLaserReceiving()
@@ -56,6 +57,7 @@ public class LaserReceiver : BoardObject, ILaserReceiver
     private void ReceiverActive()
     {
         registered = true;
-        boardManager.ReceiverActivated();
+        if (boardManager != null)
+            boardManager.ReceiverActivated();
     }
 }

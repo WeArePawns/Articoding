@@ -75,7 +75,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
             {
                 if (pos.x == lastPos.x && pos.z == lastPos.y)
                     transform.localPosition = new Vector3(lastPos.x, transform.position.y, lastPos.y);
-                else if (!board.AddBoardObject((int)pos.x, (int)pos.z, boardObject))
+                else if (board.GetBoardCellType((int)pos.x, (int)pos.z) == 1 || !board.AddBoardObject((int)pos.x, (int)pos.z, boardObject))
                     Destroy(gameObject, 0.1f);
                 board.RemoveBoardObject(lastPos.x, lastPos.y, false);
                 lastPos = new Vector2Int((int)pos.x, (int)pos.z);

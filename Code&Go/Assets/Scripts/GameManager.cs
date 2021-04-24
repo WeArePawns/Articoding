@@ -5,20 +5,22 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;    
+    public static GameManager Instance;
     [SerializeField] private Category[] categories;
+    [SerializeField] private bool loadSave = true;
 
     [SerializeField] private Category category;
     public int levelIndex;
 
     void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
             SaveManager.Init();
-            SaveManager.Load();
+            if (loadSave)
+                SaveManager.Load();
         }
         else
         {
@@ -40,7 +42,8 @@ public class GameManager : MonoBehaviour
     public void LoadLevel(Category category, int levelIndex)
     {
         ProgressManager.Instance.LevelStarted(category, levelIndex);
-        SaveManager.Save();
+        if (loadSave)
+            SaveManager.Save();
         this.category = category;
         this.levelIndex = levelIndex;
         LoadScene("LevelScene");
@@ -53,7 +56,7 @@ public class GameManager : MonoBehaviour
 
     public void OnDestroy()
     {
-        if (Instance == this)
+        if (Instance == this && loadSave)
             SaveManager.Save();
     }
 }

@@ -8,5 +8,6 @@ public class Obstacle : BoardObject
     private void Awake()
     {
         typeName = "Obstacle";
+        argsNames = new string[0];
     }
 }

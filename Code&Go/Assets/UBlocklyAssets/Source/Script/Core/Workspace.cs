@@ -234,6 +234,7 @@ namespace UBlockly
         /// <returns>VariableModel ,The newly created variable.</returns>
         public VariableModel CreateVariable(string name, string optType = null, string optId = null)
         {
+            if (name == "") return null;
             return this.VariableMap.CreateVariable(name, optType, optId);
         }
 
@@ -392,6 +393,8 @@ namespace UBlockly
         /// <param name="newName">New variable name</param>
         public void RenameVariableInternal(VariableModel variable, string newName)
         {
+            if (newName == "") return;
+
             var newVariable = this.GetVariable(newName);
             
             // If they are different types, throw an error.

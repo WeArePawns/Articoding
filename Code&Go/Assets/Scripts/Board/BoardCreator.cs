@@ -65,10 +65,10 @@ public class BoardCreator : MonoBehaviour
 
             //Fit the board on the screen and resize it
             board.transform.position = new Vector3(xPos + width / 2.0f + offsetX, 0, yPos + height / 2.0f + offsetY);
-            board.transform.localScale = new Vector3(ratio, 1.0f, ratio);
+            board.transform.localScale = new Vector3(ratio, ratio, ratio);
 
-            elementSelection.transform.position = board.transform.position + (1.5f * Vector3.left * elementSelection.GetColumns() * ratio) + Vector3.forward * ratio;
-            elementSelection.transform.localScale = new Vector3(ratio, 1.0f, ratio);
+            elementSelection.transform.position = board.transform.position + (2.0f * Vector3.left * elementSelection.GetColumns() * ratio) + Vector3.forward * (boardHeight - elementSelection.GetRows()) / 2.0f * ratio;
+            elementSelection.transform.localScale = new Vector3(ratio, ratio, ratio);
         }
     }
 

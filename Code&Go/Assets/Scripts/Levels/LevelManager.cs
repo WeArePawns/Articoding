@@ -1,10 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Xml;
 using UBlockly.UGUI;
 using UnityEngine;
 using UnityEngine.Analytics;
-using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
@@ -24,6 +22,22 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private CameraFit cameraFit;
 
+    [SerializeField] private Category defaultCategory;
+    [SerializeField] private int defaultLevelIndex;
+
+    public GameObject endPanel;
+    public GameObject blackRect;
+
+    public GameObject endPanelMinimized;
+    public GameObject debugPanel;
+
+    public GameObject gameOverPanel;
+    public GameObject gameOverMinimized;
+
+    public StarsController starsController;
+
+    private int minimosPasos = 0;
+
     private void Awake()
     {
         GameManager gameManager = GameManager.Instance;
@@ -33,6 +47,14 @@ public class LevelManager : MonoBehaviour
             currentCategory = gameManager.GetCurrentCategory();
             currentLevelIndex = gameManager.GetCurrentLevelIndex();
             currentLevel = currentCategory.levels[currentLevelIndex];
+            minimosPasos = currentLevel.minimosPasos;
+        }
+        else
+        {
+            currentCategory = defaultCategory;
+            currentLevelIndex = defaultLevelIndex;
+            currentLevel = currentCategory.levels[currentLevelIndex];
+            minimosPasos = currentLevel.minimosPasos;
         }
 
         AnalyticsResult result = Analytics.CustomEvent("LevelStart", new Dictionary<string, object>
@@ -50,6 +72,8 @@ public class LevelManager : MonoBehaviour
         if (boardInitOffsetLeftDown.y + boardInitOffsetRightUp.y >= 1.0f)
             boardInitOffsetLeftDown.y = boardInitOffsetRightUp.y = 0;
 
+        endPanel.SetActive(false);
+        //blackRect.SetActive(false);
     }
 
     private void Start()
@@ -62,7 +86,7 @@ public class LevelManager : MonoBehaviour
         if (boardManager == null)
             return;
 
-        if (boardManager.BoardCompleted())
+        if (boardManager.GetCurrentPasos() > minimosPasos)
         {
             ProgressManager.Instance.LevelCompleted(0x111);
 
@@ -76,7 +100,15 @@ public class LevelManager : MonoBehaviour
             });
             Debug.Log("Analystics result: " + result);
 
-            LoadNextLevel();
+            starsController.DeactivateMinimoStar();
+            //LoadNextLevel();
+        }
+
+        if (boardManager.BoardCompleted() && !endPanel.activeSelf && !endPanelMinimized.activeSelf)
+        {
+            endPanel.SetActive(true);
+            blackRect.SetActive(true);
+            ProgressManager.Instance.LevelCompleted(starsController.GetStars());
         }
     }
 
@@ -92,7 +124,9 @@ public class LevelManager : MonoBehaviour
         statementManager.Load(currentLevel.statement);
         ActivateLevelBlocks(currentLevel.activeBlocks, currentLevel.allActive);
         LoadInitialBlocks(currentLevel.initialState);
-        boardManager.LoadBoard(currentLevel.levelBoard, buildLimits);
+
+        BoardState state = BoardState.FromJson(currentLevel.levelBoard.text);
+        boardManager.LoadBoard(state, buildLimits);
         cameraFit.FitBoard(boardManager.GetRows(), boardManager.GetColumns());
         //FitBoard();
     }
@@ -115,7 +149,7 @@ public class LevelManager : MonoBehaviour
 
             //Fit the board on the screen and resize it
             boardManager.transform.position = new Vector3(xPos + width / 2.0f + offsetX, 0, yPos + height / 2.0f + offsetY);
-            boardManager.transform.localScale = new Vector3(ratio, 1.0f, ratio);
+            boardManager.transform.localScale = new Vector3(ratio, ratio, ratio);
         }
     }
 
@@ -132,8 +166,8 @@ public class LevelManager : MonoBehaviour
     }
 
     // It is called when the current level is completed
-    private void LoadNextLevel()
-    {
+    public void LoadNextLevel()
+    {        
         int levelSize = currentCategory.levels.Length;
         if (++currentLevelIndex < levelSize)
             GameManager.Instance.LoadLevel(currentCategory, currentLevelIndex);
@@ -141,14 +175,42 @@ public class LevelManager : MonoBehaviour
             LoadMainMenu(); // Por ejemplo
     }
 
+    public void RetryLevel()
+    {
+        ResetLevel();
+        gameOverPanel.SetActive(false);
+        blackRect.SetActive(false);
+        gameOverMinimized.SetActive(false);
+
+        starsController.DeactivatePrimeraEjecucionStar();
+    }
+
+    public void MinimizeEndPanel()
+    {
+        endPanelMinimized.SetActive(true);
+        gameOverPanel.SetActive(false);
+        endPanel.SetActive(false);
+        blackRect.SetActive(false);
+        debugPanel.SetActive(false);
+    }
+
+    public void MinimizeGameOverPanel()
+    {
+        gameOverMinimized.SetActive(true);
+        gameOverPanel.SetActive(false);
+        //endPanel.SetActive(false);
+        blackRect.SetActive(false);
+        debugPanel.SetActive(false);
+    }
+
     //TODO:Hacer un reset board en vez de volver a cargarla... o no
     public void ResetLevel()
     {
-        boardManager.transform.localScale = Vector3.one;
-        boardManager.transform.localPosition = Vector3.zero;
-        boardManager.LoadBoard(currentLevel.levelBoard, buildLimits);
+        boardManager.Reset();
+        BoardState state = BoardState.FromJson(currentLevel.levelBoard.text);
+        boardManager.GenerateBoardElements(state);
+        debugPanel.SetActive(true);
         cameraFit.FitBoard(boardManager.GetRows(), boardManager.GetColumns());
-        //FitBoard();
     }
 
     public void ReloadLevel()
