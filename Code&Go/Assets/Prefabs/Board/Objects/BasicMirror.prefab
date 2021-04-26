@@ -31,6 +31,36 @@ Transform:
   m_Father: {fileID: 6745913655574259915}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!1 &4411365646319712635
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5530012323088845598}
+  m_Layer: 0
+  m_Name: ObjectName
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5530012323088845598
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4411365646319712635}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6745913655574259915}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4542342369302809071
 GameObject:
   m_ObjectHideFlags: 0
@@ -138,7 +168,7 @@ GameObject:
   - component: {fileID: 6745913655574259914}
   - component: {fileID: 3186188285801582460}
   - component: {fileID: -5573327890906912937}
-  - component: {fileID: 3685910010990944839}
+  - component: {fileID: 8683319886470318140}
   m_Layer: 0
   m_Name: BasicMirror
   m_TagString: Untagged
@@ -159,6 +189,7 @@ Transform:
   m_Children:
   - {fileID: 4951630670766669729}
   - {fileID: 5381923565482170676}
+  - {fileID: 5530012323088845598}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -209,7 +240,7 @@ MonoBehaviour:
   OnShowed:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &3685910010990944839
+--- !u!114 &8683319886470318140
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -221,7 +252,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ce61d51f2b329d42886323b46f2a94a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nameTextPrefab: {fileID: 2328213476525294661, guid: b90e681ada0a75648807752719b128bd, type: 3}
+  nameTextPrefab: {fileID: 4709242046270480452, guid: b90e681ada0a75648807752719b128bd, type: 3}
+  textPosition: {fileID: 5530012323088845598}
 --- !u!1001 &7600149719595602126
 PrefabInstance:
   m_ObjectHideFlags: 0

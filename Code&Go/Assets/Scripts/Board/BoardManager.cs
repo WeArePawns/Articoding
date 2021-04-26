@@ -643,9 +643,9 @@ public class BoardManager : Listener
 
     private void ActivateDooor(int index, bool active)
     {
-        if (elementPositions.ContainsKey("Door") && index < elementPositions["Door"].Count)
+        if (elementPositions.ContainsKey("Puerta") && index < elementPositions["Puerta"].Count)
         {
-            Vector2Int pos = elementPositions["Door"][index];
+            Vector2Int pos = elementPositions["Puerta"][index];
             Door door = (Door)board[pos.x, pos.y].GetPlacedObject();
             if (door != null)
             {

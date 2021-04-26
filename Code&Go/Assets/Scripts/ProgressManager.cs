@@ -6,8 +6,8 @@ public class ProgressManager : MonoBehaviour
 {
     public static ProgressManager Instance;
 
-    [SerializeField]
-    private List<Category> categories;
+    [SerializeField] private List<Category> categories;
+    [SerializeField] private bool allUnlocked;
 
     private CategorySaveData[] categoriesData;
     private int hintsRemaining = 5;
@@ -96,13 +96,13 @@ public class ProgressManager : MonoBehaviour
 
     public bool IsLevelUnlocked(int categoryIndex, int level)
     {
-        return (categoryIndex < categoriesData.Length && level < categoriesData[categoryIndex].levelsData.Length &&
+        return allUnlocked || (categoryIndex < categoriesData.Length && level < categoriesData[categoryIndex].levelsData.Length &&
             level <= categoriesData[categoryIndex].lastLevelUnlocked);
     }
 
     public bool IsCategoryUnlocked(int categoryIndex)
     {
-        return (categoryIndex <= lastCategoryUnlocked);
+        return allUnlocked || (categoryIndex <= lastCategoryUnlocked);
     }
 
     public uint GetLevelStars(int categoryIndex, int level)
