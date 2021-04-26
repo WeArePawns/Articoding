@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using AssetPackage;
+using System.Collections;
 using System.Collections.Generic;
 using UBlockly.UGUI;
 using UnityEngine;
-using UnityEngine.Analytics;
 
 public class LevelManager : MonoBehaviour
 {
@@ -57,13 +57,6 @@ public class LevelManager : MonoBehaviour
             minimosPasos = currentLevel.minimosPasos;
         }
 
-        AnalyticsResult result = Analytics.CustomEvent("LevelStart", new Dictionary<string, object>
-        {
-            { "category_id", currentCategory.name_id },
-            { "level_id", currentLevelIndex }
-        });
-        Debug.Log("Analystics result: " + result);
-
         //Clamp values between 0 and 1
         boardInitOffsetRightUp = new Vector2(Mathf.Clamp(boardInitOffsetRightUp.x, 0.0f, 1.0f), Mathf.Clamp(boardInitOffsetRightUp.y, 0.0f, 1.0f));
         boardInitOffsetLeftDown = new Vector2(Mathf.Clamp(boardInitOffsetLeftDown.x, 0.0f, 1.0f), Mathf.Clamp(boardInitOffsetLeftDown.y, 0.0f, 1.0f));
@@ -79,6 +72,10 @@ public class LevelManager : MonoBehaviour
     private void Start()
     {
         Initialize();
+
+        TrackerAsset.Instance.GameObject.Used("level_start");
+        TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
+        TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
     }
 
     private void Update()
@@ -90,15 +87,12 @@ public class LevelManager : MonoBehaviour
         {
             ProgressManager.Instance.LevelCompleted(0x111);
 
-            AnalyticsResult result = Analytics.CustomEvent("LevelEnd", new Dictionary<string, object>
-            {
-                { "category_id", currentCategory.name_id },
-                { "level_id", currentLevelIndex },
-                { "first_execution", true }, // Estrellas
-                { "optimal_solution", true },
-                { "no_hints", true }
-            });
-            Debug.Log("Analystics result: " + result);
+            TrackerAsset.Instance.GameObject.Used("level_end");
+            TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
+            TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
+            TrackerAsset.Instance.setVar("first_execution", true);
+            TrackerAsset.Instance.setVar("optimal_solution", true);
+            TrackerAsset.Instance.setVar("no_hints", true);
 
             starsController.DeactivateMinimoStar();
             //LoadNextLevel();

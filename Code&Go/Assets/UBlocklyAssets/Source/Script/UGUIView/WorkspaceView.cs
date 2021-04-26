@@ -17,10 +17,10 @@ limitations under the License.
 ****************************************************************************/
 
 
+using AssetPackage;
 using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
-using UnityEngine.Analytics;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
@@ -186,15 +186,9 @@ namespace UBlockly.UGUI
 
             XmlNode dom = UBlockly.Xml.WorkspaceToDom(BlocklyUI.WorkspaceView.Workspace);
             string text = UBlockly.Xml.DomToText(dom);
-            int splitSize = 300;
-            for (int i = 0; i < Mathf.CeilToInt(text.Length / (float)splitSize); i++) {
-                AnalyticsResult result = Analytics.CustomEvent("RunButton", new Dictionary<string, object>()
-                {
-                    { "workspace_" + i.ToString(), text.Substring(i * splitSize, i * splitSize + splitSize < text.Length ? splitSize : i * splitSize + splitSize - text.Length) }
-                });
-                Debug.Log("Analytics result: " + result);
 
-            }
+            TrackerAsset.Instance.GameObject.Used("code_execution");
+            TrackerAsset.Instance.setVar("code", text);
 
 //            Lua.Interpreter.Run(mWorkspace);
             CSharp.Interpreter.Run(mWorkspace);
