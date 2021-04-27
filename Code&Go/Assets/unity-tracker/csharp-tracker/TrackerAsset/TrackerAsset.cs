@@ -939,7 +939,7 @@ namespace AssetPackage
 
                             Connected = tmp != null;
                             Active = tmp != null;
-                            done();
+                            if(done != null) done();
                         }
                         break;
                 }
