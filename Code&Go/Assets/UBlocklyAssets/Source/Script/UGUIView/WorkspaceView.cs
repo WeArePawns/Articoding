@@ -187,8 +187,8 @@ namespace UBlockly.UGUI
             XmlNode dom = UBlockly.Xml.WorkspaceToDom(BlocklyUI.WorkspaceView.Workspace);
             string text = UBlockly.Xml.DomToText(dom);
 
+            TrackerAsset.Instance.setVar("code", "\n" + text);
             TrackerAsset.Instance.GameObject.Used("code_execution");
-            TrackerAsset.Instance.setVar("code", text);
 
 //            Lua.Interpreter.Run(mWorkspace);
             CSharp.Interpreter.Run(mWorkspace);

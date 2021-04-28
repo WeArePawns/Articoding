@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using AssetPackage;
 
 public class BoardManager : Listener
 {
@@ -26,7 +27,7 @@ public class BoardManager : Listener
     private Dictionary<string, List<Vector2Int>> elementPositions;
     private List<List<BoardCell>> cells;
 
-    private int currentPasos = 0;
+    private int currentSteps = 0;
 
     private void Awake()
     {
@@ -35,9 +36,9 @@ public class BoardManager : Listener
         //currentPasos = 0;
     }
 
-    public int GetCurrentPasos()
+    public int GetCurrentSteps()
     {
-        return currentPasos;
+        return currentSteps;
     }
 
     public void GenerateBoard()
@@ -231,7 +232,7 @@ public class BoardManager : Listener
         nReceiversActive = 0;
         DeleteBoardElements();
         elementPositions.Clear();
-        currentPasos = 0;
+        //currentSteps = 0;
     }
 
     public void ReceiverActivated()
@@ -420,7 +421,7 @@ public class BoardManager : Listener
     {
         if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
-            currentPasos += amount / 2;
+            currentSteps += amount / 2;
 
             for (int i = 0; i < amount % 8; i++)
             {
@@ -459,7 +460,7 @@ public class BoardManager : Listener
                 return false;
             }
 
-            currentPasos++;
+            currentSteps++;
 
             StartCoroutine(InternalMoveObject(fromCell, toCell, time));
             return true;
@@ -622,7 +623,7 @@ public class BoardManager : Listener
             case MSG_TYPE.ACTIVATE_DOOR:
                 index = int.Parse(args[0]);
                 active = bool.Parse(args[1]);
-                ActivateDooor(index - 1, active);
+                ActivateDoor(index - 1, active);
                 break;
         }
     }
@@ -636,12 +637,12 @@ public class BoardManager : Listener
             if (laser != null)
             {
                 laser.ChangeIntensity(newIntensity);
-                currentPasos++;
+                currentSteps++;
             }
         }
     }
 
-    private void ActivateDooor(int index, bool active)
+    private void ActivateDoor(int index, bool active)
     {
         if (elementPositions.ContainsKey("Puerta") && index < elementPositions["Puerta"].Count)
         {
@@ -650,7 +651,7 @@ public class BoardManager : Listener
             if (door != null)
             {
                 door.SetActive(active);
-                currentPasos++;
+                currentSteps++;
             }
         }
     }
@@ -676,5 +677,13 @@ public class BoardManager : Listener
             default:
                 return false;
         }
+    }
+
+    public void UseHint()
+    {
+        // TODO: do the "use hint" logic
+
+        TrackerAsset.Instance.setVar("remaining_hints", 0); // TODO: poner las hints
+        TrackerAsset.Instance.GameObject.Used("hint_used");
     }
 }

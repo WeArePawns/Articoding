@@ -16,6 +16,7 @@ limitations under the License.
 
 ****************************************************************************/
 
+using AssetPackage;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -193,6 +194,9 @@ namespace UBlockly.UGUI
             blockView.UpdateCount();
 
             OnPickBlockView();
+
+            TrackerAsset.Instance.setVar("block_id", blockView.Block.ToDevString());
+            TrackerAsset.Instance.GameObject.Used("block_used");
         }
 
         protected void UpdatePickedBlockView()

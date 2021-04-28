@@ -16,6 +16,7 @@ limitations under the License.
 
 ****************************************************************************/
 
+using AssetPackage;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -157,10 +158,14 @@ namespace UBlockly.UGUI
         {
             if (CheckBin(blockView))
             {
+                TrackerAsset.Instance.setVar("block_id", blockView.Block.ToDevString());
+                TrackerAsset.Instance.GameObject.Used("block_removed");
+
                 blockView.Dispose();
 
                 //Update the blockCounter
                 foreach (GameObject gO in mRootList.Values)
+                {
                     foreach (BlockView bw in gO.transform.GetComponentsInChildren<BlockView>())
                     {
                         if (Block.blocksAvailable.ContainsKey(bw.BlockType) && Block.blocksAvailable[bw.BlockType] > 0)
@@ -171,6 +176,7 @@ namespace UBlockly.UGUI
                         }
                         bw.UpdateCount();
                     }
+                }
             }
             m_BinArea.gameObject.SetActive(false);
         }

@@ -5,36 +5,51 @@ using UnityEngine;
 
 public class StarsController : MonoBehaviour
 {
-    public Image minimoStar;
-    public Image primeraEjecucionStar;
-    public Image noPistasStar;
+    public Image minimumStepsStar;
+    public Image firstRunStar;
+    public Image noHintsStar;
     private Color deactivatedColor = new Color(1.0f, 1.0f, 1.0f, 0.5f);
 
     public uint GetStars()
     {
         uint nStars = 3;
-        if (primeraEjecucionStar.color == deactivatedColor)
+        if (firstRunStar.color == deactivatedColor)
             nStars --;
-        if (noPistasStar.color == deactivatedColor)
+        if (noHintsStar.color == deactivatedColor)
             nStars --;
-        if (minimoStar.color == deactivatedColor)
+        if (minimumStepsStar.color == deactivatedColor)
             nStars --;
 
         return nStars;
     }
 
-    public void DeactivatePrimeraEjecucionStar()
+    public void DeactivateFirstRunStar()
     {
-        primeraEjecucionStar.color = deactivatedColor;
+        firstRunStar.color = deactivatedColor;
     }
 
-    public void DeactivateNoPistasStar()
+    public void DeactivateNoHintsStar()
     {
-        noPistasStar.color = deactivatedColor;
+        noHintsStar.color = deactivatedColor;
     }
 
-    public void DeactivateMinimoStar()
+    public void DeactivateMinimumStepsStar()
     {
-        minimoStar.color = deactivatedColor;
+        minimumStepsStar.color = deactivatedColor;
+    }
+
+    public bool IsFirstRunStarActive()
+    {
+        return firstRunStar.enabled;
+    }
+
+    public bool IsMinimumStepsStarActive()
+    {
+        return minimumStepsStar.enabled;
+    }
+
+    public bool IsNoHintsStarActive()
+    {
+        return noHintsStar.enabled;
     }
 }

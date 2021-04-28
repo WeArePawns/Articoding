@@ -29,7 +29,8 @@ public class FollowingText : MonoBehaviour
 
     private void OnDestroy()
     {
-        Destroy(nameText.gameObject);
+        if(nameText != null)
+            Destroy(nameText.gameObject);
     }
 
     private bool ObjectVisible()

@@ -73,9 +73,9 @@ public class LevelManager : MonoBehaviour
     {
         Initialize();
 
-        TrackerAsset.Instance.GameObject.Used("level_start");
         TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
         TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
+        TrackerAsset.Instance.GameObject.Used("level_start");
     }
 
     private void Update()
@@ -83,23 +83,23 @@ public class LevelManager : MonoBehaviour
         if (boardManager == null)
             return;
 
-        if (boardManager.GetCurrentPasos() > minimosPasos)
+        if (boardManager.GetCurrentSteps() > minimosPasos)
         {
             ProgressManager.Instance.LevelCompleted(0x111);
-
-            TrackerAsset.Instance.GameObject.Used("level_end");
-            TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
-            TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
-            TrackerAsset.Instance.setVar("first_execution", true);
-            TrackerAsset.Instance.setVar("optimal_solution", true);
-            TrackerAsset.Instance.setVar("no_hints", true);
-
-            starsController.DeactivateMinimoStar();
+            starsController.DeactivateMinimumStepsStar();
             //LoadNextLevel();
         }
 
         if (boardManager.BoardCompleted() && !endPanel.activeSelf && !endPanelMinimized.activeSelf)
         {
+            TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
+            TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
+            TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
+            TrackerAsset.Instance.setVar("first_execution", starsController.IsFirstRunStarActive());
+            TrackerAsset.Instance.setVar("minimum_steps", starsController.IsMinimumStepsStarActive());
+            TrackerAsset.Instance.setVar("no_hints", starsController.IsNoHintsStarActive());
+            TrackerAsset.Instance.GameObject.Used("level_end");
+
             endPanel.SetActive(true);
             blackRect.SetActive(true);
             ProgressManager.Instance.LevelCompleted(starsController.GetStars());
@@ -176,7 +176,7 @@ public class LevelManager : MonoBehaviour
         blackRect.SetActive(false);
         gameOverMinimized.SetActive(false);
 
-        starsController.DeactivatePrimeraEjecucionStar();
+        starsController.DeactivateFirstRunStar();
     }
 
     public void MinimizeEndPanel()
@@ -215,6 +215,9 @@ public class LevelManager : MonoBehaviour
 
     public void LoadMainMenu()
     {
+        TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
+        TrackerAsset.Instance.GameObject.Used("main_menu_return");
+
         GameManager.Instance.LoadScene("MenuScene");
     }
 

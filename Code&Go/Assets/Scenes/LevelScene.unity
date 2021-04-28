@@ -1259,7 +1259,19 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1885510894}
         m_TargetAssemblyTypeName: StarsController, Assembly-CSharp
-        m_MethodName: DeactivateNoPistasStar
+        m_MethodName: DeactivateNoHintsStar
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 190220292}
+        m_TargetAssemblyTypeName: BoardManager, Assembly-CSharp
+        m_MethodName: UseHint
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7850,9 +7862,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa66335f93c8f54ea12564d64865f14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimoStar: {fileID: 283044347}
-  primeraEjecucionStar: {fileID: 288990326}
-  noPistasStar: {fileID: 586603504}
+  minimumStepsStar: {fileID: 283044347}
+  firstRunStar: {fileID: 288990326}
+  noHintsStar: {fileID: 586603504}
 --- !u!4 &1885510895
 Transform:
   m_ObjectHideFlags: 0
