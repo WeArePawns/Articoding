@@ -16,7 +16,6 @@ limitations under the License.
 
 ****************************************************************************/
 
-using AssetPackage;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -158,9 +157,6 @@ namespace UBlockly.UGUI
         {
             if (CheckBin(blockView))
             {
-                TrackerAsset.Instance.setVar("block_id", blockView.Block.ToDevString());
-                TrackerAsset.Instance.GameObject.Used("block_removed");
-
                 blockView.Dispose();
 
                 //Update the blockCounter
