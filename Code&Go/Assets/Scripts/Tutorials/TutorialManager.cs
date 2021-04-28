@@ -118,6 +118,8 @@ public class TutorialManager : MonoBehaviour
         else
             popUpManager.Show(info.title, info.content);
 
+        TemaryManager.AddTemary(t.type, t.info);
+
         if (t.OnShowed != null)
             t.OnShowed.Invoke();
 
