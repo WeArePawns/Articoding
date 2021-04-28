@@ -31,14 +31,14 @@ public abstract class BoardCell : MonoBehaviour
     {
         this.x = x;
         this.y = y;
-        transform.position = new Vector3(x, 0.0f, y);
+        transform.localPosition = new Vector3(x, 0.0f, y);
     }
 
     public void SetPosition(Vector2Int position)
     {
         x = position.x;
         y = position.y;
-        transform.position = new Vector3(x, 0.0f, y);
+        transform.localPosition = new Vector3(x, 0.0f, y);
     }
 
     public Vector2Int GetPosition()

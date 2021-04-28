@@ -49,7 +49,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
     private void OnLeftDown()
     {
         if (boardObject == null) boardObject = GetComponent<BoardObject>();
-        argumentLoader.SetBoardObject(boardObject);
+        if (argumentLoader != null) argumentLoader.SetBoardObject(boardObject);
 
         zCoord = Camera.main.WorldToScreenPoint(transform.position).z;
         mouseOffset = transform.position - GetMouseWorldPos();
@@ -59,7 +59,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
     private void OnRightDown()
     {
         if (boardObject == null) boardObject = GetComponent<BoardObject>();
-        argumentLoader.SetBoardObject(boardObject);
+        if (argumentLoader != null) argumentLoader.SetBoardObject(boardObject);
 
         boardObject.Rotate(1);
     }
@@ -73,15 +73,33 @@ public class DraggableObject : MonoBehaviour, IMouseListener
             pos = new Vector3(Mathf.Round(pos.x), Mathf.Round(pos.y), Mathf.Round(pos.z));
             if (boardObject != null && pos.x < board.GetColumns() && pos.x >= 0 && pos.z < board.GetRows() && pos.z >= 0)
             {
-                if (pos.x == lastPos.x && pos.z == lastPos.y)
-                    transform.localPosition = new Vector3(lastPos.x, transform.position.y, lastPos.y);
-                else if (board.GetBoardCellType((int)pos.x, (int)pos.z) == 1 || !board.AddBoardObject((int)pos.x, (int)pos.z, boardObject))
-                    Destroy(gameObject, 0.1f);
-                board.RemoveBoardObject(lastPos.x, lastPos.y, false);
-                lastPos = new Vector2Int((int)pos.x, (int)pos.z);
+                Vector2Int newPos = new Vector2Int((int)pos.x, (int)pos.z);
+                //Si la posicion en la que se suelta es donde estaba colocado no se hace nada
+                if (lastPos == newPos)
+                {
+                    transform.localPosition = new Vector3(lastPos.x, 0, lastPos.y);
+                    return;
+                }
+                //Si se suelta en una celda ocupada o en un agujero se elimina
+                if (board.GetBoardCellType(newPos.x, newPos.y) == 1 || board.IsCellOccupied(newPos.x, newPos.y))
+                {
+                    //Se elimina el objeto en la posicion anterior
+                    board.RemoveBoardObject(lastPos.x, lastPos.y, false);
+                    Destroy(gameObject, 0.3f);
+                    return;
+                }
+                //Si el objeto no se ha añadido al tablero
+                if (lastPos == -Vector2Int.one)
+                    board.AddBoardObject(newPos.x, newPos.y, boardObject);
+                else//Se mueve el objeto
+                    board.MoveBoardObject(lastPos, newPos);
+                lastPos = newPos;
             }
             else
-                Destroy(gameObject, 0.1f);
+            {
+                board.RemoveBoardObject(lastPos.x, lastPos.y, false);
+                Destroy(gameObject, 0.3f);
+            }
         }
     }
 
@@ -96,5 +114,10 @@ public class DraggableObject : MonoBehaviour, IMouseListener
     public void OnMouseButtonUp(int index)
     {
 
+    }
+
+    public void SetLastPos(Vector2Int lastPos)
+    {
+        this.lastPos = lastPos;
     }
 }

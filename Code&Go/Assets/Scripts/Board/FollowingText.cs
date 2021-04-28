@@ -39,7 +39,7 @@ public class FollowingText : MonoBehaviour
         RaycastHit hit;
         // Casts the ray and get the first game object hit 
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~(1<<LayerMask.NameToLayer("LaserLayer"))))            
-            return hit.collider.gameObject == gameObject || hit.collider.transform.parent.gameObject == gameObject;
+            return hit.collider.gameObject == gameObject || (hit.collider.transform.parent != null && hit.collider.transform.parent.gameObject == gameObject);
         return false;
     }
 }

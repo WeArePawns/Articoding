@@ -22,6 +22,7 @@ public class BoardManager : Listener
 
     // Hidden atributtes
     private BoardCell[,] board;
+    private ArgumentLoader argLoader = null;
     public enum CellColors { NORMAL, GREEN, }
 
     private Dictionary<string, List<Vector2Int>> elementPositions;
@@ -43,6 +44,7 @@ public class BoardManager : Listener
 
     public void GenerateBoard()
     {
+        elementPositions = new Dictionary<string, List<Vector2Int>>();
         // If a board already exist, destroy it
         DestroyBoard();
         // Initialize board
@@ -172,6 +174,11 @@ public class BoardManager : Listener
         return IsInBoardBounds(position.x, position.y);
     }
 
+    public void SetArgLoader(ArgumentLoader argumentLoader)
+    {
+        argLoader = argumentLoader;
+    }
+
     public void LoadBoard(BoardState state, bool limits = false)
     {
         if (state == null) return;
@@ -207,10 +214,10 @@ public class BoardManager : Listener
 
     public void DeleteBoardElements()
     {
-        foreach (var item in elementPositions)
+        foreach (List<Vector2Int> item in elementPositions.Values)
         {
-            foreach (Vector2Int pos in item.Value)
-                RemoveBoardObject(pos.x, pos.y);
+            foreach (Vector2Int pos in item)
+                RemoveBoardObject(pos.x, pos.y, true, false);
         }
     }
 
@@ -318,6 +325,7 @@ public class BoardManager : Listener
         bObject.LoadArgs(additionalArgs);
         bObject.SetBoard(this);
         bObject.SetDirection((BoardObject.Direction)orientation);
+
         return AddBoardObject(x, y, bObject);
     }
 
@@ -326,6 +334,8 @@ public class BoardManager : Listener
         if (IsInBoardBounds(x, y) && boardObject != null)
         {
             bool placed = board[x, y].PlaceObject(boardObject);
+            if (!placed) return false;
+
             if (boardObject.transform.parent != elementsParent)
                 boardObject.transform.SetParent(elementsParent);
             if (elementPositions != null)
@@ -338,31 +348,59 @@ public class BoardManager : Listener
                 if (text != null)
                     text.SetName(boardObject.GetName() + " " + elementPositions[boardObject.GetName()].Count.ToString());
             }
+
+            if (modifiable && boardObject.gameObject.GetComponent<DraggableObject>() == null)
+            {
+                DraggableObject drag = boardObject.gameObject.AddComponent<DraggableObject>();
+                drag.SetBoard(this);
+                drag.SetArgumentLoader(argLoader);
+                drag.SetLastPos(new Vector2Int(x, y));
+            }
             return placed;
         }
         return false;
     }
 
-    public void RemoveBoardObject(int x, int y, bool delete = true)
+    public void RemoveBoardObject(int x, int y, bool delete = true, bool updatePositions = true)
     {
-        if (IsInBoardBounds(x, y))
+        if (IsInBoardBounds(x, y) && board[x, y].GetPlacedObject() != null)
+        {
+            string name = board[x, y].GetPlacedObject().GetName();
             board[x, y].RemoveObject(delete);
+            if (updatePositions && elementPositions.ContainsKey(name)) elementPositions[name].Remove(new Vector2Int(x, y));
+            RefreshNames(name);
+        }
     }
 
-    public void MoveBoardObject(Vector2Int from, Vector2Int to)
+    private void RefreshNames(string name)
+    {
+        if (!elementPositions.ContainsKey(name)) return;
+        foreach (Vector2Int pos in elementPositions[name])
+        {
+            if (board[pos.x, pos.y].GetPlacedObject() == null) continue;
+
+            FollowingText text = board[pos.x, pos.y].GetPlacedObject().GetComponent<FollowingText>();
+            if (text != null)
+                text.SetName(name + " " + (elementPositions[name].IndexOf(pos) + 1).ToString());
+        }
+    }
+
+    public bool MoveBoardObject(Vector2Int from, Vector2Int to)
     {
         if (IsInBoardBounds(from) && IsInBoardBounds(to) && from != to)
         {
             BoardCell cell = board[to.x, to.y];
-            if (cell.GetState() != BoardCell.BoardCellState.FREE) return;
+            if (cell.GetState() != BoardCell.BoardCellState.FREE) return false;
 
 
             BoardObject bObject = board[from.x, from.y].GetPlacedObject();
-            if (bObject == null) return;
+            if (bObject == null) return false;
 
             board[from.x, from.y].RemoveObject(false);
             board[to.x, to.y].PlaceObject(bObject);
+            return true;
         }
+        return false;
     }
 
     public void RotateBoardObject(Vector2Int position, int direction)
@@ -493,6 +531,11 @@ public class BoardManager : Listener
     public Vector3 GetLocalPosition(Vector3 position)
     {
         return transform.InverseTransformPoint(position);
+    }
+
+    public bool IsCellOccupied(int x, int y)
+    {
+        return IsInBoardBounds(x, y) && board[x, y].GetPlacedObject() != null;
     }
 
     // We assume, all are valid arguments

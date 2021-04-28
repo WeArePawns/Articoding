@@ -13,7 +13,11 @@ public class BoardCreator : MonoBehaviour
 
     [SerializeField] InputField columnsField;
     [SerializeField] InputField rowsField;
-    [SerializeField] InputField fileNameField;
+    [SerializeField] InputField saveFileNameField;
+
+    [SerializeField] ArgumentLoader argumentLoader;
+
+    [SerializeField] InputField loadFileNameField;
 
     [SerializeField] Toggle limits;
 
@@ -42,6 +46,7 @@ public class BoardCreator : MonoBehaviour
         filePath = Application.dataPath + "/LevelsCreated/";
         rows = board.GetRows();
         columns = board.GetColumns();
+        board.SetArgLoader(argumentLoader);
         material.color = Color.yellow;
         GetComponent<MeshRenderer>().enabled = keyBoardControls;
         FitBoard();
@@ -227,14 +232,39 @@ public class BoardCreator : MonoBehaviour
         this.columns = board.GetColumns();
         FitBoard();
     }
+
     public void SaveBoard()
     {
-        fileName = fileNameField.text;
+        fileName = saveFileNameField.text;
         if (fileName == "") fileName = "level";
         using (StreamWriter outputFile = new StreamWriter(filePath + fileName + nLevel++.ToString() + ".json"))
         {
             board.ClearHoles();
             outputFile.Write(board.GetBoardState());
+        }
+        Console.WriteLine("Archivo Guardado");
+    }
+
+    public void LoadBoard()
+    {
+        fileName = Application.dataPath + "/" + loadFileNameField.text;
+        using (StreamReader inputFile = new StreamReader(fileName))
+        {
+            BoardState state = BoardState.FromJson(inputFile.ReadToEnd());
+            board.transform.localScale = Vector3.one;
+            board.transform.localPosition = Vector3.zero;
+            board.LoadBoard(state, buildLimits);
+
+            elementSelection.transform.localScale = Vector3.one;
+            elementSelection.transform.localPosition = Vector3.zero;
+            elementSelection.GenerateSelector();
+
+            DeselectObject();
+            cursorPos = Vector2Int.zero;
+            transform.localPosition = Vector3.zero;
+            this.rows = board.GetRows();
+            this.columns = board.GetColumns();
+            FitBoard();
         }
         Console.WriteLine("Archivo Guardado");
     }
