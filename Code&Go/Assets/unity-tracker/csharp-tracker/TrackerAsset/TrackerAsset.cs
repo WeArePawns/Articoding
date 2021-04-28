@@ -904,6 +904,7 @@ namespace AssetPackage
 		public void Start()
         {
             StartAux(false, null);
+            Completable.Initialized("application");
         }
 
         /// <summary>
@@ -1076,6 +1077,7 @@ namespace AssetPackage
         /// </summary>
         public void Exit(Action done)
         {
+            Completable.Completed("application");
             FlushAll(done);
         }
 
