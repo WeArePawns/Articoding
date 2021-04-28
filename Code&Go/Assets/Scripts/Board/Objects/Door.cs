@@ -9,7 +9,8 @@ public class Door : BoardObject
     // DO STUFF I GUESS
     private void Awake()
     {
-        typeName = "Door";
+        typeName = "Puerta";
+        argsNames = new string[1] { "Activada" };
     }
 
     override public string[] GetArgs()
@@ -27,7 +28,7 @@ public class Door : BoardObject
     {
         if (this.open == open) return;
         //Animacion
-        Invoke("DeactivateCollider", 0.5f);
+        Invoke("DeactivateCollider", 0.01f);
         this.open = open;
     }
 

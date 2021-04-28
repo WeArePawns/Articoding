@@ -17,6 +17,7 @@ limitations under the License.
 ****************************************************************************/
 
 
+using AssetPackage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -154,6 +155,9 @@ namespace UBlockly.UGUI
                     }
                 }
             }
+
+            TrackerAsset.Instance.setVar("block_id", Block.ToDevString());
+            TrackerAsset.Instance.GameObject.Used("block_removed");
 
             //Update available blocks
             if (Block.blocksAvailable.ContainsKey(BlockType))

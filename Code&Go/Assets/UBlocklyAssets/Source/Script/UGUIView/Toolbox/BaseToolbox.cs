@@ -16,6 +16,7 @@ limitations under the License.
 
 ****************************************************************************/
 
+using AssetPackage;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -74,13 +75,18 @@ namespace UBlockly.UGUI
             //Deactivate the block if it's not in the active list
             bool active = false;
             string blockType = block.BlockType;
-            if (activeCategories != null && activeCategories.ContainsKey(mActiveCategory.ToLower()))
+            if (activeCategories != null && mActiveCategory != null && activeCategories.ContainsKey(mActiveCategory.ToLower()))
             {
                 CategoryBlocks info = activeCategories[mActiveCategory.ToLower()];
                 active = info.activate == (info.activeBlocks.ContainsKey(blockType));
                 int prevValue = (Block.blocksAvailable.ContainsKey(blockType)) ? Block.blocksAvailable[blockType] : 0;
                 int value = prevValue + (info.activeBlocks.ContainsKey(blockType) ? info.activeBlocks[blockType] : Int16.MaxValue);
                 Block.blocksAvailable[blockType] = value;
+                if (value <= 0)
+                {
+                    block.enabled = false;
+                    block.ChangeBgColor(Color.grey);
+                }
             }
             block.gameObject.SetActive(allActive || active);
             block.UpdateCount();
@@ -188,6 +194,9 @@ namespace UBlockly.UGUI
             blockView.UpdateCount();
 
             OnPickBlockView();
+
+            TrackerAsset.Instance.setVar("block_id", blockView.Block.ToDevString());
+            TrackerAsset.Instance.GameObject.Used("block_used");
         }
 
         protected void UpdatePickedBlockView()
@@ -269,7 +278,7 @@ namespace UBlockly.UGUI
             foreach (VariableModel variable in mWorkspace.GetAllVariables())
             {
                 CreateVariableGetterView(variable.Name);
-            }           
+            }
         }
 
         protected void CreateVariableGetterView(string varName)

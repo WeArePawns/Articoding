@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 164, y: 60}
+  m_SizeDelta: {x: 216, y: 60}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1490071131630462000
 MonoBehaviour:
@@ -90,7 +90,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 206, y: 60}
+  m_SizeDelta: {x: 258, y: 60}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &4656875108939472403
 MonoBehaviour:
@@ -217,6 +217,7 @@ GameObject:
   - component: {fileID: 850825221287016111}
   - component: {fileID: 9027443423130848431}
   - component: {fileID: 4575154855674989143}
+  - component: {fileID: 3039272825726021071}
   m_Layer: 0
   m_Name: Block_movement_laser_change_intensity
   m_TagString: Untagged
@@ -245,7 +246,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 206, y: 60}
+  m_SizeDelta: {x: 258, y: 60}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &850825221287016111
 CanvasRenderer:
@@ -286,7 +287,7 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
   m_DrawDimensions:
-  - {x: 0, y: -60, z: 194, w: 0}
+  - {x: 0, y: -60, z: 246, w: 0}
 --- !u!114 &4575154855674989143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,6 +312,26 @@ MonoBehaviour:
   - {fileID: 9027443423130848431}
   - {fileID: 924635253839917891}
   - {fileID: 5644018491662230650}
+--- !u!114 &3039272825726021071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2783548254004940391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 180
+  info: {fileID: 11400000, guid: cfc2cc2b94cdd594ca5dd92c74d357bb, type: 2}
+  highlightObject: 1
+  destroyOnShowed: 1
+  isSaveCheckpoint: 1
+  OnShowed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3926757362508541429
 GameObject:
   m_ObjectHideFlags: 0
@@ -389,7 +410,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Cambia intensidad a
+  m_Text: "Intensidad de L\xE1ser igual a"
 --- !u!1 &5675754246570359301
 GameObject:
   m_ObjectHideFlags: 0
@@ -425,7 +446,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 184, y: 0}
+  m_AnchoredPosition: {x: 236, y: 0}
   m_SizeDelta: {x: 12, y: 60}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8788391052366431152
@@ -579,7 +600,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 10, y: -0}
-  m_SizeDelta: {x: 196, y: 60}
+  m_SizeDelta: {x: 248, y: 60}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &3392457064367519034
 MonoBehaviour:

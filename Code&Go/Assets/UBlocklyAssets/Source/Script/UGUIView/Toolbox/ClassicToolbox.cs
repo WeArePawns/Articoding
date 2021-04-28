@@ -161,6 +161,7 @@ namespace UBlockly.UGUI
 
                 //Update the blockCounter
                 foreach (GameObject gO in mRootList.Values)
+                {
                     foreach (BlockView bw in gO.transform.GetComponentsInChildren<BlockView>())
                     {
                         if (Block.blocksAvailable.ContainsKey(bw.BlockType) && Block.blocksAvailable[bw.BlockType] > 0)
@@ -171,6 +172,7 @@ namespace UBlockly.UGUI
                         }
                         bw.UpdateCount();
                     }
+                }
             }
             m_BinArea.gameObject.SetActive(false);
         }

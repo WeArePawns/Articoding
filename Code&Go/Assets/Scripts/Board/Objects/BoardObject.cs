@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 // Base class of all board objects
 public class BoardObject : MonoBehaviour
 {
@@ -13,8 +12,10 @@ public class BoardObject : MonoBehaviour
 
     Direction objectDirection;
 
+    [SerializeField] protected Animator anim;
     protected BoardManager boardManager;
     protected string typeName = "";
+    protected string[] argsNames;
 
     public void SetBoard(BoardManager board)
     {
@@ -33,6 +34,11 @@ public class BoardObject : MonoBehaviour
         return typeName;
     }
 
+    public string[] GetArgsNames()
+    {
+        return argsNames;
+    }
+
     public void SetDirection(Direction direction, bool rotate = true)
     {
         objectDirection = direction;
@@ -43,7 +49,7 @@ public class BoardObject : MonoBehaviour
             direction = Direction.RIGHT; // Default
 
         Vector3 lastRot = transform.localEulerAngles;
-        lastRot.z = (int)direction * -45.0f;
+        lastRot.y = (int)direction * 45.0f;
         transform.localEulerAngles = lastRot;
     }
 
@@ -56,6 +62,11 @@ public class BoardObject : MonoBehaviour
     {
         Direction newDir = (Direction)((((int)objectDirection + dir) + 8) % 8);
         SetDirection(newDir);
+    }
+
+    public Animator GetAnimator()
+    {
+        return anim;
     }
 
     //Virtual method for seralization of additional arguments in child classes

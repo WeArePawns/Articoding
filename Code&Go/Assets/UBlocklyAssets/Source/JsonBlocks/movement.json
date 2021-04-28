@@ -83,17 +83,17 @@
       "message0": "%{BKY_MOVEMENT_ROTATE_LASER_TITLE}",
       "args0": [
         {
-          "type": "input_value",
-          "name": "AMOUNT",
-          "check": "Number"
-        },
-        {
           "type": "field_dropdown",
           "name": "ROTATION",
           "options": [
             ["%{BKY_MOVEMENT_ROTATION_RIGHT}", "CLOCKWISE"],
             ["%{BKY_MOVEMENT_ROTATION_LEFT}", "ANTI_CLOCKWISE"]
           ]
+        },
+        {
+          "type": "input_value",
+          "name": "AMOUNT",
+          "check": "Number"
         }
       ],
       "inputsInline": true,
@@ -114,17 +114,17 @@
           "check": "String"
         },
         {
-          "type": "input_value",
-          "name": "AMOUNT",
-          "check": "Number"
-        },
-        {
           "type": "field_dropdown",
           "name": "ROTATION",
           "options": [
             ["%{BKY_MOVEMENT_ROTATION_RIGHT}", "CLOCKWISE"],
             ["%{BKY_MOVEMENT_ROTATION_LEFT}", "ANTI_CLOCKWISE"]
           ]
+        },
+        {
+          "type": "input_value",
+          "name": "AMOUNT",
+          "check": "Number"
         }
       ],
       "inputsInline": true,
@@ -153,6 +153,27 @@
       "inputsInline": true,
       "previousStatement": null,
       "nextStatement": null,
+      "colour": "%{BKY_MOVEMENT_HUE}",
+      "extensions": [
+        "text_append_tooltip"
+      ]
+    },
+    {
+      "type": "movement_cells_occupied",
+      "message0": "%{BKY_MOVEMENT_CELLS_OCCUPIED_TITLE}",
+      "args0": [
+        {
+          "type": "field_dropdown",
+          "name": "TYPE",
+          "options": [
+            ["%{BKY_CELL_TYPE_1}", "RED"],
+            ["%{BKY_CELL_TYPE_2}", "GREEN"],
+            ["%{BKY_CELL_TYPE_3}", "BLUE"]
+          ]
+        }
+      ],
+      "inputsInline": true,
+      "output": "Boolean",
       "colour": "%{BKY_MOVEMENT_HUE}",
       "extensions": [
         "text_append_tooltip"

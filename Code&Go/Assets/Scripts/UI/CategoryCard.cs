@@ -34,7 +34,7 @@ public class CategoryCard : MonoBehaviour
         button = GetComponent<Button>();
 
         title.text = category.name_id;
-        stars.text = "32/45"; //category.description;
+        stars.text = ProgressManager.Instance.GetCategoryProgress(category).ToString() + "/" + (category.levels.Length * 3).ToString(); ; //category.description;
         image.sprite = category.icon;
     }
 

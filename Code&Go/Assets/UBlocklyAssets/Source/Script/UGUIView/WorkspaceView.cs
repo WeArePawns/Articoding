@@ -17,7 +17,9 @@ limitations under the License.
 ****************************************************************************/
 
 
+using AssetPackage;
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -181,7 +183,13 @@ namespace UBlockly.UGUI
         {
             if (mRunCodeEvent != null)
                 mRunCodeEvent.Invoke();
-            
+
+            XmlNode dom = UBlockly.Xml.WorkspaceToDom(BlocklyUI.WorkspaceView.Workspace);
+            string text = UBlockly.Xml.DomToText(dom);
+
+            TrackerAsset.Instance.setVar("code", "\n" + text);
+            TrackerAsset.Instance.GameObject.Used("code_execution");
+
 //            Lua.Interpreter.Run(mWorkspace);
             CSharp.Interpreter.Run(mWorkspace);
             m_StatusView.enabled = true;

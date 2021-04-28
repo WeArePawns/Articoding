@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class BoardCreator : MonoBehaviour
 {
     [SerializeField] BoardManager board;
+    [SerializeField] ElementSelection elementSelection;
     [SerializeField] Material material;
 
     [SerializeField] InputField columnsField;
@@ -20,9 +21,10 @@ public class BoardCreator : MonoBehaviour
 
     [SerializeField] private Vector2 boardInitOffsetLeftDown;
     [SerializeField] private Vector2 boardInitOffsetRightUp;
-    private bool buildLimits = false;
     [SerializeField] private Camera mainCamera;
+    [SerializeField] private bool keyBoardControls = false;
 
+    private bool buildLimits = false;
     private string fileName = "level";
     private int nLevel = 1;
     private string filePath = "";
@@ -41,6 +43,7 @@ public class BoardCreator : MonoBehaviour
         rows = board.GetRows();
         columns = board.GetColumns();
         material.color = Color.yellow;
+        GetComponent<MeshRenderer>().enabled = keyBoardControls;
         FitBoard();
     }
 
@@ -54,20 +57,24 @@ public class BoardCreator : MonoBehaviour
             height *= (1.0f - (boardInitOffsetLeftDown.y + boardInitOffsetRightUp.y));
             width *= (1.0f - (boardInitOffsetLeftDown.x + boardInitOffsetRightUp.x));
 
-            int limits = (buildLimits) ? 2 : 0;
+            int limits = (buildLimits) ? 0 : 0;//Ver si queremos que se tenga en cuenta para el fit
             float boardHeight = (float)board.GetRows() + limits, boardWidth = (float)board.GetColumns() + limits;
             float xRatio = width / boardWidth, yRatio = height / boardHeight;
             float ratio = Mathf.Min(xRatio, yRatio);
             float offsetX = (-boardWidth * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio, offsetY = (-boardHeight * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio;
 
             //Fit the board on the screen and resize it
-            board.transform.position = new Vector3(xPos + width / 2.0f + offsetX, yPos + height / 2.0f + offsetY, 0);
-            board.transform.localScale = new Vector3(ratio, ratio, 1.0f);
+            board.transform.position = new Vector3(xPos + width / 2.0f + offsetX, 0, yPos + height / 2.0f + offsetY);
+            board.transform.localScale = new Vector3(ratio, ratio, ratio);
+
+            elementSelection.transform.position = board.transform.position + (2.0f * Vector3.left * elementSelection.GetColumns() * ratio) + Vector3.forward * (boardHeight - elementSelection.GetRows()) / 2.0f * ratio;
+            elementSelection.transform.localScale = new Vector3(ratio, ratio, ratio);
         }
     }
 
     private void Update()
     {
+        if (!keyBoardControls) return;
         ManageInput();
 
         //CursorMovement
@@ -75,7 +82,7 @@ public class BoardCreator : MonoBehaviour
         int nY = Input.GetKeyDown(KeyCode.S) ? -1 : (Input.GetKeyDown(KeyCode.W) ? 1 : 0);
         cursorPos.x = ((cursorPos.x + nX) + columns) % columns;
         cursorPos.y = ((cursorPos.y + nY) + rows) % rows;
-        transform.localPosition = new Vector3(cursorPos.x + offset.x, cursorPos.y + offset.y, 0);
+        transform.localPosition = new Vector3(cursorPos.x + offset.x, 0, cursorPos.y + offset.y);
     }
 
     private void AddObject(int id)
@@ -173,6 +180,26 @@ public class BoardCreator : MonoBehaviour
         {
             AddObject(4);
         }
+        else if (Input.GetKeyDown(KeyCode.Keypad1))
+        {
+            ReplaceCell(0, cursorPos.x, cursorPos.y);
+        }
+        else if (Input.GetKeyDown(KeyCode.Keypad2))
+        {
+            ReplaceCell(1, cursorPos.x, cursorPos.y);
+        }
+        else if (Input.GetKeyDown(KeyCode.Keypad3))
+        {
+            ReplaceCell(2, cursorPos.x, cursorPos.y);
+        }
+        else if (Input.GetKeyDown(KeyCode.Keypad4))
+        {
+            ReplaceCell(3, cursorPos.x, cursorPos.y);
+        }
+        else if (Input.GetKeyDown(KeyCode.Keypad5))
+        {
+            ReplaceCell(4, cursorPos.x, cursorPos.y);
+        }
     }
 
     public void GenerateNewBoard()
@@ -186,13 +213,18 @@ public class BoardCreator : MonoBehaviour
         board.transform.localScale = Vector3.one;
         board.transform.localPosition = Vector3.zero;
         board.GenerateBoard();
+        board.GenerateHoles();
         if (buildLimits) board.GenerateLimits();
+
+        elementSelection.transform.localScale = Vector3.one;
+        elementSelection.transform.localPosition = Vector3.zero;
+        elementSelection.GenerateSelector();
 
         DeselectObject();
         cursorPos = Vector2Int.zero;
         transform.localPosition = Vector3.zero;
-        this.rows = rows;
-        this.columns = columns;
+        this.rows = board.GetRows();
+        this.columns = board.GetColumns();
         FitBoard();
     }
     public void SaveBoard()
@@ -201,8 +233,14 @@ public class BoardCreator : MonoBehaviour
         if (fileName == "") fileName = "level";
         using (StreamWriter outputFile = new StreamWriter(filePath + fileName + nLevel++.ToString() + ".json"))
         {
+            board.ClearHoles();
             outputFile.Write(board.GetBoardState());
         }
         Console.WriteLine("Archivo Guardado");
+    }
+
+    private void ReplaceCell(int id, int x, int y)
+    {
+        board.ReplaceCell(id, x, y);
     }
 }
