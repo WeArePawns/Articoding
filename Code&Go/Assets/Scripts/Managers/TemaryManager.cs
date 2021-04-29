@@ -6,11 +6,12 @@ using UnityEngine.UI;
 
 public class TemaryManager : MonoBehaviour
 {
-    private static Dictionary<TutorialType, List<PopUpData>> shownTemary = new Dictionary<TutorialType, List<PopUpData>>();
+    public static TemaryManager Instance = null;
+    private Dictionary<TutorialType, List<PopUpData>> shownTemary;
 
     [SerializeField] private RectTransform rectTransform;
 
-    private static PopUpData lastData;
+    private PopUpData lastData;
 
     [Space]
     [SerializeField] private RectTransform categoryList;
@@ -22,21 +23,52 @@ public class TemaryManager : MonoBehaviour
     [SerializeField] private Button backButton;
     [Space]
     [SerializeField] private PopUpData[] allTutorials;
-    private static string[] shownTutorials;
+    private List<string> shownTutorials;
 
     private Button[] categoryButtons;
 
     private void Awake()
     {
-        CreateCategoryList();
+        shownTutorials = new List<string>();
 
+        Instance = this;
+
+        CreateCategoryList();
         backButton.onClick.AddListener(() => ShowTutorialsCategoryList());
+    }
+    private void Start()
+    {
+        shownTutorials.AddRange(TutorialManager.Instance.GetTriggeredTutorials());
+        Configure();
+    }
+
+    // Slow, avoid calling repetly
+    private void Configure()
+    {
+        shownTemary = new Dictionary<TutorialType, List<PopUpData>>();
+
+        for (int i = 0; i < allTutorials.Length; i++)
+        {
+            if (!shownTutorials.Contains(Hash.ToHash(allTutorials[i].title + allTutorials[i].content, "TutorialTrigger"))) continue;
+
+            if (!shownTemary.ContainsKey(allTutorials[i].type))
+                shownTemary.Add(allTutorials[i].type, new List<PopUpData>());
+
+            List<PopUpData> list = shownTemary[allTutorials[i].type];
+            list.Add(allTutorials[i]);
+        }
+
+        for (int i = 0; i < categoryButtons.Length; i++)
+        {
+            TutorialType type = (TutorialType)(i + 1);
+            categoryButtons[i].interactable = shownTemary.ContainsKey(type);
+        }
     }
 
     private void CreateCategoryList()
     {
         int count = Enum.GetValues(typeof(TutorialType)).Length;
-        categoryButtons = new Button[count];
+        categoryButtons = new Button[count - 1];
         for (int i = 0; i < count; i++)
         {
             TutorialType type = (TutorialType)i;
@@ -46,11 +78,9 @@ public class TemaryManager : MonoBehaviour
             button.onClick.AddListener(() => ShowCategory(type));
 
             button.transform.GetChild(0).GetComponent<Text>().text = type.ToString();
-            categoryButtons[i] = button;
+            categoryButtons[i - 1] = button;
         }
         categoryButton.gameObject.SetActive(false);
-
-        // TODO: disable button if theres no tutorials
     }
 
     private void ShowCategory(TutorialType type)
@@ -93,17 +123,13 @@ public class TemaryManager : MonoBehaviour
         categoryList.gameObject.SetActive(true);
     }
 
-    public static void AddTemary(PopUpData data)
+    public void AddTemary(PopUpData data)
     {
-        if (!shownTemary.ContainsKey(data.type))
-            shownTemary.Add(data.type, new List<PopUpData>());
+        string hash = Hash.ToHash(data.title + data.content, "TutorialTrigger");
+        if (shownTutorials.Contains(hash)) return;
 
-        List<PopUpData> list = shownTemary[data.type];
-        if (!list.Contains(data))
-            list.Add(data);
-        else return;
-
-        lastData = data;
+        shownTutorials.Add(hash);
+        Configure();
     }
 
     private void AddTitle(string s)
@@ -120,8 +146,9 @@ public class TemaryManager : MonoBehaviour
         paragraph.text = s;
     }
 
-    public static void Load(TutorialSaveData data)
+    public void Load(TutorialSaveData data)
     {
-        shownTutorials = data.tutorials;
+        shownTutorials.AddRange(data.tutorials);
+        Configure();
     }
 }

@@ -19,13 +19,17 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             SaveManager.Init();
-            if (loadSave)
-                SaveManager.Load();
         }
         else
         {
             DestroyImmediate(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        if (loadSave)
+            SaveManager.Load();
     }
 
     public Category GetCurrentCategory()
