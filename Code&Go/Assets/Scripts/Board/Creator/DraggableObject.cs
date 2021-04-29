@@ -13,6 +13,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
     Vector2Int lastPos = -Vector2Int.one;
     private float zCoord;
     private bool dragging = false;
+    private bool modifiable = true;
 
     private Vector3 GetMouseWorldPos()
     {
@@ -28,7 +29,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
 
     private void Update()
     {
-        if (dragging)
+        if (modifiable && dragging)
         {
             transform.position = GetMouseWorldPos() + mouseOffset;
             if (Input.GetMouseButtonUp(0))
@@ -48,6 +49,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
 
     private void OnLeftDown()
     {
+        if (!modifiable) return;
         if (boardObject == null) boardObject = GetComponent<BoardObject>();
         if (argumentLoader != null) argumentLoader.SetBoardObject(boardObject);
 
@@ -58,6 +60,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
 
     private void OnRightDown()
     {
+        if (!modifiable) return;
         if (boardObject == null) boardObject = GetComponent<BoardObject>();
         if (argumentLoader != null) argumentLoader.SetBoardObject(boardObject);
 
@@ -66,7 +69,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
 
     private void OnLeftUp()
     {
-        if (dragging)
+        if (modifiable && dragging)
         {
             dragging = false;
             Vector3 pos = board.GetLocalPosition(transform.position);
@@ -119,5 +122,10 @@ public class DraggableObject : MonoBehaviour, IMouseListener
     public void SetLastPos(Vector2Int lastPos)
     {
         this.lastPos = lastPos;
+    }
+
+    public void SetModifiable(bool modifiable)
+    {
+        this.modifiable = modifiable;
     }
 }

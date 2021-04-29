@@ -34,7 +34,7 @@ public class ProgressManager : MonoBehaviour
             CategorySaveData data = new CategorySaveData();
             data.lastLevelUnlocked = i <= lastCategoryUnlocked ? 0 : -1;
             data.totalStars = 0;
-            data.levelsData = new LevelSaveData[categories[i].levels.Length];
+            data.levelsData = new LevelSaveData[categories[i].levels.Count];
             for (int j = 0; j < data.levelsData.Length; j++)
             {
                 data.levelsData[j] = new LevelSaveData();

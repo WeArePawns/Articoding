@@ -78,7 +78,7 @@ public class CategoryManager : MonoBehaviour
         currentCategoryPanel.SetActive(false);
         currentLevelPanel.SetActive(true);
 
-        for (int i = 0; i < category.levels.Length; i++)
+        for (int i = 0; i < category.levels.Count; i++)
         {
             int index = i;
             LevelData levelData = category.levels[i];

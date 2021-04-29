@@ -18,14 +18,16 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            SaveManager.Init();
-            if (loadSave)
-                SaveManager.Load();
         }
         else
-        {
             DestroyImmediate(gameObject);
-        }
+    }
+
+    private void Start()
+    {
+        SaveManager.Init();
+        if (loadSave)
+            SaveManager.Load();
     }
 
     public Category GetCurrentCategory()
@@ -36,6 +38,16 @@ public class GameManager : MonoBehaviour
     public int GetCurrentLevelIndex()
     {
         return levelIndex;
+    }
+
+    public void SetCurrentLevel(int levelIndex)
+    {
+        this.levelIndex = levelIndex;
+    }
+
+    public void SetCurrentCategory(Category category)
+    {
+        this.category = category;
     }
 
     // Esto habra que moverlo al MenuManager o algo asi

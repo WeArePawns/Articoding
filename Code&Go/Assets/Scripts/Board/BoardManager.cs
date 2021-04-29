@@ -174,6 +174,22 @@ public class BoardManager : Listener
         return IsInBoardBounds(position.x, position.y);
     }
 
+    public void SetModifiable(bool modifiable)
+    {
+        this.modifiable = modifiable;
+        foreach (Transform child in cellsParent)
+        {
+            ModifiableBoardCell modCell = child.GetComponent<ModifiableBoardCell>();
+            if (modCell != null) modCell.SetModifiable(modifiable);
+        }
+
+        foreach (Transform child in elementsParent)
+        {
+            DraggableObject drag = child.GetComponent<DraggableObject>();
+            if (drag != null) drag.SetModifiable(modifiable);
+        }
+    }
+
     public void SetArgLoader(ArgumentLoader argumentLoader)
     {
         argLoader = argumentLoader;

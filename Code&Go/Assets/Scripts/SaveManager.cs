@@ -14,7 +14,7 @@ public class SaveManager
 #if UNITY_EDITOR
         Application.dataPath;
 #else
-            Application.persistentDataPath;
+        Application.persistentDataPath;
 #endif
         Filepath = Path.Combine(dataPath, filename);
     }
@@ -50,7 +50,7 @@ public class SaveManager
 
     public static void Save()
     {
-        SaveData data= new SaveData();
+        SaveData data = new SaveData();
         GameSaveData gameData = new GameSaveData();
         gameData.tutorialInfo = TutorialManager.Instance.Save();
         gameData.progressData = ProgressManager.Instance.Save();

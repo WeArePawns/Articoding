@@ -52,7 +52,7 @@ public class BoardCreator : MonoBehaviour
         FitBoard();
     }
 
-    private void FitBoard()
+    public void FitBoard()
     {
         if (mainCamera != null)
         {

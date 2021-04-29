@@ -122,29 +122,6 @@ public class LevelManager : MonoBehaviour
         BoardState state = BoardState.FromJson(currentLevel.levelBoard.text);
         boardManager.LoadBoard(state, buildLimits);
         cameraFit.FitBoard(boardManager.GetRows(), boardManager.GetColumns());
-        //FitBoard();
-    }
-
-    private void FitBoard()
-    {
-        if (mainCamera != null)
-        {
-            float height = mainCamera.orthographicSize * 2, width = height * mainCamera.aspect;
-            float xPos = Mathf.Lerp(-width / 2.0f, width / 2.0f, boardInitOffsetLeftDown.x);
-            float yPos = Mathf.Lerp(-height / 2.0f, height / 2.0f, boardInitOffsetLeftDown.y);
-            height *= (1.0f - (boardInitOffsetLeftDown.y + boardInitOffsetRightUp.y));
-            width *= (1.0f - (boardInitOffsetLeftDown.x + boardInitOffsetRightUp.x));
-
-            int limits = (buildLimits) ? 0 : 0;//Ver si queremos que se tenga en cuenta para el fit
-            float boardHeight = (float)boardManager.GetRows() + limits, boardWidth = (float)boardManager.GetColumns() + limits;
-            float xRatio = width / boardWidth, yRatio = height / boardHeight;
-            float ratio = Mathf.Min(xRatio, yRatio);
-            float offsetX = (-boardWidth * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio, offsetY = (-boardHeight * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio;
-
-            //Fit the board on the screen and resize it
-            boardManager.transform.position = new Vector3(xPos + width / 2.0f + offsetX, 0, yPos + height / 2.0f + offsetY);
-            boardManager.transform.localScale = new Vector3(ratio, ratio, ratio);
-        }
     }
 
     public void LoadLevel(Category category, int levelIndex)
@@ -162,7 +139,7 @@ public class LevelManager : MonoBehaviour
     // It is called when the current level is completed
     public void LoadNextLevel()
     {        
-        int levelSize = currentCategory.levels.Length;
+        int levelSize = currentCategory.levels.Count;
         if (++currentLevelIndex < levelSize)
             GameManager.Instance.LoadLevel(currentCategory, currentLevelIndex);
         else
@@ -210,7 +187,6 @@ public class LevelManager : MonoBehaviour
     public void ReloadLevel()
     {
         LoadLevel(currentLevel);
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void LoadMainMenu()
