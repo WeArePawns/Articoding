@@ -9,9 +9,7 @@ public class TemaryManager : MonoBehaviour
     private static Dictionary<TutorialType, List<PopUpData>> shownTemary = new Dictionary<TutorialType, List<PopUpData>>();
 
     [SerializeField] private RectTransform rectTransform;
-    [SerializeField] private Category currentCategory;
 
-    private static TutorialType lastTutorialType;
     private static PopUpData lastData;
 
     [Space]
@@ -22,13 +20,14 @@ public class TemaryManager : MonoBehaviour
     [SerializeField] private Text paragraphPrefab;
     [SerializeField] private RectTransform contentRect;
     [SerializeField] private Button backButton;
+    [Space]
+    [SerializeField] private PopUpData[] allTutorials;
+    private static string[] shownTutorials;
 
     private Button[] categoryButtons;
 
     private void Awake()
     {
-        /*if (GameManager.Instance != null)
-            currentCategory = GameManager.Instance.GetCurrentCategory();*/
         CreateCategoryList();
 
         backButton.onClick.AddListener(() => ShowTutorialsCategoryList());
@@ -41,6 +40,8 @@ public class TemaryManager : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             TutorialType type = (TutorialType)i;
+            if (type == TutorialType.NONE) continue;
+
             Button button = Instantiate(categoryButton, categoryList);
             button.onClick.AddListener(() => ShowCategory(type));
 
@@ -92,17 +93,16 @@ public class TemaryManager : MonoBehaviour
         categoryList.gameObject.SetActive(true);
     }
 
-    public static void AddTemary(TutorialType id, PopUpData data)
+    public static void AddTemary(PopUpData data)
     {
-        if (!shownTemary.ContainsKey(id))
-            shownTemary.Add(id, new List<PopUpData>());
+        if (!shownTemary.ContainsKey(data.type))
+            shownTemary.Add(data.type, new List<PopUpData>());
 
-        List<PopUpData> list = shownTemary[id];
+        List<PopUpData> list = shownTemary[data.type];
         if (!list.Contains(data))
             list.Add(data);
         else return;
 
-        lastTutorialType = id;
         lastData = data;
     }
 
@@ -118,5 +118,10 @@ public class TemaryManager : MonoBehaviour
         Text paragraph = Instantiate(paragraphPrefab, contentRect);
         paragraph.gameObject.SetActive(true);
         paragraph.text = s;
+    }
+
+    public static void Load(TutorialSaveData data)
+    {
+        shownTutorials = data.tutorials;
     }
 }

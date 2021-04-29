@@ -2,21 +2,8 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public enum TutorialType
-{
-    GENERAL,
-    BOARD,
-    CATEGORY_VARIABLES,
-    CATEGORY_TYPES,
-    CATEGORY_OPERATORS,
-    CATEGORY_LOOPS,
-    CATEGORY_CONDITIONS,
-    ACTION
-}
-
 public class TutorialTrigger : MonoBehaviour, IComparable<TutorialTrigger>
 {
-    public TutorialType type = TutorialType.GENERAL;
     public int priority;
     public PopUpData info;
     public Func<bool> condition;
