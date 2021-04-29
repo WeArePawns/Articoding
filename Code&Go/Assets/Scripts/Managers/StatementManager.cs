@@ -16,7 +16,7 @@ public class StatementManager : MonoBehaviour
 
     public void Load(TextAsset textAsset)
     {
-        XmlDocument document = new XmlDocument();
+        /*XmlDocument document = new XmlDocument();
         document.LoadXml(textAsset.text);
 
         XmlNodeList elements = document.SelectSingleNode("statement").ChildNodes;
@@ -35,7 +35,7 @@ public class StatementManager : MonoBehaviour
             {
                 AddImage(child);
             }
-        }
+        }*/
     }
 
     private void AddTitle(string s)
