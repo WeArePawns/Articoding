@@ -119,7 +119,8 @@ public class LevelManager : MonoBehaviour
         ActivateLevelBlocks(currentLevel.activeBlocks, currentLevel.allActive);
         LoadInitialBlocks(currentLevel.initialState);
 
-        BoardState state = BoardState.FromJson(currentLevel.levelBoard.text);
+        string boardJson = currentLevel.levelBoard != null ? currentLevel.levelBoard.text : currentLevel.auxLevelBoard;        
+        BoardState state = BoardState.FromJson(boardJson);
         boardManager.LoadBoard(state, buildLimits);
         cameraFit.FitBoard(boardManager.GetRows(), boardManager.GetColumns());
     }

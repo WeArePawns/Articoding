@@ -41,13 +41,13 @@ public class LaserReceiver : BoardObject, ILaserReceiver
 
     public void OnLaserLost()
     {
-        receiverRenderer.material = offMaterial;
-        onParticles.Stop();
-        light.SetActive(false);
+        if (receiverRenderer != null) receiverRenderer.material = offMaterial;
+        if (onParticles != null) onParticles.Stop();
+        if (light != null) light.SetActive(false);
 
         if (registered)
         {
-            boardManager.ReceiverDeactivated();
+            if (boardManager != null) boardManager.ReceiverDeactivated();
             registered = false;
         }
         else
@@ -65,6 +65,6 @@ public class LaserReceiver : BoardObject, ILaserReceiver
     {
         this.boardManager = board;
         boardManager.RegisterReceiver();
-        if(registered) boardManager.ReceiverActivated();
+        if (registered) boardManager.ReceiverActivated();
     }
 }

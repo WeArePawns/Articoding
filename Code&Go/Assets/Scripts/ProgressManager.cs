@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
+using System;
 
 public class ProgressManager : MonoBehaviour
 {
@@ -8,6 +10,9 @@ public class ProgressManager : MonoBehaviour
 
     [SerializeField] private List<Category> categories;
     [SerializeField] private bool allUnlocked;
+    [SerializeField] private TextAsset activeBlocks;
+    [SerializeField] private TextAsset initialStatement;
+    [SerializeField] private Category levelsCreatedCategory;
 
     private CategorySaveData[] categoriesData;
     private int hintsRemaining = 5;
@@ -15,6 +20,9 @@ public class ProgressManager : MonoBehaviour
 
     private CategorySaveData currentCategory = null;
     private int currentLevel = 0, lastCategoryUnlocked = 0;
+
+    private LevelsCreatedSaveData levelsCreated;
+    private List<string> levelsCreatedHash;
 
     private void Awake()
     {
@@ -45,6 +53,10 @@ public class ProgressManager : MonoBehaviour
 
         currentCategory = categoriesData[0];
         currentLevel = 0;
+        levelsCreated = new LevelsCreatedSaveData();
+        levelsCreated.levelsCreated = new string[0];
+        levelsCreatedHash = new List<string>();
+        levelsCreatedCategory.levels.Clear();
     }
 
     //Setters
@@ -69,7 +81,7 @@ public class ProgressManager : MonoBehaviour
 
     public void LevelStarted(int categoryIndex, int level)
     {
-        if (currentCategory == null || categoriesData[categoryIndex] != currentCategory)
+        if (currentCategory == null || (categoryIndex >= 0 && categoryIndex < categoriesData.Length && categoriesData[categoryIndex] != currentCategory))
             currentCategory = categoriesData[categoryIndex];
         currentLevel = level;
     }
@@ -107,7 +119,7 @@ public class ProgressManager : MonoBehaviour
 
     public uint GetLevelStars(int categoryIndex, int level)
     {
-        if (categoryIndex >= categoriesData.Length || level >= categoriesData[categoryIndex].levelsData.Length) return 0;
+        if (categoryIndex >= categoriesData.Length || categoryIndex < 0 || level >= categoriesData[categoryIndex].levelsData.Length || level < 0) return 0;
         return categoriesData[categoryIndex].levelsData[level].stars;
     }
 
@@ -118,7 +130,7 @@ public class ProgressManager : MonoBehaviour
 
     public uint GetCategoryProgress(int categoryIndex)
     {
-        if (categoryIndex >= categoriesData.Length) return 0;
+        if (categoryIndex >= categoriesData.Length || categoryIndex < 0) return 0;
         return categoriesData[categoryIndex].totalStars;
     }
 
@@ -137,6 +149,64 @@ public class ProgressManager : MonoBehaviour
         return coins;
     }
 
+    public void UserCreatedLevel(string board)
+    {
+        //si el nivel ya existe no se guarda
+        if (levelsCreatedHash.Contains(Hash.ToHash(board, ""))) return;
+
+        int index = levelsCreatedCategory.levels.Count + 1;
+        string levelName = "created_level_" + index.ToString();
+        string path =
+#if UNITY_EDITOR
+                   Application.dataPath;
+#else
+                   Application.persistentDataPath;
+#endif
+        string filePath = Path.Combine(path, "Boards/LevelsCreated/" + levelName + ".json");
+        FileStream file = new FileStream(filePath, FileMode.Create);
+        file.Close();
+        StreamWriter writer = new StreamWriter(filePath);
+        writer.Write(board);
+        writer.Close();
+
+        AddLevelCreated(board, index);
+        Array.Resize(ref levelsCreated.levelsCreated, levelsCreated.levelsCreated.Length + 1);
+        levelsCreated.levelsCreated[levelsCreated.levelsCreated.GetUpperBound(0)] = levelName;
+    }
+
+    private void LoadLevelsCreated()
+    {
+        string path =
+#if UNITY_EDITOR
+                   Application.dataPath;
+#else
+                   Application.persistentDataPath;
+#endif
+        for (int i = 0; i < levelsCreated.levelsCreated.Length; i++)
+        {
+            string levelName = levelsCreated.levelsCreated[i];
+            string filePath = Path.Combine(path, "Boards/LevelsCreated/" + levelName + ".json");
+            StreamReader reader = new StreamReader(filePath);
+            string readerData = reader.ReadToEnd();
+            reader.Close();
+
+            AddLevelCreated(readerData, i + 1);
+        }
+    }
+
+    private void AddLevelCreated(string board, int index)
+    {
+        LevelData data = ScriptableObject.CreateInstance<LevelData>();
+        data.description = "Nivel creado por el usuario";
+        data.activeBlocks = activeBlocks;
+        data.levelName = "Nivel Creado " + index.ToString();
+        data.auxLevelBoard = board;
+        data.statement = initialStatement;
+
+        levelsCreatedCategory.levels.Add(data);
+        levelsCreatedHash.Add(board);
+    }
+
     //Save and Load
     //----------------
     public ProgressSaveData Save()
@@ -146,6 +216,7 @@ public class ProgressManager : MonoBehaviour
         data.hintsRemaining = hintsRemaining;
         data.lastCategoryUnlocked = lastCategoryUnlocked;
         data.coins = coins;
+        data.levelsCreatedData = levelsCreated;
         return data;
     }
 
@@ -155,5 +226,7 @@ public class ProgressManager : MonoBehaviour
         hintsRemaining = data.hintsRemaining;
         lastCategoryUnlocked = data.lastCategoryUnlocked;
         coins = data.coins;
+        levelsCreated = data.levelsCreatedData;
+        LoadLevelsCreated();
     }
 }

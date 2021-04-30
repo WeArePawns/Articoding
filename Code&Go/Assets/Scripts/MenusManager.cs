@@ -31,4 +31,9 @@ public class MenusManager : MonoBehaviour
         //GameManager.instance.Quit(); //TODO: GameManager
         Application.Quit();
     }
+    
+    public void LoadLevelCreator()
+    {
+        GameManager.Instance.LoadLevelCreator();
+    }
 }

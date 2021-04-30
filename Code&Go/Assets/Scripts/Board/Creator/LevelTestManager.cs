@@ -22,7 +22,7 @@ public class LevelTestManager : MonoBehaviour
 
     [SerializeField] BoardManager board;
     [SerializeField] BoardCreator boardCreator;
-    [SerializeField] TextAsset activeBlocks;
+    [SerializeField] TextAsset activeBlocks;    
 
     [SerializeField] GameObject debugPanel;
     [SerializeField] GameObject changeModeButton;
@@ -52,22 +52,12 @@ public class LevelTestManager : MonoBehaviour
             changeModeButton.GetComponent<Button>().enabled = enabled;
             changeModeButton.GetComponent<Image>().color = enabled ? Color.white : Color.red;
         }
-        else
+        else if (board.BoardCompleted() && !completed)
         {
-            if (board.BoardCompleted() && !completed)
-            {
-                completed = true;
-                int index = levelsCreatedCategory.levels.Count + 1;
-                string levelName = "created_level_" + index.ToString();
-
-                LevelData data = ScriptableObject.CreateInstance<LevelData>();
-                data.description = "Nivel creado por el usuario";
-                data.activeBlocks = activeBlocks;
-                data.levelName = "Nivel Creado " + index.ToString();
-                data.levelBoard = null;
-
-                levelsCreatedCategory.levels.Add(data);
-            }
+            completed = true;
+            endPanel.SetActive(true);
+            blackRect.SetActive(true);
+            ProgressManager.Instance.UserCreatedLevel(initialState.ToJson());
         }
     }
 
@@ -84,35 +74,31 @@ public class LevelTestManager : MonoBehaviour
 
         board.SetModifiable(inCreator);
 
-        board.transform.position = Vector3.zero;
-        board.transform.localScale = Vector3.one;
         if (!inCreator)
         {
             completed = false;
             cameraFit.FitBoard(board.GetRows(), board.GetColumns());
             initialState = board.GetBoardStateWithoutHoles();
         }
-        else boardCreator.FitBoard();
-    }
-
-    public void LoadLevelToTest()
-    {
-
+        else
+        {
+            board.transform.position = Vector3.zero;
+            board.transform.localScale = Vector3.one;
+            boardCreator.FitBoard();
+        }
     }
 
     public void LoadMainMenu()
     {
         //TrackerAsset.Instance.setVar("steps", board.GetCurrentSteps());
         TrackerAsset.Instance.GameObject.Used("main_menu_return");
-
         GameManager.Instance.LoadScene("MenuScene");
     }
 
     public void ResetLevel()
     {
         board.Reset();
-        BoardState state = BoardState.FromJson(initialState.ToJson());
-        board.GenerateBoardElements(state);
+        board.GenerateBoardElements(initialState);
         debugPanel.SetActive(true);
         cameraFit.FitBoard(board.GetRows(), board.GetColumns());
     }
@@ -123,6 +109,7 @@ public class LevelTestManager : MonoBehaviour
         gameOverPanel.SetActive(false);
         blackRect.SetActive(false);
         gameOverMinimized.SetActive(false);
+        completed = false;
     }
 
     public void MinimizeEndPanel()

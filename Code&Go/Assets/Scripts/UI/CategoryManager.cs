@@ -95,7 +95,6 @@ public class CategoryManager : MonoBehaviour
             }
             else
                 levelCard.DeactivateCard();
-            // TODO: cargar progreso y poner estrellas
         }
 
         // TODO: seleccionar primer level sin completar

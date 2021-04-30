@@ -17,8 +17,15 @@ public class CategorySaveData
 }
 
 [System.Serializable]
+public class LevelsCreatedSaveData
+{
+    public string[] levelsCreated;
+}
+
+[System.Serializable]
 public class ProgressSaveData
 {
+    public LevelsCreatedSaveData levelsCreatedData;
     public CategorySaveData[] categoriesInfo;
     public int hintsRemaining;
     public int lastCategoryUnlocked;
@@ -30,6 +37,7 @@ public class TutorialSaveData
 {
     public string[] tutorials;
 }
+
 
 [System.Serializable]
 public class GameSaveData

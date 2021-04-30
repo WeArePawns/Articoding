@@ -20,6 +20,7 @@ public class LevelData : ScriptableObject
 
     [Space(10)]
     public TextAsset levelBoard;
+    public string auxLevelBoard;
 
     public int minimosPasos;
 }

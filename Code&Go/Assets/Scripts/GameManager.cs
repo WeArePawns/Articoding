@@ -61,6 +61,11 @@ public class GameManager : MonoBehaviour
         LoadScene("LevelScene");
     }
 
+    public void LoadLevelCreator()
+    {
+        LoadScene("BoardCreation");
+    }
+
     public void LoadScene(string name)
     {
         SceneManager.LoadScene(name);
