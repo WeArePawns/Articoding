@@ -60,4 +60,11 @@ public class LaserReceiver : BoardObject, ILaserReceiver
         if (boardManager != null)
             boardManager.ReceiverActivated();
     }
+
+    override public void SetBoard(BoardManager board)
+    {
+        this.boardManager = board;
+        boardManager.RegisterReceiver();
+        if(registered) boardManager.ReceiverActivated();
+    }
 }

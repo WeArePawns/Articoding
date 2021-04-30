@@ -240,7 +240,7 @@ public class BoardCreator : MonoBehaviour
         using (StreamWriter outputFile = new StreamWriter(filePath + fileName + nLevel++.ToString() + ".json"))
         {
             board.ClearHoles();
-            outputFile.Write(board.GetBoardState());
+            outputFile.Write(board.GetBoardStateAsString());
         }
         Console.WriteLine("Archivo Guardado");
     }

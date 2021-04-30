@@ -174,7 +174,6 @@ public class LevelManager : MonoBehaviour
         debugPanel.SetActive(false);
     }
 
-    //TODO:Hacer un reset board en vez de volver a cargarla... o no
     public void ResetLevel()
     {
         boardManager.Reset();

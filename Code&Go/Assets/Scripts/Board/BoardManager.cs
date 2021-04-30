@@ -273,6 +273,17 @@ public class BoardManager : Listener
         return nReceivers > 0 && nReceiversActive >= nReceivers;
     }
 
+    public int GetNReceivers()
+    {
+        return nReceivers;
+    }
+
+    public int GetNEmitters()
+    {
+        if (!elementPositions.ContainsKey("Laser")) return 0;
+        return elementPositions["Laser"].Count;
+    }
+
     public void SetRows(int rows)
     {
         this.rows = rows;
@@ -302,8 +313,7 @@ public class BoardManager : Listener
     {
         return IsInBoardBounds(x, y) ? board[x, y].GetObjectID() : -1;
     }
-
-    public string GetBoardState()
+    public BoardState GetBoardState()
     {
         BoardState state = new BoardState(rows - 2, columns - 2, elementsParent.childCount);
         int i = 0;
@@ -315,8 +325,30 @@ public class BoardManager : Listener
                 state.SetBoardObject(i++, cell);
         }
 
-        return state.ToJson();
+        return state;
     }
+
+    public BoardState GetBoardStateWithoutHoles()
+    {
+        BoardState state = new BoardState(rows - 2, columns - 2, elementsParent.childCount);
+        int i = 0;
+        foreach (BoardCell cell in board)
+        {
+            Vector2Int pos = cell.GetPosition();
+            if (cell == null || pos.x == 0 || pos.y == 0 || pos.x == columns - 1 || pos.y == rows - 1) continue;
+            state.SetBoardCell(cell);
+            if (i < elementsParent.childCount && cell.GetState() == BoardCell.BoardCellState.OCUPPIED)
+                state.SetBoardObject(i++, cell);
+        }
+
+        return state;
+    }
+
+    public string GetBoardStateAsString()
+    {
+        return GetBoardState().ToJson();
+    }
+
 
     public BoardCell AddBoardCell(int id, int x, int y, string[] args = null)
     {
@@ -353,7 +385,10 @@ public class BoardManager : Listener
             if (!placed) return false;
 
             if (boardObject.transform.parent != elementsParent)
+            {
                 boardObject.transform.SetParent(elementsParent);
+                boardObject.SetBoard(this);
+            }
             if (elementPositions != null)
             {
                 if (!elementPositions.ContainsKey(boardObject.GetName()))

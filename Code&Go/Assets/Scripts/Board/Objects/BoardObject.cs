@@ -17,7 +17,7 @@ public class BoardObject : MonoBehaviour
     protected string typeName = "";
     protected string[] argsNames;
 
-    public void SetBoard(BoardManager board)
+    public virtual void SetBoard(BoardManager board)
     {
         boardManager = board;
     }
