@@ -77,7 +77,7 @@ public class TemaryManager : MonoBehaviour
             Button button = Instantiate(categoryButton, categoryList);
             button.onClick.AddListener(() => ShowCategory(type));
 
-            button.transform.GetChild(0).GetComponent<Text>().text = type.ToString();
+            button.transform.GetChild(0).GetComponent<Text>().text = TypeToString(type);
             categoryButtons[i - 1] = button;
         }
         categoryButton.gameObject.SetActive(false);
@@ -150,5 +150,12 @@ public class TemaryManager : MonoBehaviour
     {
         shownTutorials.AddRange(data.tutorials);
         Configure();
+    }
+
+    private string TypeToString(TutorialType type)
+    {
+        string[] arr = { "Ninguna", "General", "Tablero", "Variables", "Tipos", "Operadores", "Bucles", "Condiciones", "Acciones" };
+
+        return arr[(int)type];
     }
 }
