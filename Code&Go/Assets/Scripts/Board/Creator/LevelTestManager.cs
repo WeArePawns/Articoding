@@ -27,6 +27,9 @@ public class LevelTestManager : MonoBehaviour
     [SerializeField] GameObject debugPanel;
     [SerializeField] GameObject changeModeButton;
 
+    [SerializeField] GameObject loadBoardPanel;
+    [SerializeField] GameObject saveBoardPanel;
+
     public GameObject endPanel;
     public GameObject blackRect;
     public GameObject endPanelMinimized;
@@ -42,6 +45,10 @@ public class LevelTestManager : MonoBehaviour
     {
         Invoke("ChangeMode", 0.01f);
         ActivateLevelBlocks(activeBlocks, false);
+#if UNITY_EDITOR
+        loadBoardPanel.SetActive(true);
+        saveBoardPanel.SetActive(true);
+#endif
     }
 
     private void Update()

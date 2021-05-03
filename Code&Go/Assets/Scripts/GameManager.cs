@@ -35,6 +35,11 @@ public class GameManager : MonoBehaviour
         return category;
     }
 
+    public bool InCreatedLevel()
+    {
+        return category = categories[categories.Length - 1];
+    }
+
     public int GetCurrentLevelIndex()
     {
         return levelIndex;

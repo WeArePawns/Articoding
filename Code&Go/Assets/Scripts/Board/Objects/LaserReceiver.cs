@@ -7,6 +7,7 @@ public class LaserReceiver : BoardObject, ILaserReceiver
     [SerializeField] private Renderer receiverRenderer;
 
     private bool registered = false;
+    private bool registeredOnBoard = false;
 
     [SerializeField] private Material offMaterial;
     [SerializeField] private Material onMaterial;
@@ -22,8 +23,11 @@ public class LaserReceiver : BoardObject, ILaserReceiver
 
     private void Start()
     {
-        if (boardManager != null)
+        if (boardManager != null && !registeredOnBoard)
+        {
             boardManager.RegisterReceiver();
+            registeredOnBoard = true;
+        }
     }
 
     public void OnLaserReceived()
@@ -64,7 +68,11 @@ public class LaserReceiver : BoardObject, ILaserReceiver
     override public void SetBoard(BoardManager board)
     {
         this.boardManager = board;
-        boardManager.RegisterReceiver();
-        if (registered) boardManager.ReceiverActivated();
+        if (!registeredOnBoard)
+        {
+            registeredOnBoard = true;
+            boardManager.RegisterReceiver();
+            if (registered) boardManager.ReceiverActivated();
+        }
     }
 }
