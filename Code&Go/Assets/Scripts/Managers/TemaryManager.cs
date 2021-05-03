@@ -34,7 +34,9 @@ public class TemaryManager : MonoBehaviour
         Instance = this;
 
         CreateCategoryList();
-        backButton.onClick.AddListener(() => ShowTutorialsCategoryList());
+
+        if(backButton != null)
+            backButton.onClick.AddListener(() => ShowTutorialsCategoryList());
     }
     private void Start()
     {
@@ -88,7 +90,8 @@ public class TemaryManager : MonoBehaviour
         if (!shownTemary.ContainsKey(type)) return;
 
         // Deactivate tutorial category list
-        categoryList.gameObject.SetActive(false);
+        if (backButton != null)
+            categoryList.gameObject.SetActive(false);
 
         // Delete previous content
         foreach (Transform child in contentRect)
@@ -106,7 +109,9 @@ public class TemaryManager : MonoBehaviour
         }
 
         contentRect.gameObject.SetActive(true);
-        backButton.gameObject.SetActive(true);
+
+        if (backButton != null)
+            backButton.gameObject.SetActive(true);
     }
 
     private void ShowTutorialsCategoryList()
