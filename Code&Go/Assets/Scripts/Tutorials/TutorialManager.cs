@@ -57,7 +57,6 @@ public class TutorialManager : MonoBehaviour
         }
         conditionTriggers.Sort();
 
-        Canvas.ForceUpdateCanvases();
     }
 
     private void Update()
