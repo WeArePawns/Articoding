@@ -113,7 +113,6 @@ public class LevelManager : MonoBehaviour
         }
 
         // Maybe do more stuff
-        statementManager.Load(currentLevel.statement);
         ActivateLevelBlocks(currentLevel.activeBlocks, currentLevel.allActive);
         LoadInitialBlocks(currentLevel.initialState);
 

@@ -38,6 +38,7 @@ public class TutorialManager : MonoBehaviour
 
             return;
         }
+        Instance.tutorialsON = tutorialsON;
         needToBeDestroyed = true;
     }
 
@@ -50,12 +51,12 @@ public class TutorialManager : MonoBehaviour
             return;
         }
 
-        TutorialTrigger[] aux = FindObjectsOfType<TutorialTrigger>();
-        for(int i=0; i < aux.Length; i++)
-        {
-            AddTutorialTrigger(aux[i], true);
-        }
-        conditionTriggers.Sort();
+        //TutorialTrigger[] aux = FindObjectsOfType<TutorialTrigger>();
+        //for (int i = 0; i < aux.Length; i++)
+        //{
+        //    AddTutorialTrigger(aux[i], true);
+        //}
+        //conditionTriggers.Sort();
 
     }
 
@@ -118,8 +119,8 @@ public class TutorialManager : MonoBehaviour
             popUpManager.Show(info, t.GetRect());
         else
             popUpManager.Show(info.title, info.content);
-
-        TemaryManager.Instance.AddTemary(t.info);
+        if (TemaryManager.Instance != null)
+            TemaryManager.Instance.AddTemary(t.info);
 
         if (t.OnShowed != null)
             t.OnShowed.Invoke();

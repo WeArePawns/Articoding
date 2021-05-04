@@ -26,13 +26,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        SaveManager.Init();
-        if (loadSave)
-            SaveManager.Load();
-    }
-
-    private void Start()
-    {
         if (loadSave)
             SaveManager.Load();
     }
