@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            SaveManager.Init();
         }
         else
             DestroyImmediate(gameObject);
@@ -26,6 +27,12 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SaveManager.Init();
+        if (loadSave)
+            SaveManager.Load();
+    }
+
+    private void Start()
+    {
         if (loadSave)
             SaveManager.Load();
     }
