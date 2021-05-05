@@ -30,6 +30,9 @@ public class BoardManager : Listener
 
     private int currentSteps = 0;
 
+    public GameObject gameOverPanel;
+    public GameObject blackRect;
+
     private void Awake()
     {
         cells = new List<List<BoardCell>>();
@@ -675,50 +678,59 @@ public class BoardManager : Listener
 
     public override void ReceiveMessage(string msg, MSG_TYPE type)
     {
-        string[] args = msg.Split(' ');
-        int amount = 0, index = -1, rot = 0;
-        float intensity = 0.0f, time = 0.5f;
-        bool active;
-        Vector2Int dir;
-
-        switch (type)
+        try
         {
-            case MSG_TYPE.MOVE_LASER:
-                amount = int.Parse(args[0]);
-                dir = GetDirectionFromString(args[1]);
-                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                StartCoroutine(MoveObject("Laser", 0, dir, amount, time));
-                break;
-            case MSG_TYPE.MOVE:
-                index = int.Parse(args[1]);
-                amount = int.Parse(args[2]);
-                dir = GetDirectionFromString(args[3]);
-                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                StartCoroutine(MoveObject(args[0], index - 1, dir, amount, time));
-                break;
-            case MSG_TYPE.ROTATE_LASER:
-                amount = int.Parse(args[0]) * 2;
-                rot = GetRotationFromString(args[1]);
-                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                StartCoroutine(RotateObject("Laser", 0, rot, amount, time));
-                break;
-            case MSG_TYPE.ROTATE:
-                index = int.Parse(args[1]);
-                amount = int.Parse(args[2]) * 2;
-                rot = GetRotationFromString(args[3]);
-                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                StartCoroutine(RotateObject(args[0], index - 1, rot, amount, time));
-                break;
-            case MSG_TYPE.CHANGE_INTENSITY:
-                index = int.Parse(args[0]);
-                intensity = float.Parse(args[1]);
-                ChangeLaserIntensity(index - 1, intensity);
-                break;
-            case MSG_TYPE.ACTIVATE_DOOR:
-                index = int.Parse(args[0]);
-                active = bool.Parse(args[1]);
-                ActivateDoor(index - 1, active);
-                break;
+
+            string[] args = msg.Split(' ');
+            int amount = 0, index = -1, rot = 0;
+            float intensity = 0.0f, time = 0.5f;
+            bool active;
+            Vector2Int dir;
+
+            switch (type)
+            {
+                case MSG_TYPE.MOVE_LASER:
+                    amount = int.Parse(args[0]);
+                    dir = GetDirectionFromString(args[1]);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                    StartCoroutine(MoveObject("Laser", 0, dir, amount, time));
+                    break;
+                case MSG_TYPE.MOVE:
+                    index = int.Parse(args[1]);
+                    amount = int.Parse(args[2]);
+                    dir = GetDirectionFromString(args[3]);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                    StartCoroutine(MoveObject(args[0], index - 1, dir, amount, time));
+                    break;
+                case MSG_TYPE.ROTATE_LASER:
+                    amount = int.Parse(args[0]) * 2;
+                    rot = GetRotationFromString(args[1]);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                    StartCoroutine(RotateObject("Laser", 0, rot, amount, time));
+                    break;
+                case MSG_TYPE.ROTATE:
+                    index = int.Parse(args[1]);
+                    amount = int.Parse(args[2]) * 2;
+                    rot = GetRotationFromString(args[3]);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                    StartCoroutine(RotateObject(args[0], index - 1, rot, amount, time));
+                    break;
+                case MSG_TYPE.CHANGE_INTENSITY:
+                    index = int.Parse(args[0]);
+                    intensity = float.Parse(args[1]);
+                    ChangeLaserIntensity(index - 1, intensity);
+                    break;
+                case MSG_TYPE.ACTIVATE_DOOR:
+                    index = int.Parse(args[0]);
+                    active = bool.Parse(args[1]);
+                    ActivateDoor(index - 1, active);
+                    break;
+            }
+        }
+        catch
+        {
+            gameOverPanel.SetActive(true);
+            blackRect.SetActive(true);
         }
     }
 
@@ -776,6 +788,8 @@ public class BoardManager : Listener
     public void UseHint()
     {
         // TODO: do the "use hint" logic
+
+
 
         TrackerAsset.Instance.setVar("remaining_hints", 0); // TODO: poner las hints
         TrackerAsset.Instance.GameObject.Used("hint_used");
