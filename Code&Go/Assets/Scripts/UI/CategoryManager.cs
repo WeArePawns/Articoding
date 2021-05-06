@@ -32,6 +32,8 @@ public class CategoryManager : MonoBehaviour
     public GameObject currentCategoryPanel;
     public GameObject currentLevelPanel;
 
+    public GameObject currentLevelCreatedPanel;
+
     public Text currentCategoryLevelsText;
 
     public int currentCategory;
@@ -54,6 +56,7 @@ public class CategoryManager : MonoBehaviour
             if (!ProgressManager.Instance.IsCategoryUnlocked(index)) card.button.enabled = false;
             //TODO: Poner icono de candado o algo
         }
+        currentLevelCreatedPanel.SetActive(false);
 
         HideLevels();
 
@@ -73,6 +76,7 @@ public class CategoryManager : MonoBehaviour
             levelCard.DeactivateStars();
             levelCard.button.onClick.AddListener(() =>
             {
+                currentLevelCreatedPanel.SetActive(true);
                 levelCreatedIndex = index;
                 levelCreatedName.text = levelData.levelName;
                 levelCreatdeDescription.text = levelData.description;
@@ -150,7 +154,7 @@ public class CategoryManager : MonoBehaviour
     }
 
     public void PlayLevelCreated()
-    {
+    {        
         GameManager.Instance.LoadLevel(levelsCreatedCategory, levelCreatedIndex);
     }
 }

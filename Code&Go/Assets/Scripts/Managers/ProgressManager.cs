@@ -161,7 +161,7 @@ public class ProgressManager : MonoBehaviour
 #else
                    Application.persistentDataPath;
 #endif
-        string filePath = Path.Combine(path, "Boards/LevelsCreated/" + levelName + ".json");
+        string filePath = Path.Combine(path, "Boards/LevelsCreated/" + levelName + ".userLevel");
         FileStream file = new FileStream(filePath, FileMode.Create);
         file.Close();
         StreamWriter writer = new StreamWriter(filePath);
@@ -184,12 +184,18 @@ public class ProgressManager : MonoBehaviour
         for (int i = 0; i < levelsCreated.levelsCreated.Length; i++)
         {
             string levelName = levelsCreated.levelsCreated[i];
-            string filePath = Path.Combine(path, "Boards/LevelsCreated/" + levelName + ".json");
-            StreamReader reader = new StreamReader(filePath);
-            string readerData = reader.ReadToEnd();
-            reader.Close();
-
-            AddLevelCreated(readerData, i + 1);
+            string filePath = Path.Combine(path, "Boards/LevelsCreated/" + levelName + ".userLevel");
+            try
+            {
+                StreamReader reader = new StreamReader(filePath);
+                string readerData = reader.ReadToEnd();
+                reader.Close();
+                AddLevelCreated(readerData, i + 1);
+            }
+            catch
+            {                
+                Debug.Log("El archivo " + filePath + " no existe");
+            }
         }
     }
 
@@ -200,6 +206,7 @@ public class ProgressManager : MonoBehaviour
         data.activeBlocks = activeBlocks;
         data.levelName = "Nivel Creado " + index.ToString();
         data.auxLevelBoard = board;
+        data.minimosPasos = 10;
 
         levelsCreatedCategory.levels.Add(data);
         levelsCreatedHash.Add(board);

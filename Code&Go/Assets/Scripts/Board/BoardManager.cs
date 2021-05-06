@@ -18,7 +18,8 @@ public class BoardManager : Listener
     [SerializeField] private BoardCell[] cellPrefabs;
     [SerializeField] private BoardObject[] boardObjectPrefabs;
     [SerializeField] private GameObject limitsPrefab;
-    [SerializeField] private bool modifiable = false;
+    [SerializeField] private bool boardModifiable = false;
+    private bool objectsModifiable = false;
 
     // Hidden atributtes
     private BoardCell[,] board;
@@ -179,7 +180,7 @@ public class BoardManager : Listener
 
     public void SetModifiable(bool modifiable)
     {
-        this.modifiable = modifiable;
+        this.objectsModifiable = modifiable;
         foreach (Transform child in cellsParent)
         {
             ModifiableBoardCell modCell = child.GetComponent<ModifiableBoardCell>();
@@ -362,7 +363,12 @@ public class BoardManager : Listener
         cell.SetBoardManager(this);
         board[x, y] = cell;
 
-        if (modifiable) cell.gameObject.AddComponent<ModifiableBoardCell>().SetBoardManager(this);
+        if (boardModifiable)
+        {
+            ModifiableBoardCell modCell = cell.gameObject.AddComponent<ModifiableBoardCell>();
+            modCell.SetBoardManager(this);
+            modCell.SetModifiable(objectsModifiable);
+        }
 
         cells[id].Add(cell);
 
@@ -403,12 +409,17 @@ public class BoardManager : Listener
                     text.SetName(boardObject.GetName() + " " + elementPositions[boardObject.GetName()].Count.ToString());
             }
 
-            if (modifiable && boardObject.gameObject.GetComponent<DraggableObject>() == null)
+            if (boardModifiable)
             {
-                DraggableObject drag = boardObject.gameObject.AddComponent<DraggableObject>();
-                drag.SetBoard(this);
-                drag.SetArgumentLoader(argLoader);
-                drag.SetLastPos(new Vector2Int(x, y));
+                DraggableObject drag = boardObject.gameObject.GetComponent<DraggableObject>();
+                if (drag == null)
+                {
+                    drag = boardObject.gameObject.AddComponent<DraggableObject>();
+                    drag.SetBoard(this);
+                    drag.SetArgumentLoader(argLoader);
+                    drag.SetLastPos(new Vector2Int(x, y));
+                }
+                drag.SetModifiable(objectsModifiable);
             }
             return placed;
         }
