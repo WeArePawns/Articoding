@@ -8922,6 +8922,7 @@ MonoBehaviour:
   elementsParent: {fileID: 973166398}
   limitsParent: {fileID: 1976053842}
   holesParent: {fileID: 1300319815}
+  hintsParent: {fileID: 1722340479}
   cellPrefabs:
   - {fileID: 8917401937122784809, guid: 0580e2697c9b8604c97bdbe808bb12d9, type: 3}
   - {fileID: 6124133308536270790, guid: 02f52319b8df58c44a7cd6ae4004517e, type: 3}
@@ -8935,9 +8936,11 @@ MonoBehaviour:
   - {fileID: 1727520620708870339, guid: 7055252898c53e4498a269603f29004c, type: 3}
   - {fileID: 1094048151191990440, guid: b1326b4de0ce3ea49826eb571da0d37d, type: 3}
   limitsPrefab: {fileID: 6745913655574259957, guid: 8f659a6cd11cefa4db8890aae2461e5f, type: 3}
+  hintsPrefab: {fileID: 1764217823370457327, guid: 5cbf97d1ae52e464a941800aae6ab46c, type: 3}
+  hintButton: {fileID: 0}
   boardModifiable: 1
-  gameOverPanel: {fileID: 0}
-  blackRect: {fileID: 0}
+  gameOverPanel: {fileID: 1727125255}
+  blackRect: {fileID: 1698826748}
 --- !u!4 &1616481009
 Transform:
   m_ObjectHideFlags: 0
@@ -8955,6 +8958,7 @@ Transform:
   - {fileID: 1440010656}
   - {fileID: 1976053842}
   - {fileID: 1300319815}
+  - {fileID: 1722340479}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10622,6 +10626,36 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
+--- !u!1 &1722340478
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1722340479}
+  m_Layer: 0
+  m_Name: Hints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1722340479
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1722340478}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1616481009}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1724290877
 GameObject:
   m_ObjectHideFlags: 0
@@ -11344,7 +11378,7 @@ MonoBehaviour:
   boardInitOffsetLeftDown: {x: 0.25, y: 0}
   boardInitOffsetRightUp: {x: 0.25, y: 0.15}
   mainCamera: {fileID: 2123773576}
-  keyBoardControls: 0
+  keyBoardControls: 1
 --- !u!1 &1809972683
 GameObject:
   m_ObjectHideFlags: 0

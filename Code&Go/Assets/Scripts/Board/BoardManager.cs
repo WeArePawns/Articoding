@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using AssetPackage;
 
@@ -15,11 +16,16 @@ public class BoardManager : Listener
     [SerializeField] private Transform elementsParent;
     [SerializeField] private Transform limitsParent;
     [SerializeField] private Transform holesParent;
+    [SerializeField] private Transform hintsParent;
     [SerializeField] private BoardCell[] cellPrefabs;
     [SerializeField] private BoardObject[] boardObjectPrefabs;
     [SerializeField] private GameObject limitsPrefab;
+    [SerializeField] private BoardHint hintsPrefab;
+    [SerializeField] private Button hintButton;
     [SerializeField] private bool boardModifiable = false;
     private bool objectsModifiable = false;
+    private int hintsShown = 0;
+    private int hintsPerUse = 0;
 
     // Hidden atributtes
     private BoardCell[,] board;
@@ -46,7 +52,14 @@ public class BoardManager : Listener
         return currentSteps;
     }
 
-    public void GenerateBoard()
+    private void GenerateDefaultBoard()
+    {
+        for (int y = 1; y <= rows; y++)
+            for (int x = 1; x <= columns; x++)
+                AddBoardCell(0, x, y);
+    }
+
+    public void GenerateBoard(BoardCellState[] cells = null)
     {
         elementPositions = new Dictionary<string, List<Vector2Int>>();
         // If a board already exist, destroy it
@@ -54,19 +67,19 @@ public class BoardManager : Listener
         // Initialize board
         board = new BoardCell[columns + 2, rows + 2];
         // Instantiate cells
-        for (int y = 1; y <= rows; y++)
-        {
-            for (int x = 1; x <= columns; x++)
-            {
-                AddBoardCell(0, x, y);
-            }
-        }
+        if (cells != null)
+            foreach (BoardCellState cellState in cells)
+                AddBoardCell(cellState.id, cellState.x, cellState.y, cellState.args);
+        else
+            GenerateDefaultBoard();
+
         nReceivers = 0;
         nReceiversActive = 0;
 
+        //Set focus point of the camera
         FocusPoint fPoint = GetComponent<FocusPoint>();
         if (fPoint != null)
-            fPoint.offset = new Vector3(columns / 2.0f, 0.0f, rows / 2.0f);
+            fPoint.offset = new Vector3(columns / 2.0f + 0.5f, 0.0f, rows / 2.0f + 0.5f);
     }
 
     public void GenerateLimits()
@@ -152,6 +165,11 @@ public class BoardManager : Listener
             Destroy(child.gameObject);
         }
 
+        foreach (Transform child in hintsParent)
+        {
+            Destroy(child.gameObject);
+        }
+
         foreach (List<BoardCell> cellsList in cells)
         {
             cellsList.Clear();
@@ -203,42 +221,31 @@ public class BoardManager : Listener
     {
         if (state == null) return;
 
-        elementPositions = new Dictionary<string, List<Vector2Int>>();
         rows = state.rows;
         columns = state.columns;
 
         // Generate board cells
-        if (state.cells == null)
-            GenerateBoard();
-        else
-        {
-            // If a board already exist, destroy it
-            DestroyBoard();
-            // Initialize board
-            board = new BoardCell[columns + 2, rows + 2];
-            // Instantiate cells
-            foreach (BoardCellState cellState in state.cells)
-                AddBoardCell(cellState.id, cellState.x, cellState.y, cellState.args);
+        GenerateBoard(state.cells);
 
-            nReceivers = 0;
-            nReceiversActive = 0;
-        }
+        //Create Hints
+        if (state.boardHints != null)
+            foreach (BoardHintState hintState in state.boardHints)
+                AddBoardHint(hintState);
+        hintsPerUse = (hintsParent.childCount / 3.0f >= 1) ? Mathf.CeilToInt(hintsParent.childCount / 3.0f) : ((hintsParent.childCount / 2.0f >= 1) ? Mathf.CeilToInt(hintsParent.childCount / 2.0f) : hintsParent.childCount);
+        if (hintsParent.childCount == 0) DeactivateHintButton();
+        //Generate limits and holes around the board
         GenerateHoles();
         if (limits) GenerateLimits();
-        GenerateBoardElements(state);
 
-        FocusPoint fPoint = GetComponent<FocusPoint>();
-        if (fPoint != null)
-            fPoint.offset = new Vector3(columns / 2.0f - 0.5f, 0.0f, rows / 2.0f - 0.5f);
+        //Generate the board elements
+        GenerateBoardElements(state);
     }
 
     public void DeleteBoardElements()
     {
         foreach (List<Vector2Int> item in elementPositions.Values)
-        {
             foreach (Vector2Int pos in item)
                 RemoveBoardObject(pos.x, pos.y, true, false);
-        }
     }
 
     public void GenerateBoardElements(BoardState state)
@@ -260,6 +267,11 @@ public class BoardManager : Listener
         DeleteBoardElements();
         elementPositions.Clear();
         //currentSteps = 0;
+    }
+
+    public bool HasHint(Vector2Int pos)
+    {
+        return IsInBoardBounds(pos.x, pos.y) && board[pos.x, pos.y].HasHint();
     }
 
     public void ReceiverActivated()
@@ -317,32 +329,30 @@ public class BoardManager : Listener
     {
         return IsInBoardBounds(x, y) ? board[x, y].GetObjectID() : -1;
     }
+
     public BoardState GetBoardState()
     {
-        BoardState state = new BoardState(rows - 2, columns - 2, elementsParent.childCount);
+        BoardState state = new BoardState(rows - 2, columns - 2, elementsParent.childCount, hintsParent.childCount);
         int i = 0;
+        //Iterate the cells of the current board
         foreach (BoardCell cell in board)
         {
-            if (cell == null) continue;
+            Vector2Int pos = cell.GetPosition();
+            //If it's a valid position and not a hole
+            if (cell == null || pos.x == 0 || pos.y == 0 || pos.x == columns - 1 || pos.y == rows - 1) continue;
             state.SetBoardCell(cell);
+            //Process the object in the cell if there's any
             if (i < elementsParent.childCount && cell.GetState() == BoardCell.BoardCellState.OCUPPIED)
                 state.SetBoardObject(i++, cell);
         }
 
-        return state;
-    }
-
-    public BoardState GetBoardStateWithoutHoles()
-    {
-        BoardState state = new BoardState(rows - 2, columns - 2, elementsParent.childCount);
-        int i = 0;
-        foreach (BoardCell cell in board)
+        //Get hints of the current board
+        i = 0;
+        foreach (Transform hintT in hintsParent.transform)
         {
-            Vector2Int pos = cell.GetPosition();
-            if (cell == null || pos.x == 0 || pos.y == 0 || pos.x == columns - 1 || pos.y == rows - 1) continue;
-            state.SetBoardCell(cell);
-            if (i < elementsParent.childCount && cell.GetState() == BoardCell.BoardCellState.OCUPPIED)
-                state.SetBoardObject(i++, cell);
+            BoardHint hint = hintT.GetComponent<BoardHint>();
+            if (hint != null)
+                state.SetBoardHint(i++, hint);
         }
 
         return state;
@@ -353,6 +363,44 @@ public class BoardManager : Listener
         return GetBoardState().ToJson();
     }
 
+    public void AddBoardHint(Vector2Int pos, int amount, int id)
+    {
+        if (!IsInBoardBounds(pos)) return;
+
+        BoardHint hint = Instantiate(hintsPrefab, hintsParent);
+        hint.SetDirection((BoardObject.Direction)0);
+        hint.SetAmount(amount);
+        hint.SetPosition(pos.x, pos.y);
+        hint.SetHintID(id);
+        hint.gameObject.SetActive(true);
+
+        board[pos.x, pos.y].SetHint(hint);
+    }
+
+    public void AddBoardHint(BoardHintState hintState)
+    {
+        if (!IsInBoardBounds(hintState.x, hintState.y)) return;
+
+        BoardHint hint = Instantiate(hintsPrefab, hintsParent);
+        hint.SetDirection((BoardObject.Direction)hintState.orientation);
+        hint.SetAmount(hintState.amount);
+        hint.SetPosition(hintState.x, hintState.y);
+        hint.SetHintID(hintState.id);
+
+        board[hintState.x, hintState.y].SetHint(hint);
+    }
+
+    public void RotateHint(Vector2Int pos, int dir)
+    {
+        if (!IsInBoardBounds(pos) || !board[pos.x, pos.y].HasHint()) return;
+        board[pos.x, pos.y].GetHint().Rotate(2 * dir);
+    }
+
+    public void DeleteHint(Vector2Int pos)
+    {
+        if (!IsInBoardBounds(pos) || !board[pos.x, pos.y].HasHint()) return;
+        board[pos.x, pos.y].RemoveHint();
+    }
 
     public BoardCell AddBoardCell(int id, int x, int y, string[] args = null)
     {
@@ -662,7 +710,6 @@ public class BoardManager : Listener
         bObject.SetDirection(targetDirection);
     }
 
-    //TODO: Mover esto
     private Vector2Int GetDirectionFromString(string dir)
     {
         dir = dir.ToLower();
@@ -691,7 +738,6 @@ public class BoardManager : Listener
     {
         try
         {
-
             string[] args = msg.Split(' ');
             int amount = 0, index = -1, rot = 0;
             float intensity = 0.0f, time = 0.5f;
@@ -796,13 +842,33 @@ public class BoardManager : Listener
         }
     }
 
+    private void DeactivateHintButton()
+    {
+        hintButton.GetComponent<Image>().color = Color.grey;
+        hintButton.enabled = false;
+    }
+
     public void UseHint()
     {
-        // TODO: do the "use hint" logic
+        if (hintsShown >= hintsParent.childCount /*|| ProgressManager.Instance.GetHintsRemaining() == 0*/)
+        {
+            DeactivateHintButton();
+            return;
+        }
 
+        int i = 0;
+        while (i < hintsPerUse && hintsShown + i < hintsParent.childCount)
+        {
+            hintsParent.transform.GetChild(hintsShown + i).gameObject.SetActive(true);
+            i++;
+        }
+        hintsShown += i;
+        //ProgressManager.Instance.AddHints(-1);
 
+        if (hintsShown >= hintsParent.childCount /*|| ProgressManager.Instance.GetHintsRemaining() == 0*/)
+            DeactivateHintButton();
 
-        TrackerAsset.Instance.setVar("remaining_hints", 0); // TODO: poner las hints
+        TrackerAsset.Instance.setVar("remaining_hints", ProgressManager.Instance.GetHintsRemaining());
         TrackerAsset.Instance.GameObject.Used("hint_used");
     }
 }

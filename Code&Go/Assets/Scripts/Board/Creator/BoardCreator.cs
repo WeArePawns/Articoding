@@ -77,6 +77,7 @@ public class BoardCreator : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
     private void Update()
     {
         if (!keyBoardControls) return;
@@ -89,6 +90,7 @@ public class BoardCreator : MonoBehaviour
         cursorPos.y = ((cursorPos.y + nY) + rows) % rows;
         transform.localPosition = new Vector3(cursorPos.x + offset.x, 0, cursorPos.y + offset.y);
     }
+#endif
 
     private void AddObject(int id)
     {
@@ -163,6 +165,8 @@ public class BoardCreator : MonoBehaviour
                 board.RemoveBoardObject(selectedPos.x, selectedPos.y);
                 DeselectObject();
             }
+            else if (board.HasHint(cursorPos))
+                board.DeleteHint(cursorPos);            
         }
         //Create new elements
         else if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -185,6 +189,7 @@ public class BoardCreator : MonoBehaviour
         {
             AddObject(4);
         }
+        //Create new cell types
         else if (Input.GetKeyDown(KeyCode.Keypad1))
         {
             ReplaceCell(0, cursorPos.x, cursorPos.y);
@@ -205,26 +210,52 @@ public class BoardCreator : MonoBehaviour
         {
             ReplaceCell(4, cursorPos.x, cursorPos.y);
         }
+        //Add hints
+        else if (Input.GetKeyDown(KeyCode.J))
+        {
+            if (!board.HasHint(cursorPos))
+                board.AddBoardHint(cursorPos, 1, 0);
+            else
+                board.RotateHint(cursorPos, 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.K))
+        {
+            if (!board.HasHint(cursorPos))
+                board.AddBoardHint(cursorPos, 1, 1);
+            else
+                board.RotateHint(cursorPos, 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.L))
+        {
+            if (!board.HasHint(cursorPos))
+                board.AddBoardHint(cursorPos, 1, 2);
+            else
+                board.RotateHint(cursorPos, 1);
+        }
     }
 
     public void GenerateNewBoard()
     {
         int columns = int.Parse(columnsField.text), rows = int.Parse(rowsField.text);
         if (columns <= 0 || rows <= 0) return;
-        buildLimits = limits.isOn;
 
+        buildLimits = limits.isOn;
         board.SetColumns(columns);
         board.SetRows(rows);
+
+        //Create an empty board
         board.transform.localScale = Vector3.one;
         board.transform.localPosition = Vector3.zero;
         board.GenerateBoard();
         board.GenerateHoles();
         if (buildLimits) board.GenerateLimits();
 
+        //Initialize the element selection section
         elementSelection.transform.localScale = Vector3.one;
         elementSelection.transform.localPosition = Vector3.zero;
         elementSelection.GenerateSelector();
 
+        //Reset the cursor
         DeselectObject();
         cursorPos = Vector2Int.zero;
         transform.localPosition = Vector3.zero;
@@ -239,7 +270,6 @@ public class BoardCreator : MonoBehaviour
         if (fileName == "") fileName = "level";
         using (StreamWriter outputFile = new StreamWriter(filePath + fileName + nLevel++.ToString() + ".json"))
         {
-            board.ClearHoles();
             outputFile.Write(board.GetBoardStateAsString());
         }
         Console.WriteLine("Archivo Guardado");
@@ -266,7 +296,7 @@ public class BoardCreator : MonoBehaviour
             this.columns = board.GetColumns();
             FitBoard();
         }
-        Console.WriteLine("Archivo Guardado");
+        Console.WriteLine("Archivo Cargado");
     }
 
     private void ReplaceCell(int id, int x, int y)

@@ -19,6 +19,7 @@ public abstract class BoardCell : MonoBehaviour
     protected int y;
     protected BoardManager boardManager;
     protected BoardObject placedObject;
+    protected BoardHint hint = null;
 
     private BoardCellState state = BoardCellState.NONE;
 
@@ -99,6 +100,28 @@ public abstract class BoardCell : MonoBehaviour
     public void SetBoardManager(BoardManager board)
     {
         boardManager = board;
+    }
+
+    public bool HasHint()
+    {
+        return hint != null;
+    }
+
+    public void SetHint(BoardHint hint)
+    {
+        this.hint = hint;
+    }
+
+    public void RemoveHint()
+    {
+        if (hint != null)
+            Destroy(hint.gameObject);
+        hint = null;
+    }
+
+    public BoardHint GetHint()
+    {
+        return hint;
     }
 
     public abstract void OnObjectPlaced();

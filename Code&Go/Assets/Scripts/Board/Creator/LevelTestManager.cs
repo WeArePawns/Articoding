@@ -85,7 +85,7 @@ public class LevelTestManager : MonoBehaviour
         {
             completed = false;
             cameraFit.FitBoard(board.GetRows(), board.GetColumns());
-            initialState = board.GetBoardStateWithoutHoles();
+            initialState = board.GetBoardState();
         }
         else
         {
