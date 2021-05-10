@@ -34,6 +34,11 @@ public class BoardObject : MonoBehaviour
         return typeName;
     }
 
+    public string GetNameAsLower()
+    {
+        return typeName.ToLower();
+    }
+
     public string[] GetArgsNames()
     {
         return argsNames;

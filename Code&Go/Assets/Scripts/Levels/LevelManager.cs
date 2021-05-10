@@ -102,6 +102,11 @@ public class LevelManager : MonoBehaviour
             if (!GameManager.Instance.InCreatedLevel())
                 ProgressManager.Instance.LevelCompleted(starsController.GetStars());
         }
+
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.N))
+            LoadNextLevel();
+#endif
     }
 
     private void Initialize()

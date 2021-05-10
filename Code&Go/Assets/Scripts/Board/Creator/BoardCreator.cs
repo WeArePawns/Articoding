@@ -166,7 +166,7 @@ public class BoardCreator : MonoBehaviour
                 DeselectObject();
             }
             else if (board.HasHint(cursorPos))
-                board.DeleteHint(cursorPos);            
+                board.DeleteHint(cursorPos, 0);
         }
         //Create new elements
         else if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -213,24 +213,28 @@ public class BoardCreator : MonoBehaviour
         //Add hints
         else if (Input.GetKeyDown(KeyCode.J))
         {
-            if (!board.HasHint(cursorPos))
-                board.AddBoardHint(cursorPos, 1, 0);
-            else
-                board.RotateHint(cursorPos, 1);
+            board.AddBoardHint(cursorPos, 1, 0);
         }
         else if (Input.GetKeyDown(KeyCode.K))
         {
-            if (!board.HasHint(cursorPos))
-                board.AddBoardHint(cursorPos, 1, 1);
-            else
-                board.RotateHint(cursorPos, 1);
+            board.AddBoardHint(cursorPos, 1, 1);
         }
         else if (Input.GetKeyDown(KeyCode.L))
         {
-            if (!board.HasHint(cursorPos))
-                board.AddBoardHint(cursorPos, 1, 2);
-            else
-                board.RotateHint(cursorPos, 1);
+            board.AddBoardHint(cursorPos, 1, 2);
+        }
+        //Rotate Hints
+        else if (Input.GetKeyDown(KeyCode.U))
+        {
+            board.RotateHint(cursorPos, 1, 0);
+        }
+        else if (Input.GetKeyDown(KeyCode.I))
+        {
+            board.RotateHint(cursorPos, 1, 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.O))
+        {
+            board.RotateHint(cursorPos, 1, 2);
         }
     }
 

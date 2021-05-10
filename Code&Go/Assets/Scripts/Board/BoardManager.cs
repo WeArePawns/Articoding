@@ -296,8 +296,8 @@ public class BoardManager : Listener
 
     public int GetNEmitters()
     {
-        if (!elementPositions.ContainsKey("Laser")) return 0;
-        return elementPositions["Laser"].Count;
+        if (!elementPositions.ContainsKey("laser")) return 0;
+        return elementPositions["laser"].Count;
     }
 
     public void SetRows(int rows)
@@ -390,16 +390,16 @@ public class BoardManager : Listener
         board[hintState.x, hintState.y].SetHint(hint);
     }
 
-    public void RotateHint(Vector2Int pos, int dir)
+    public void RotateHint(Vector2Int pos, int dir, int index)
     {
-        if (!IsInBoardBounds(pos) || !board[pos.x, pos.y].HasHint()) return;
-        board[pos.x, pos.y].GetHint().Rotate(2 * dir);
+        if (!IsInBoardBounds(pos) || index >= board[pos.x, pos.y].GetNHints()) return;
+        board[pos.x, pos.y].GetHint(index).Rotate(2 * dir);
     }
 
-    public void DeleteHint(Vector2Int pos)
+    public void DeleteHint(Vector2Int pos, int index)
     {
         if (!IsInBoardBounds(pos) || !board[pos.x, pos.y].HasHint()) return;
-        board[pos.x, pos.y].RemoveHint();
+        board[pos.x, pos.y].RemoveHint(index);
     }
 
     public BoardCell AddBoardCell(int id, int x, int y, string[] args = null)
@@ -448,13 +448,13 @@ public class BoardManager : Listener
             }
             if (elementPositions != null)
             {
-                if (!elementPositions.ContainsKey(boardObject.GetName()))
-                    elementPositions[boardObject.GetName()] = new List<Vector2Int>();
-                elementPositions[boardObject.GetName()].Add(new Vector2Int(x, y));
+                if (!elementPositions.ContainsKey(boardObject.GetNameAsLower()))
+                    elementPositions[boardObject.GetNameAsLower()] = new List<Vector2Int>();
+                elementPositions[boardObject.GetNameAsLower()].Add(new Vector2Int(x, y));
 
                 FollowingText text = boardObject.GetComponent<FollowingText>();
                 if (text != null)
-                    text.SetName(boardObject.GetName() + " " + elementPositions[boardObject.GetName()].Count.ToString());
+                    text.SetName(boardObject.GetName() + " " + elementPositions[boardObject.GetNameAsLower()].Count.ToString());
             }
 
             if (boardModifiable)
@@ -478,7 +478,7 @@ public class BoardManager : Listener
     {
         if (IsInBoardBounds(x, y) && board[x, y].GetPlacedObject() != null)
         {
-            string name = board[x, y].GetPlacedObject().GetName();
+            string name = board[x, y].GetPlacedObject().GetNameAsLower();
             board[x, y].RemoveObject(delete);
             if (updatePositions && elementPositions.ContainsKey(name)) elementPositions[name].Remove(new Vector2Int(x, y));
             RefreshNames(name);
@@ -556,6 +556,7 @@ public class BoardManager : Listener
     //Moves an object given its name and index called by the blocks
     public IEnumerator MoveObject(string name, int index, Vector2Int direction, int amount, float time)
     {
+        name = name.ToLower();
         if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
             int i = 0;
@@ -570,6 +571,7 @@ public class BoardManager : Listener
 
     public IEnumerator RotateObject(string name, int index, int direction, int amount, float time)
     {
+        name = name.ToLower();
         if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
             currentSteps += amount / 2;
@@ -778,9 +780,9 @@ public class BoardManager : Listener
                     ChangeLaserIntensity(index - 1, intensity);
                     break;
                 case MSG_TYPE.ACTIVATE_DOOR:
-                    index = int.Parse(args[0]);
-                    active = bool.Parse(args[1]);
-                    ActivateDoor(index - 1, active);
+                    active = bool.Parse(args[2]);
+                    index = int.Parse(args[1]);
+                    ActivateDoor(args[0], index - 1, active);
                     break;
             }
         }
@@ -793,9 +795,9 @@ public class BoardManager : Listener
 
     private void ChangeLaserIntensity(int index, float newIntensity)
     {
-        if (elementPositions.ContainsKey("Laser") && index < elementPositions["Laser"].Count)
+        if (elementPositions.ContainsKey("laser") && index < elementPositions["laser"].Count)
         {
-            Vector2Int pos = elementPositions["Laser"][index];
+            Vector2Int pos = elementPositions["laser"][index];
             LaserEmitter laser = (LaserEmitter)board[pos.x, pos.y].GetPlacedObject();
             if (laser != null)
             {
@@ -805,11 +807,12 @@ public class BoardManager : Listener
         }
     }
 
-    private void ActivateDoor(int index, bool active)
+    private void ActivateDoor(string name, int index, bool active)
     {
-        if (elementPositions.ContainsKey("Puerta") && index < elementPositions["Puerta"].Count)
+        name = name.ToLower();
+        if (name == "puerta" && elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
-            Vector2Int pos = elementPositions["Puerta"][index];
+            Vector2Int pos = elementPositions[name][index];
             Door door = (Door)board[pos.x, pos.y].GetPlacedObject();
             if (door != null)
             {
@@ -844,6 +847,7 @@ public class BoardManager : Listener
 
     private void DeactivateHintButton()
     {
+        if (hintButton == null) return;
         hintButton.GetComponent<Image>().color = Color.grey;
         hintButton.enabled = false;
     }

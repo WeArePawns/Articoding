@@ -19,7 +19,7 @@ public abstract class BoardCell : MonoBehaviour
     protected int y;
     protected BoardManager boardManager;
     protected BoardObject placedObject;
-    protected BoardHint hint = null;
+    protected List<BoardHint> hints = new List<BoardHint>();
 
     private BoardCellState state = BoardCellState.NONE;
 
@@ -104,24 +104,31 @@ public abstract class BoardCell : MonoBehaviour
 
     public bool HasHint()
     {
-        return hint != null;
+        return hints.Count > 0;
+    }
+
+    public int GetNHints()
+    {
+        return hints.Count;
     }
 
     public void SetHint(BoardHint hint)
     {
-        this.hint = hint;
+        hints.Add(hint);
     }
 
-    public void RemoveHint()
+    public void RemoveHint(int index)
     {
-        if (hint != null)
-            Destroy(hint.gameObject);
-        hint = null;
+        if (hints.Count > 0)
+        {
+            Destroy(hints[index].gameObject);
+            hints.RemoveAt(index);
+        }
     }
 
-    public BoardHint GetHint()
-    {
-        return hint;
+    public BoardHint GetHint(int index)
+    {       
+        return hints[index];
     }
 
     public abstract void OnObjectPlaced();

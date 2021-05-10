@@ -139,9 +139,11 @@ namespace UBlockly
             yield return ctor;
             DataStruct arg0 = ctor.Data;
 
-            string index = block.GetFieldValue("INDEX");
+            ctor = CSharp.Interpreter.ValueReturn(block, "NAME", new DataStruct(0));
+            yield return ctor;
+            DataStruct arg1 = ctor.Data;
 
-            string msg = index + " " + arg0.ToString();
+            string msg = arg1.ToString() + " " + arg0.ToString();
             MessageManager.Instance.SendMessage(msg, MSG_TYPE.ACTIVATE_DOOR);
 
             yield return new WaitForSeconds(Times.instructionWaitTime);

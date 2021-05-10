@@ -55,8 +55,6 @@ public class BoardHint : MonoBehaviour
         if (id < 0 || id >= hints.Length) return;
         this.id = id;
         hints[id].SetActive(true);
-        for (int i = 0; i < hints[id].transform.childCount; i++)
-            hints[id].transform.GetChild(i).gameObject.SetActive(i < amount);
     }
 
     public Vector2Int GetPosition()
