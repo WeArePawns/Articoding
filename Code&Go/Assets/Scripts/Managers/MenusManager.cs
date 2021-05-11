@@ -15,25 +15,20 @@ public class MenusManager : MonoBehaviour
         settingsMenu.SetActive(false);
     }
 
-    public void toggleSettingsMenu()
+    public void ToggleSettingsMenu()
     {
         settingsMenu.SetActive(!settingsMenu.activeSelf);
     }
 
-    public void setActiveExitConfirmationPanel(bool active)
+    public void SetActiveExitConfirmationPanel(bool active)
     {
         exitConfirmationPanel.SetActive(active);
         blackPanel.SetActive(active);
     }
 
-    public void exitGame()
+    public void ExitGame()
     {
         //GameManager.instance.Quit(); //TODO: GameManager
         Application.Quit();
-    }
-    
-    public void LoadLevelCreator()
-    {
-        GameManager.Instance.LoadLevelCreator();
     }
 }
