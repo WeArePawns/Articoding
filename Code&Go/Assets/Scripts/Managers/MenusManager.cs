@@ -15,6 +15,20 @@ public class MenusManager : MonoBehaviour
         settingsMenu.SetActive(false);
     }
 
+    private void Update()
+    {
+        if(settingsMenu.activeSelf && !blackPanel.activeSelf)
+        {
+            Vector2 mousePos = Input.mousePosition;
+            if (Input.GetMouseButtonDown(0))
+            {
+                Rect rect = RectUtils.RectTransformToScreenSpace(settingsMenu.GetComponent<RectTransform>());
+                if (mousePos.x < rect.x || mousePos.x > rect.x + rect.width || mousePos.y < rect.y || mousePos.y > rect.y + rect.height)
+                    ToggleSettingsMenu();
+            }
+        }
+    }
+
     public void ToggleSettingsMenu()
     {
         settingsMenu.SetActive(!settingsMenu.activeSelf);

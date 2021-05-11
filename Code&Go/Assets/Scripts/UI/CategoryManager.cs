@@ -134,12 +134,11 @@ public class CategoryManager : MonoBehaviour
                     levelName.text = levelData.levelName;
                     levelDescription.text = levelData.description;
                 });
+                levelCard.button.onClick.Invoke();
             }
             else
                 levelCard.DeactivateCard();
         }
-
-        // TODO: seleccionar primer level sin completar
     }
 
     public void HideLevels()
