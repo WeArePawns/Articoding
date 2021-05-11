@@ -27,7 +27,7 @@ namespace UBlockly
     public abstract class ControlCmdtor : EnumeratorCmdtor
     {
         protected ControlFlowType mFlowState;
-    
+
         public bool NeedBreak
         {
             get { return mFlowState == ControlFlowType.Break; }
@@ -86,7 +86,7 @@ namespace UBlockly
                 return loopCmdtor.NeedBreak || loopCmdtor.NeedContinue;
             return false;
         }
-        
+
         public static bool IsLoopBlock(Block block)
         {
             return block.Type.Equals("controls_repeat") ||
@@ -96,19 +96,19 @@ namespace UBlockly
                    block.Type.Equals("controls_forEach");
         }
     }
-    
+
     [CodeInterpreter(BlockType = "controls_repeat")]
     public class Control_Repeat_Cmdtor : ControlCmdtor
     {
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
-            
+
             int repeats = int.Parse(block.GetFieldValue("TIMES"));
             for (int i = 0; i < repeats; i++)
             {
                 yield return CSharp.Interpreter.StatementRun(block, "DO");
-                
+
                 //reset flow control
                 if (NeedBreak) break;
                 if (NeedContinue) ResetFlowState();
@@ -123,18 +123,18 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
-            
+
             CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "TIMES", new DataStruct(0));
             yield return ctor;
             DataStruct repeats = ctor.Data;
-            
+
             if (repeats.Type != Define.EDataType.Number)
                 throw new Exception("input value \"TIMES\" of block controls_repeat_ext must be a number type");
-            int repeatsInt = (int) repeats.NumberValue.Value;
+            int repeatsInt = (int)repeats.NumberValue.Value;
             for (int i = 0; i < repeatsInt; i++)
             {
                 yield return CSharp.Interpreter.StatementRun(block, "DO");
-                
+
                 //reset flow control
                 if (NeedBreak) break;
                 if (NeedContinue) ResetFlowState();
@@ -149,13 +149,13 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
-            
-            bool until = block.GetFieldValue("MODE").Equals("UNTIL");
-            
+
+            bool until = false;
+
             CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "BOOL", new DataStruct(false));
             yield return ctor;
             DataStruct arg = ctor.Data;
-            
+
             if (arg.Type != Define.EDataType.Boolean)
                 throw new Exception("input value \"BOOL\" of block controls_whileUntil must be a boolean type");
 
@@ -163,12 +163,12 @@ namespace UBlockly
             while (condition)
             {
                 yield return CSharp.Interpreter.StatementRun(block, "DO");
-                
+
                 ctor = CSharp.Interpreter.ValueReturn(block, "BOOL", new DataStruct(false));
                 yield return ctor;
                 arg = ctor.Data;
                 condition = until ? !arg.BooleanValue : arg.BooleanValue;
-                
+
                 //reset flow control
                 if (NeedBreak) break;
                 if (NeedContinue) ResetFlowState();
@@ -183,26 +183,26 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
-            
+
             CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "FROM", new DataStruct(0));
             yield return ctor;
             DataStruct from = ctor.Data;
-            
+
             ctor = CSharp.Interpreter.ValueReturn(block, "TO", new DataStruct(0));
             yield return ctor;
             DataStruct to = ctor.Data;
-            
+
             ctor = CSharp.Interpreter.ValueReturn(block, "BY", new DataStruct(0));
             yield return ctor;
             DataStruct increment = ctor.Data;
-                
-            if (!from.IsNumber || !to.IsNumber|| !increment.IsNumber)
+
+            if (!from.IsNumber || !to.IsNumber || !increment.IsNumber)
                 throw new Exception("input value \"FROM\", \"TO\", \"BY\" of block controls_for must be number type");
 
             for (float i = from.NumberValue.Value; i <= to.NumberValue.Value; i += increment.NumberValue.Value)
             {
                 yield return CSharp.Interpreter.StatementRun(block, "DO");
-                
+
                 //reset flow control
                 if (NeedBreak) break;
                 if (NeedContinue) ResetFlowState();
@@ -217,29 +217,29 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
-            
+
             CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "LIST");
             yield return ctor;
             DataStruct arg0 = ctor.Data;
-            
-            if (arg0.IsUndefined) 
+
+            if (arg0.IsUndefined)
                 arg0 = new DataStruct(new ArrayList());
             if (!arg0.IsList)
                 throw new Exception("input value \"LIST\" of block controls_forEach must be LIST type");
 
             string variable0 = CSharp.VariableNames.GetName(block.GetFieldValue("VAR"), Variables.NAME_TYPE);
-            foreach (var e  in arg0.ListValue)
+            foreach (var e in arg0.ListValue)
             {
                 DataStruct data;
-                if (e is bool) data = new DataStruct((bool) e);
-                else if (e is float) data = new DataStruct(new Number((float) e));
-                else if (e is string) data = new DataStruct((string) e);
-                else if (e is ArrayList) data = new DataStruct((ArrayList) e);
+                if (e is bool) data = new DataStruct((bool)e);
+                else if (e is float) data = new DataStruct(new Number((float)e));
+                else if (e is string) data = new DataStruct((string)e);
+                else if (e is ArrayList) data = new DataStruct((ArrayList)e);
                 else throw new Exception("LIST element is undefined type.");
 
                 CSharp.VariableDatas.SetData(variable0, data);
                 yield return CSharp.Interpreter.StatementRun(block, "DO");
-                
+
                 //reset flow control
                 if (NeedBreak) break;
                 if (NeedContinue) ResetFlowState();
@@ -256,15 +256,15 @@ namespace UBlockly
             ControlCmdtor loopCmdtor = ControlCmdtor.FindParentControlCmdtor(block);
             if (loopCmdtor == null)
                 throw new Exception("blocks of \"break\" and \"continue\" can only be put in blocks of loop control types");
-            
+
             switch (block.GetFieldValue("FLOW"))
             {
                 case "BREAK":
-                    loopCmdtor.SetFlowState(ControlFlowType.Break); 
+                    loopCmdtor.SetFlowState(ControlFlowType.Break);
                     return;
-                    
+
                 case "CONTINUE":
-                    loopCmdtor.SetFlowState(ControlFlowType.Continue); 
+                    loopCmdtor.SetFlowState(ControlFlowType.Continue);
                     return;
             }
         }

@@ -788,6 +788,7 @@ public class BoardManager : Listener
         }
         catch
         {
+            UBlockly.CSharp.Interpreter.Stop();
             gameOverPanel.SetActive(true);
             blackRect.SetActive(true);
         }

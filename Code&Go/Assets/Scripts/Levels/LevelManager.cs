@@ -104,7 +104,7 @@ public class LevelManager : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.N))
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.N))
             LoadNextLevel();
 #endif
     }
