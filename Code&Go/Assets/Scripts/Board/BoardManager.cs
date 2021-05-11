@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using AssetPackage;
 
@@ -15,19 +16,29 @@ public class BoardManager : Listener
     [SerializeField] private Transform elementsParent;
     [SerializeField] private Transform limitsParent;
     [SerializeField] private Transform holesParent;
+    [SerializeField] private Transform hintsParent;
     [SerializeField] private BoardCell[] cellPrefabs;
     [SerializeField] private BoardObject[] boardObjectPrefabs;
     [SerializeField] private GameObject limitsPrefab;
-    [SerializeField] private bool modifiable = false;
+    [SerializeField] private BoardHint hintsPrefab;
+    [SerializeField] private Button hintButton;
+    [SerializeField] private bool boardModifiable = false;
+    private bool objectsModifiable = false;
+    private int hintsShown = 0;
+    private int hintsPerUse = 0;
 
     // Hidden atributtes
     private BoardCell[,] board;
+    private ArgumentLoader argLoader = null;
     public enum CellColors { NORMAL, GREEN, }
 
     private Dictionary<string, List<Vector2Int>> elementPositions;
     private List<List<BoardCell>> cells;
 
     private int currentSteps = 0;
+
+    public GameObject gameOverPanel;
+    public GameObject blackRect;
 
     private void Awake()
     {
@@ -41,26 +52,34 @@ public class BoardManager : Listener
         return currentSteps;
     }
 
-    public void GenerateBoard()
+    private void GenerateDefaultBoard()
     {
+        for (int y = 1; y <= rows; y++)
+            for (int x = 1; x <= columns; x++)
+                AddBoardCell(0, x, y);
+    }
+
+    public void GenerateBoard(BoardCellState[] cells = null)
+    {
+        elementPositions = new Dictionary<string, List<Vector2Int>>();
         // If a board already exist, destroy it
         DestroyBoard();
         // Initialize board
         board = new BoardCell[columns + 2, rows + 2];
         // Instantiate cells
-        for (int y = 1; y <= rows; y++)
-        {
-            for (int x = 1; x <= columns; x++)
-            {
-                AddBoardCell(0, x, y);
-            }
-        }
+        if (cells != null)
+            foreach (BoardCellState cellState in cells)
+                AddBoardCell(cellState.id, cellState.x, cellState.y, cellState.args);
+        else
+            GenerateDefaultBoard();
+
         nReceivers = 0;
         nReceiversActive = 0;
 
+        //Set focus point of the camera
         FocusPoint fPoint = GetComponent<FocusPoint>();
         if (fPoint != null)
-            fPoint.offset = new Vector3(columns / 2.0f, 0.0f, rows / 2.0f);
+            fPoint.offset = new Vector3(columns / 2.0f + 0.5f, 0.0f, rows / 2.0f + 0.5f);
     }
 
     public void GenerateLimits()
@@ -146,6 +165,11 @@ public class BoardManager : Listener
             Destroy(child.gameObject);
         }
 
+        foreach (Transform child in hintsParent)
+        {
+            Destroy(child.gameObject);
+        }
+
         foreach (List<BoardCell> cellsList in cells)
         {
             cellsList.Clear();
@@ -172,46 +196,56 @@ public class BoardManager : Listener
         return IsInBoardBounds(position.x, position.y);
     }
 
+    public void SetModifiable(bool modifiable)
+    {
+        this.objectsModifiable = modifiable;
+        foreach (Transform child in cellsParent)
+        {
+            ModifiableBoardCell modCell = child.GetComponent<ModifiableBoardCell>();
+            if (modCell != null) modCell.SetModifiable(modifiable);
+        }
+
+        foreach (Transform child in elementsParent)
+        {
+            DraggableObject drag = child.GetComponent<DraggableObject>();
+            if (drag != null) drag.SetModifiable(modifiable);
+        }
+    }
+
+    public void SetArgLoader(ArgumentLoader argumentLoader)
+    {
+        argLoader = argumentLoader;
+    }
+
     public void LoadBoard(BoardState state, bool limits = false)
     {
         if (state == null) return;
 
-        elementPositions = new Dictionary<string, List<Vector2Int>>();
         rows = state.rows;
         columns = state.columns;
 
         // Generate board cells
-        if (state.cells == null)
-            GenerateBoard();
-        else
-        {
-            // If a board already exist, destroy it
-            DestroyBoard();
-            // Initialize board
-            board = new BoardCell[columns + 2, rows + 2];
-            // Instantiate cells
-            foreach (BoardCellState cellState in state.cells)
-                AddBoardCell(cellState.id, cellState.x, cellState.y, cellState.args);
+        GenerateBoard(state.cells);
 
-            nReceivers = 0;
-            nReceiversActive = 0;
-        }
+        //Create Hints
+        if (state.boardHints != null)
+            foreach (BoardHintState hintState in state.boardHints)
+                AddBoardHint(hintState);
+        hintsPerUse = (hintsParent.childCount / 3.0f >= 1) ? Mathf.CeilToInt(hintsParent.childCount / 3.0f) : ((hintsParent.childCount / 2.0f >= 1) ? Mathf.CeilToInt(hintsParent.childCount / 2.0f) : hintsParent.childCount);
+        if (hintsParent.childCount == 0) DeactivateHintButton();
+        //Generate limits and holes around the board
         GenerateHoles();
         if (limits) GenerateLimits();
-        GenerateBoardElements(state);
 
-        FocusPoint fPoint = GetComponent<FocusPoint>();
-        if (fPoint != null)
-            fPoint.offset = new Vector3(columns / 2.0f - 0.5f, 0.0f, rows / 2.0f - 0.5f);
+        //Generate the board elements
+        GenerateBoardElements(state);
     }
 
     public void DeleteBoardElements()
     {
-        foreach (var item in elementPositions)
-        {
-            foreach (Vector2Int pos in item.Value)
-                RemoveBoardObject(pos.x, pos.y);
-        }
+        foreach (List<Vector2Int> item in elementPositions.Values)
+            foreach (Vector2Int pos in item)
+                RemoveBoardObject(pos.x, pos.y, true, false);
     }
 
     public void GenerateBoardElements(BoardState state)
@@ -235,6 +269,11 @@ public class BoardManager : Listener
         //currentSteps = 0;
     }
 
+    public bool HasHint(Vector2Int pos)
+    {
+        return IsInBoardBounds(pos.x, pos.y) && board[pos.x, pos.y].HasHint();
+    }
+
     public void ReceiverActivated()
     {
         nReceiversActive++;
@@ -248,6 +287,17 @@ public class BoardManager : Listener
     public bool BoardCompleted()
     {
         return nReceivers > 0 && nReceiversActive >= nReceivers;
+    }
+
+    public int GetNReceivers()
+    {
+        return nReceivers;
+    }
+
+    public int GetNEmitters()
+    {
+        if (!elementPositions.ContainsKey("laser")) return 0;
+        return elementPositions["laser"].Count;
     }
 
     public void SetRows(int rows)
@@ -280,19 +330,76 @@ public class BoardManager : Listener
         return IsInBoardBounds(x, y) ? board[x, y].GetObjectID() : -1;
     }
 
-    public string GetBoardState()
+    public BoardState GetBoardState()
     {
-        BoardState state = new BoardState(rows - 2, columns - 2, elementsParent.childCount);
+        BoardState state = new BoardState(rows - 2, columns - 2, elementsParent.childCount, hintsParent.childCount);
         int i = 0;
+        //Iterate the cells of the current board
         foreach (BoardCell cell in board)
         {
-            if (cell == null) continue;
+            Vector2Int pos = cell.GetPosition();
+            //If it's a valid position and not a hole
+            if (cell == null || pos.x == 0 || pos.y == 0 || pos.x == columns - 1 || pos.y == rows - 1) continue;
             state.SetBoardCell(cell);
+            //Process the object in the cell if there's any
             if (i < elementsParent.childCount && cell.GetState() == BoardCell.BoardCellState.OCUPPIED)
                 state.SetBoardObject(i++, cell);
         }
 
-        return state.ToJson();
+        //Get hints of the current board
+        i = 0;
+        foreach (Transform hintT in hintsParent.transform)
+        {
+            BoardHint hint = hintT.GetComponent<BoardHint>();
+            if (hint != null)
+                state.SetBoardHint(i++, hint);
+        }
+
+        return state;
+    }
+
+    public string GetBoardStateAsString()
+    {
+        return GetBoardState().ToJson();
+    }
+
+    public void AddBoardHint(Vector2Int pos, int amount, int id)
+    {
+        if (!IsInBoardBounds(pos)) return;
+
+        BoardHint hint = Instantiate(hintsPrefab, hintsParent);
+        hint.SetDirection((BoardObject.Direction)0);
+        hint.SetAmount(amount);
+        hint.SetPosition(pos.x, pos.y);
+        hint.SetHintID(id);
+        hint.gameObject.SetActive(true);
+
+        board[pos.x, pos.y].SetHint(hint);
+    }
+
+    public void AddBoardHint(BoardHintState hintState)
+    {
+        if (!IsInBoardBounds(hintState.x, hintState.y)) return;
+
+        BoardHint hint = Instantiate(hintsPrefab, hintsParent);
+        hint.SetDirection((BoardObject.Direction)hintState.orientation);
+        hint.SetAmount(hintState.amount);
+        hint.SetPosition(hintState.x, hintState.y);
+        hint.SetHintID(hintState.id);
+
+        board[hintState.x, hintState.y].SetHint(hint);
+    }
+
+    public void RotateHint(Vector2Int pos, int dir, int index)
+    {
+        if (!IsInBoardBounds(pos) || index >= board[pos.x, pos.y].GetNHints()) return;
+        board[pos.x, pos.y].GetHint(index).Rotate(2 * dir);
+    }
+
+    public void DeleteHint(Vector2Int pos, int index)
+    {
+        if (!IsInBoardBounds(pos) || !board[pos.x, pos.y].HasHint()) return;
+        board[pos.x, pos.y].RemoveHint(index);
     }
 
     public BoardCell AddBoardCell(int id, int x, int y, string[] args = null)
@@ -304,7 +411,12 @@ public class BoardManager : Listener
         cell.SetBoardManager(this);
         board[x, y] = cell;
 
-        if (modifiable) cell.gameObject.AddComponent<ModifiableBoardCell>().SetBoardManager(this);
+        if (boardModifiable)
+        {
+            ModifiableBoardCell modCell = cell.gameObject.AddComponent<ModifiableBoardCell>();
+            modCell.SetBoardManager(this);
+            modCell.SetModifiable(objectsModifiable);
+        }
 
         cells[id].Add(cell);
 
@@ -318,6 +430,7 @@ public class BoardManager : Listener
         bObject.LoadArgs(additionalArgs);
         bObject.SetBoard(this);
         bObject.SetDirection((BoardObject.Direction)orientation);
+
         return AddBoardObject(x, y, bObject);
     }
 
@@ -326,43 +439,81 @@ public class BoardManager : Listener
         if (IsInBoardBounds(x, y) && boardObject != null)
         {
             bool placed = board[x, y].PlaceObject(boardObject);
+            if (!placed) return false;
+
             if (boardObject.transform.parent != elementsParent)
+            {
                 boardObject.transform.SetParent(elementsParent);
+                boardObject.SetBoard(this);
+            }
             if (elementPositions != null)
             {
-                if (!elementPositions.ContainsKey(boardObject.GetName()))
-                    elementPositions[boardObject.GetName()] = new List<Vector2Int>();
-                elementPositions[boardObject.GetName()].Add(new Vector2Int(x, y));
+                if (!elementPositions.ContainsKey(boardObject.GetNameAsLower()))
+                    elementPositions[boardObject.GetNameAsLower()] = new List<Vector2Int>();
+                elementPositions[boardObject.GetNameAsLower()].Add(new Vector2Int(x, y));
 
                 FollowingText text = boardObject.GetComponent<FollowingText>();
                 if (text != null)
-                    text.SetName(boardObject.GetName() + " " + elementPositions[boardObject.GetName()].Count.ToString());
+                    text.SetName(boardObject.GetName() + " " + elementPositions[boardObject.GetNameAsLower()].Count.ToString());
+            }
+
+            if (boardModifiable)
+            {
+                DraggableObject drag = boardObject.gameObject.GetComponent<DraggableObject>();
+                if (drag == null)
+                {
+                    drag = boardObject.gameObject.AddComponent<DraggableObject>();
+                    drag.SetBoard(this);
+                    drag.SetArgumentLoader(argLoader);
+                    drag.SetLastPos(new Vector2Int(x, y));
+                }
+                drag.SetModifiable(objectsModifiable);
             }
             return placed;
         }
         return false;
     }
 
-    public void RemoveBoardObject(int x, int y, bool delete = true)
+    public void RemoveBoardObject(int x, int y, bool delete = true, bool updatePositions = true)
     {
-        if (IsInBoardBounds(x, y))
+        if (IsInBoardBounds(x, y) && board[x, y].GetPlacedObject() != null)
+        {
+            string name = board[x, y].GetPlacedObject().GetNameAsLower();
             board[x, y].RemoveObject(delete);
+            if (updatePositions && elementPositions.ContainsKey(name)) elementPositions[name].Remove(new Vector2Int(x, y));
+            RefreshNames(name);
+        }
     }
 
-    public void MoveBoardObject(Vector2Int from, Vector2Int to)
+    private void RefreshNames(string name)
+    {
+        if (!elementPositions.ContainsKey(name)) return;
+        foreach (Vector2Int pos in elementPositions[name])
+        {
+            if (board[pos.x, pos.y].GetPlacedObject() == null) continue;
+
+            FollowingText text = board[pos.x, pos.y].GetPlacedObject().GetComponent<FollowingText>();
+            if (text != null)
+                text.SetName(name + " " + (elementPositions[name].IndexOf(pos) + 1).ToString());
+        }
+    }
+
+    public bool MoveBoardObject(Vector2Int from, Vector2Int to)
     {
         if (IsInBoardBounds(from) && IsInBoardBounds(to) && from != to)
         {
             BoardCell cell = board[to.x, to.y];
-            if (cell.GetState() != BoardCell.BoardCellState.FREE) return;
+            if (cell.GetState() != BoardCell.BoardCellState.FREE) return false;
 
 
             BoardObject bObject = board[from.x, from.y].GetPlacedObject();
-            if (bObject == null) return;
+            if (bObject == null) return false;
 
             board[from.x, from.y].RemoveObject(false);
             board[to.x, to.y].PlaceObject(bObject);
+            return true;
         }
+        return false;
     }
 
     public void RotateBoardObject(Vector2Int position, int direction)
@@ -405,6 +556,7 @@ public class BoardManager : Listener
     //Moves an object given its name and index called by the blocks
     public IEnumerator MoveObject(string name, int index, Vector2Int direction, int amount, float time)
     {
+        name = name.ToLower();
         if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
             int i = 0;
@@ -419,6 +571,7 @@ public class BoardManager : Listener
 
     public IEnumerator RotateObject(string name, int index, int direction, int amount, float time)
     {
+        name = name.ToLower();
         if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
             currentSteps += amount / 2;
@@ -495,6 +648,11 @@ public class BoardManager : Listener
         return transform.InverseTransformPoint(position);
     }
 
+    public bool IsCellOccupied(int x, int y)
+    {
+        return IsInBoardBounds(x, y) && board[x, y].GetPlacedObject() != null;
+    }
+
     // We assume, all are valid arguments
     private IEnumerator InternalMoveObject(BoardCell from, BoardCell to, float time)
     {
@@ -554,7 +712,6 @@ public class BoardManager : Listener
         bObject.SetDirection(targetDirection);
     }
 
-    //TODO: Mover esto
     private Vector2Int GetDirectionFromString(string dir)
     {
         dir = dir.ToLower();
@@ -581,58 +738,67 @@ public class BoardManager : Listener
 
     public override void ReceiveMessage(string msg, MSG_TYPE type)
     {
-        string[] args = msg.Split(' ');
-        int amount = 0, index = -1, rot = 0;
-        float intensity = 0.0f, time = 0.5f;
-        bool active;
-        Vector2Int dir;
-
-        switch (type)
+        try
         {
-            case MSG_TYPE.MOVE_LASER:
-                amount = int.Parse(args[0]);
-                dir = GetDirectionFromString(args[1]);
-                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                StartCoroutine(MoveObject("Laser", 0, dir, amount, time));
-                break;
-            case MSG_TYPE.MOVE:
-                index = int.Parse(args[1]);
-                amount = int.Parse(args[2]);
-                dir = GetDirectionFromString(args[3]);
-                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                StartCoroutine(MoveObject(args[0], index - 1, dir, amount, time));
-                break;
-            case MSG_TYPE.ROTATE_LASER:
-                amount = int.Parse(args[0]) * 2;
-                rot = GetRotationFromString(args[1]);
-                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                StartCoroutine(RotateObject("Laser", 0, rot, amount, time));
-                break;
-            case MSG_TYPE.ROTATE:
-                index = int.Parse(args[1]);
-                amount = int.Parse(args[2]) * 2;
-                rot = GetRotationFromString(args[3]);
-                time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                StartCoroutine(RotateObject(args[0], index - 1, rot, amount, time));
-                break;
-            case MSG_TYPE.CHANGE_INTENSITY:
-                index = int.Parse(args[0]);
-                intensity = float.Parse(args[1]);
-                ChangeLaserIntensity(index - 1, intensity);
-                break;
-            case MSG_TYPE.ACTIVATE_DOOR:
-                index = int.Parse(args[0]);
-                active = bool.Parse(args[1]);
-                ActivateDoor(index - 1, active);
-                break;
+            string[] args = msg.Split(' ');
+            int amount = 0, index = -1, rot = 0;
+            float intensity = 0.0f, time = 0.5f;
+            bool active;
+            Vector2Int dir;
+
+            switch (type)
+            {
+                case MSG_TYPE.MOVE_LASER:
+                    amount = int.Parse(args[0]);
+                    dir = GetDirectionFromString(args[1]);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                    StartCoroutine(MoveObject("Laser", 0, dir, amount, time));
+                    break;
+                case MSG_TYPE.MOVE:
+                    index = int.Parse(args[1]);
+                    amount = int.Parse(args[2]);
+                    dir = GetDirectionFromString(args[3]);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                    StartCoroutine(MoveObject(args[0], index - 1, dir, amount, time));
+                    break;
+                case MSG_TYPE.ROTATE_LASER:
+                    amount = int.Parse(args[0]) * 2;
+                    rot = GetRotationFromString(args[1]);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                    StartCoroutine(RotateObject("Laser", 0, rot, amount, time));
+                    break;
+                case MSG_TYPE.ROTATE:
+                    index = int.Parse(args[1]);
+                    amount = int.Parse(args[2]) * 2;
+                    rot = GetRotationFromString(args[3]);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                    StartCoroutine(RotateObject(args[0], index - 1, rot, amount, time));
+                    break;
+                case MSG_TYPE.CHANGE_INTENSITY:
+                    index = int.Parse(args[0]);
+                    intensity = float.Parse(args[1]);
+                    ChangeLaserIntensity(index - 1, intensity);
+                    break;
+                case MSG_TYPE.ACTIVATE_DOOR:
+                    active = bool.Parse(args[2]);
+                    index = int.Parse(args[1]);
+                    ActivateDoor(args[0], index - 1, active);
+                    break;
+            }
+        }
+        catch
+        {
+            UBlockly.CSharp.Interpreter.Stop();
+            gameOverPanel.SetActive(true);
+            blackRect.SetActive(true);
         }
     }
 
     private void ChangeLaserIntensity(int index, float newIntensity)
     {
-        if (elementPositions.ContainsKey("Laser") && index < elementPositions["Laser"].Count)
+        if (elementPositions.ContainsKey("laser") && index < elementPositions["laser"].Count)
         {
-            Vector2Int pos = elementPositions["Laser"][index];
+            Vector2Int pos = elementPositions["laser"][index];
             LaserEmitter laser = (LaserEmitter)board[pos.x, pos.y].GetPlacedObject();
             if (laser != null)
             {
@@ -642,11 +808,12 @@ public class BoardManager : Listener
         }
     }
 
-    private void ActivateDoor(int index, bool active)
+    private void ActivateDoor(string name, int index, bool active)
     {
-        if (elementPositions.ContainsKey("Puerta") && index < elementPositions["Puerta"].Count)
+        name = name.ToLower();
+        if (name == "puerta" && elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
-            Vector2Int pos = elementPositions["Puerta"][index];
+            Vector2Int pos = elementPositions[name][index];
             Door door = (Door)board[pos.x, pos.y].GetPlacedObject();
             if (door != null)
             {
@@ -679,11 +846,34 @@ public class BoardManager : Listener
         }
     }
 
+    private void DeactivateHintButton()
+    {
+        if (hintButton == null) return;
+        hintButton.GetComponent<Image>().color = Color.grey;
+        hintButton.enabled = false;
+    }
+
     public void UseHint()
     {
-        // TODO: do the "use hint" logic
+        if (hintsShown >= hintsParent.childCount /*|| ProgressManager.Instance.GetHintsRemaining() == 0*/)
+        {
+            DeactivateHintButton();
+            return;
+        }
 
-        TrackerAsset.Instance.setVar("remaining_hints", 0); // TODO: poner las hints
+        int i = 0;
+        while (i < hintsPerUse && hintsShown + i < hintsParent.childCount)
+        {
+            hintsParent.transform.GetChild(hintsShown + i).gameObject.SetActive(true);
+            i++;
+        }
+        hintsShown += i;
+        //ProgressManager.Instance.AddHints(-1);
+
+        if (hintsShown >= hintsParent.childCount /*|| ProgressManager.Instance.GetHintsRemaining() == 0*/)
+            DeactivateHintButton();
+
+        TrackerAsset.Instance.setVar("remaining_hints", ProgressManager.Instance.GetHintsRemaining());
         TrackerAsset.Instance.GameObject.Used("hint_used");
     }
 }

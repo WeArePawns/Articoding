@@ -9,7 +9,7 @@ public class Category : ScriptableObject
     [TextArea(3, 6)]
     public string description;
 
-    public LevelData[] levels;
+    public List<LevelData> levels;
 
     public Sprite icon;
 }

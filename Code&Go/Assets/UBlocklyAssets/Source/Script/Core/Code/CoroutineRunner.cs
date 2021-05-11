@@ -29,6 +29,7 @@ namespace UBlockly
     {
         private GameObject blackRect;
         private GameObject gameOverPanel;
+        private GameObject endPanel;
         private GameObject debugPanel;
 
         private void Init()
@@ -37,6 +38,7 @@ namespace UBlockly
 
             blackRect = canvas.transform.Find("BlackRect").gameObject;
             gameOverPanel = canvas.transform.Find("GameOverPanel").gameObject;
+            endPanel = canvas.transform.Find("EndPanel").gameObject;
             debugPanel = canvas.transform.Find("Content").Find("Header").Find("DebugPanel").gameObject;
         }
 
@@ -179,8 +181,9 @@ namespace UBlockly
             while (stack.Count > 0)
             {
                 IEnumerator itor = stack.Peek();
+
                 bool finished = true;
-                while (itor.MoveNext())
+                while (itor != null /*&& itor.Current != null*/ && itor.MoveNext())
                 {
                     //Debug.LogFormat("<color=green>[CodeRunner]SimulateCoroutine: current - {0}, time: {1}</color>", itor.Current, Time.time);
                     if (itor.Current is IEnumerator)
@@ -194,7 +197,10 @@ namespace UBlockly
 
                     //pause
                     while (mCoroutineDict[itorFunc].paused)
+                    {
+                        print("a");
                         yield return null;
+                    }
                 }
 
                 if (finished)
@@ -210,7 +216,7 @@ namespace UBlockly
 
             if (blackRect != null)
                 blackRect.SetActive(true);
-            if (gameOverPanel != null)
+            if (gameOverPanel != null && !endPanel.activeSelf)
                 gameOverPanel.SetActive(true);
         }
     }

@@ -121,6 +121,14 @@ namespace UBlockly
         /// </summary>
         IEnumerator RunBlock(Block block)
         {
+            foreach(var b in block.InputList)
+            {
+                if(b.Connection != null && b.ConnectedBlock == null)
+                {
+                    yield break;
+                }
+            }
+
             //check if stopped
             if (mRunningProcess == null)
             {
@@ -173,12 +181,6 @@ namespace UBlockly
         public CustomEnumerator ValueReturn(Block block, string name, DataStruct defaultData)
         {
             CustomEnumerator etor = ValueReturn(block, name);
-
-            /*if(defaultData == null)
-            {
-                Debug.Log("ha petao");
-                return null;
-            }*/
 
             etor.Cmdtor.DefaultData = defaultData;
             return etor;

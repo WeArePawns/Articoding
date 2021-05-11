@@ -51,6 +51,12 @@ public class LevelCard : MonoBehaviour
         Configure();
     }
 
+    public void DeactivateStars()
+    {
+        for (int i = 0; i < stars.Length; i++)
+            stars[i].enabled = false;
+    }
+
     public void DeactivateCard()
     {
         cardImage.color = Color.grey;

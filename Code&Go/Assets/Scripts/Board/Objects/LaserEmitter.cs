@@ -17,7 +17,7 @@ public class LaserEmitter : BoardObject, ILaserEmitter
     private void Awake()
     {
         typeName = "Laser";
-        argsNames = new string[1] { "Intensidad" };        
+        argsNames = new string[1] { "Intensidad" };
     }
 
     public void Start()
@@ -40,6 +40,12 @@ public class LaserEmitter : BoardObject, ILaserEmitter
         {
             onParticles.Stop();
             pointLight.SetActive(false);
+            if (laserRay != null)
+            {
+                foreach (Transform child in laserRay.transform)
+                    Destroy(child.gameObject);
+                Destroy(laserRay.gameObject);
+            }
             return;
         }
 

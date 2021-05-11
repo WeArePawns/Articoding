@@ -23,23 +23,15 @@
 
   {
     "type": "controls_whileUntil",
-    "message0": "%1 %2",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "MODE",
-        "options": [
-          ["%{BKY_CONTROLS_WHILEUNTIL_OPERATOR_WHILE}", "WHILE"],
-          ["%{BKY_CONTROLS_WHILEUNTIL_OPERATOR_UNTIL}", "UNTIL"]
-        ]
-      },
+    "message0": "%{BKY_CONTROLS_WHILE_TITLE} %1",
+    "args0": [      
       {
         "type": "input_value",
         "name": "BOOL",
         "check": "Boolean"
       }
     ],
-    "message1": "%{BKY_CONTROLS_REPEAT_INPUT_DO} %1",
+    "message1": "%{BKY_CONTROLS_WHILEUNTIL_INPUT_DO} %1",
     "args1": [{
       "type": "input_statement",
       "name": "DO"

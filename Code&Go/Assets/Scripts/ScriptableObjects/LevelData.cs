@@ -11,7 +11,6 @@ public class LevelData : ScriptableObject
     [TextArea(3,6)]
     public string description;
 
-    public TextAsset statement; // Enunciado en .xml
     public TextAsset initialState; // Estado inicial en .xml
 
     [Header("Active Blocks")]
@@ -20,6 +19,7 @@ public class LevelData : ScriptableObject
 
     [Space(10)]
     public TextAsset levelBoard;
+    public string auxLevelBoard;
 
     public int minimosPasos;
 }

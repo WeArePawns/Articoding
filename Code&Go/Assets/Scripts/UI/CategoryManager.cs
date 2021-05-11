@@ -13,11 +13,18 @@ public class CategoryManager : MonoBehaviour
     [SerializeField] private GameObject levelsParent;
     [SerializeField] private LevelCard levelCardPrefab;
 
+    [SerializeField] private GameObject levelsCreatedParent;
+    [SerializeField] private GameObject createLevelButton;
+    [SerializeField] private Category levelsCreatedCategory;
+
     public Text categoryName;
     public Text categoryDescription;
 
     public Text levelName;
     public Text levelDescription;
+
+    public Text levelCreatedName;
+    public Text levelCreatdeDescription;
 
     public GameObject categoriesPanel;
     public GameObject levelsPanel;
@@ -25,10 +32,13 @@ public class CategoryManager : MonoBehaviour
     public GameObject currentCategoryPanel;
     public GameObject currentLevelPanel;
 
+    public GameObject currentLevelCreatedPanel;
+
     public Text currentCategoryLevelsText;
 
     public int currentCategory;
     private int currentLevel;
+    private int levelCreatedIndex;
 
     private void Start()
     {
@@ -46,10 +56,34 @@ public class CategoryManager : MonoBehaviour
             if (!ProgressManager.Instance.IsCategoryUnlocked(index)) card.button.enabled = false;
             //TODO: Poner icono de candado o algo
         }
+        currentLevelCreatedPanel.SetActive(false);
 
         HideLevels();
 
         SelectCategory(currentCategory);
+
+        CreateUserLevelsCards();
+    }
+
+    private void CreateUserLevelsCards()
+    {
+        for (int i = 0; i < levelsCreatedCategory.levels.Count; i++)
+        {
+            int index = i;
+            LevelData levelData = levelsCreatedCategory.levels[i];
+            LevelCard levelCard = Instantiate(levelCardPrefab, levelsCreatedParent.transform);
+            levelCard.ConfigureLevel(levelData, levelsCreatedCategory, i + 1);
+            levelCard.DeactivateStars();
+            levelCard.button.onClick.AddListener(() =>
+            {
+                currentLevelCreatedPanel.SetActive(true);
+                levelCreatedIndex = index;
+                levelCreatedName.text = levelData.levelName;
+                levelCreatdeDescription.text = levelData.description;
+            });
+        }
+        createLevelButton.SetActive(true);
+        createLevelButton.transform.SetParent(levelsCreatedParent.transform);
     }
 
     private void SelectCategory(int index)
@@ -78,7 +112,7 @@ public class CategoryManager : MonoBehaviour
         currentCategoryPanel.SetActive(false);
         currentLevelPanel.SetActive(true);
 
-        for (int i = 0; i < category.levels.Length; i++)
+        for (int i = 0; i < category.levels.Count; i++)
         {
             int index = i;
             LevelData levelData = category.levels[i];
@@ -95,7 +129,6 @@ public class CategoryManager : MonoBehaviour
             }
             else
                 levelCard.DeactivateCard();
-            // TODO: cargar progreso y poner estrellas
         }
 
         // TODO: seleccionar primer level sin completar
@@ -118,5 +151,10 @@ public class CategoryManager : MonoBehaviour
     public void PlaySelectedLevel()
     {
         GameManager.Instance.LoadLevel(categories[currentCategory], currentLevel);
+    }
+
+    public void PlayLevelCreated()
+    {        
+        GameManager.Instance.LoadLevel(levelsCreatedCategory, levelCreatedIndex);
     }
 }
