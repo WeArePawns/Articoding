@@ -7,12 +7,14 @@ public class MenusManager : MonoBehaviour
     public GameObject blackPanel;
     public GameObject exitConfirmationPanel;
     public GameObject settingsMenu;
+    public GameObject optionsMenu;
 
     void Start()
     {
         exitConfirmationPanel.SetActive(false);
         blackPanel.SetActive(false);
         settingsMenu.SetActive(false);
+        optionsMenu.SetActive(false);
     }
 
     private void Update()
@@ -32,6 +34,12 @@ public class MenusManager : MonoBehaviour
     public void ToggleSettingsMenu()
     {
         settingsMenu.SetActive(!settingsMenu.activeSelf);
+    }
+
+    public void SetActiveOptionsPanel(bool active)
+    {
+        optionsMenu.SetActive(active);
+        blackPanel.SetActive(active);
     }
 
     public void SetActiveExitConfirmationPanel(bool active)

@@ -63,7 +63,11 @@ public class TemaryManager : MonoBehaviour
         for (int i = 0; i < categoryButtons.Length; i++)
         {
             TutorialType type = (TutorialType)(i + 1);
-            categoryButtons[i].interactable = shownTemary.ContainsKey(type);
+            bool enabled = shownTemary.ContainsKey(type);
+            categoryButtons[i].interactable = enabled;
+
+            if (enabled && backButton == null && contentRect.childCount == 0)
+                categoryButtons[i].onClick.Invoke();
         }
     }
 
