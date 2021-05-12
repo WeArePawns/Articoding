@@ -31,6 +31,10 @@ public class ProgressManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             Init();
         }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void Init()
@@ -127,15 +131,31 @@ public class ProgressManager : MonoBehaviour
         return GetLevelStars(categories.IndexOf(category), level);
     }
 
-    public uint GetCategoryProgress(int categoryIndex)
+    public uint GetCategoryTotalStars(int categoryIndex)
     {
         if (categoryIndex >= categoriesData.Length || categoryIndex < 0) return 0;
         return categoriesData[categoryIndex].totalStars;
     }
 
-    public uint GetCategoryProgress(Category category)
+    public uint GetCategoryTotalStars(Category category)
     {
-        return GetCategoryProgress(categories.IndexOf(category));
+        return GetCategoryTotalStars(categories.IndexOf(category));
+    }
+
+    public int GetCategoryCurrentProgress(Category category)
+    {
+        int index = categories.IndexOf(category);
+        if (index >= categoriesData.Length || index < 0) return 0;
+
+        return categoriesData[index].lastLevelUnlocked;
+    }
+
+    public int GetCategoryTotalProgress(Category category)
+    {
+        int index = categories.IndexOf(category);
+        if (index >= categoriesData.Length || index < 0) return 0;
+
+        return categoriesData[index].levelsData.Length;
     }
 
     public int GetHintsRemaining()

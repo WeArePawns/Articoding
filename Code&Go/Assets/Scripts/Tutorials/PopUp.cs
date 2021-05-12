@@ -8,6 +8,8 @@ public class PopUp : MonoBehaviour
 {
     [SerializeField] private CanvasScaler canvasScaler;
     [SerializeField] private RectTransform panelRect;
+    [SerializeField] private GameObject titleContent;
+    [SerializeField] private GameObject contentContent;
     [SerializeField] private Text titleText;
     [SerializeField] private Text contentText;
     [SerializeField] private Text buttonText;
@@ -31,16 +33,13 @@ public class PopUp : MonoBehaviour
     public void Show(PopUpData data)
     {
         // Set texts
-        if (string.IsNullOrEmpty(data.title))
-        {
-            titleText.gameObject.SetActive(false);
-        }
+        titleContent.SetActive(!string.IsNullOrEmpty(data.title));
+        titleText.gameObject.SetActive(!string.IsNullOrEmpty(data.title));
+     
         titleText.text = data.title;
 
-        if (string.IsNullOrEmpty(data.content))
-        {
-            contentText.gameObject.SetActive(false);
-        }
+        contentContent.SetActive(!string.IsNullOrEmpty(data.content));
+        contentText.gameObject.SetActive(!string.IsNullOrEmpty(data.content));
         contentText.text = data.content;
 
         // Set action

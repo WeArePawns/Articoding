@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
 
     public bool InCreatedLevel()
     {
-        return category = categories[categories.Length - 1];
+        return category == categories[categories.Length - 1];
     }
 
     public int GetCurrentLevelIndex()
