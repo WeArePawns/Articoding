@@ -21,6 +21,8 @@ public class TemaryManager : MonoBehaviour
     [SerializeField] private Text paragraphPrefab;
     [SerializeField] private RectTransform contentRect;
     [SerializeField] private Button backButton;
+    [SerializeField] private Text categoryTitle;
+    [SerializeField] private GameObject bodyContent;
     [Space]
     [SerializeField] private PopUpData[] allTutorials;
     private List<string> shownTutorials;
@@ -116,6 +118,11 @@ public class TemaryManager : MonoBehaviour
 
         if (backButton != null)
             backButton.gameObject.SetActive(true);
+
+        if (bodyContent != null)
+            bodyContent.SetActive(true);
+
+        categoryTitle.text = TypeToString(type);
     }
 
     private void ShowTutorialsCategoryList()
@@ -130,6 +137,9 @@ public class TemaryManager : MonoBehaviour
 
         // Show tutorials category list
         categoryList.gameObject.SetActive(true);
+
+        if (bodyContent != null)
+            bodyContent.SetActive(false);
     }
 
     public void AddTemary(PopUpData data)
