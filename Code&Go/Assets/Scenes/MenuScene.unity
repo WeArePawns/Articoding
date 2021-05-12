@@ -8050,6 +8050,7 @@ MonoBehaviour:
   blackPanel: {fileID: 1512015273}
   exitConfirmationPanel: {fileID: 474805239}
   settingsMenu: {fileID: 2044693739}
+  settingsButtonTransform: {fileID: 652553031}
   optionsMenu: {fileID: 2109229268}
 --- !u!4 &944922605
 Transform:
@@ -10510,7 +10511,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Categories
+  m_Text: "Categor\xEDas"
 --- !u!222 &1170937711
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13110,7 +13111,19 @@ MonoBehaviour:
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2109229273}
+        m_TargetAssemblyTypeName: OptionsManager, Assembly-CSharp
+        m_MethodName: OnLanguageDropdownUsed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &1432015877
 MonoBehaviour:
@@ -14074,7 +14087,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2109229273}
+        m_TargetAssemblyTypeName: OptionsManager, Assembly-CSharp
+        m_MethodName: OnFullscreenToggleUsed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1
 --- !u!1 &1511870753
 GameObject:
@@ -19639,6 +19664,7 @@ GameObject:
   - component: {fileID: 2109229272}
   - component: {fileID: 2109229271}
   - component: {fileID: 2109229270}
+  - component: {fileID: 2109229273}
   m_Layer: 5
   m_Name: OptionsPanel
   m_TagString: Untagged
@@ -19731,6 +19757,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2109229268}
   m_CullTransparentMesh: 0
+--- !u!114 &2109229273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2109229268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7ca855a3e78b4b42b69efbbde069c3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  languageDropdown: {fileID: 1432015876}
+  fullscreenToggle: {fileID: 1509687151}
 --- !u!1001 &2125946013
 PrefabInstance:
   m_ObjectHideFlags: 0

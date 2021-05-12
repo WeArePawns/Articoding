@@ -7,6 +7,7 @@ public class MenusManager : MonoBehaviour
     public GameObject blackPanel;
     public GameObject exitConfirmationPanel;
     public GameObject settingsMenu;
+    public RectTransform settingsButtonTransform;
     public GameObject optionsMenu;
 
     void Start()
@@ -24,8 +25,11 @@ public class MenusManager : MonoBehaviour
             Vector2 mousePos = Input.mousePosition;
             if (Input.GetMouseButtonDown(0))
             {
-                Rect rect = RectUtils.RectTransformToScreenSpace(settingsMenu.GetComponent<RectTransform>());
-                if (mousePos.x < rect.x || mousePos.x > rect.x + rect.width || mousePos.y < rect.y || mousePos.y > rect.y + rect.height)
+                Rect settingsRect = RectUtils.RectTransformToScreenSpace(settingsMenu.GetComponent<RectTransform>());
+                Rect settingsButtonRect = RectUtils.RectTransformToScreenSpace(settingsButtonTransform);
+                // Out of settings rect AND settings button rect
+                if ((mousePos.x < settingsRect.x || mousePos.x > settingsRect.x + settingsRect.width || mousePos.y < settingsRect.y || mousePos.y > settingsRect.y + settingsRect.height) &&
+                    (mousePos.x < settingsButtonRect.x || mousePos.x > settingsButtonRect.x + settingsButtonRect.width || mousePos.y < settingsButtonRect.y || mousePos.y > settingsButtonRect.y + settingsButtonRect.height))
                     ToggleSettingsMenu();
             }
         }
