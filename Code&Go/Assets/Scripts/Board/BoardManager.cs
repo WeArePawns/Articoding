@@ -24,6 +24,7 @@ public class BoardManager : Listener
     [SerializeField] private Button hintButton;
     [SerializeField] private bool boardModifiable = false;
     private bool objectsModifiable = false;
+    private bool completed = false;
     private int hintsShown = 0;
     private int hintsPerUse = 0;
 
@@ -266,6 +267,7 @@ public class BoardManager : Listener
         nReceiversActive = 0;
         DeleteBoardElements();
         elementPositions.Clear();
+        completed = false;
         //currentSteps = 0;
     }
 
@@ -286,6 +288,9 @@ public class BoardManager : Listener
 
     public bool BoardCompleted()
     {
+        return completed;
+    }
+    public bool AllReceiving() {
         return nReceivers > 0 && nReceiversActive >= nReceivers;
     }
 
@@ -607,7 +612,6 @@ public class BoardManager : Listener
 
             if (toCell.GetPlacedObject() != null)
             {
-                // TODO: hacer que se choque o haga algo
                 if (bObject.GetAnimator() != null)
                     bObject.GetAnimator().Play("Collision");
                 return false;
@@ -784,14 +788,31 @@ public class BoardManager : Listener
                     index = int.Parse(args[1]);
                     ActivateDoor(args[0], index - 1, active);
                     break;
+                case MSG_TYPE.CODE_END:
+                    if (AllReceiving())
+                        completed = true;
+                    else
+                        LevelFailed();
+                    break;
             }
         }
         catch
         {
-            UBlockly.CSharp.Interpreter.Stop();
-            gameOverPanel.SetActive(true);
-            blackRect.SetActive(true);
+            LevelFailed();
         }
+    }
+
+    public void InvokeLevelFailed()
+    {
+        UBlockly.CSharp.Interpreter.Stop();
+        Invoke("LevelFailed", 0.3f);
+    }
+
+    private void LevelFailed()
+    {
+        UBlockly.CSharp.Interpreter.Stop();
+        gameOverPanel.SetActive(true);
+        blackRect.SetActive(true);
     }
 
     private void ChangeLaserIntensity(int index, float newIntensity)

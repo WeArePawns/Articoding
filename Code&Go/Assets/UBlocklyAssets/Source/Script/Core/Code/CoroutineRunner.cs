@@ -27,18 +27,12 @@ namespace UBlockly
     /// </summary>
     public class CoroutineRunner : MonoBehaviour
     {
-        private GameObject blackRect;
-        private GameObject gameOverPanel;
-        private GameObject endPanel;
         private GameObject debugPanel;
 
         private void Init()
         {
             GameObject canvas = GameObject.Find("Canvas");
 
-            blackRect = canvas.transform.Find("BlackRect").gameObject;
-            gameOverPanel = canvas.transform.Find("GameOverPanel").gameObject;
-            endPanel = canvas.transform.Find("EndPanel").gameObject;
             debugPanel = canvas.transform.Find("Content").Find("Header").Find("DebugPanel").gameObject;
         }
 
@@ -214,10 +208,7 @@ namespace UBlockly
 
             yield return new WaitForSeconds(1.5f);
 
-            if (blackRect != null)
-                blackRect.SetActive(true);
-            if (gameOverPanel != null && !endPanel.activeSelf)
-                gameOverPanel.SetActive(true);
+            MessageManager.Instance.SendMessage("", MSG_TYPE.CODE_END);
         }
     }
 }
