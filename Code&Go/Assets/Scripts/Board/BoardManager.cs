@@ -43,6 +43,8 @@ public class BoardManager : Listener
 
     public StreamRoom streamRoom;
 
+    public Color deactivatedColor;
+
     private void Awake()
     {
         cells = new List<List<BoardCell>>();
@@ -874,7 +876,7 @@ public class BoardManager : Listener
     private void DeactivateHintButton()
     {
         if (hintButton == null) return;
-        hintButton.GetComponent<Image>().color = Color.grey;
+        hintButton.GetComponent<Image>().color = deactivatedColor;
         hintButton.enabled = false;
     }
 
