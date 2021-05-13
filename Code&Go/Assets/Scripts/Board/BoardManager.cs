@@ -41,6 +41,8 @@ public class BoardManager : Listener
     public GameObject gameOverPanel;
     public GameObject blackRect;
 
+    public StreamRoom streamRoom;
+
     private void Awake()
     {
         cells = new List<List<BoardCell>>();
@@ -813,6 +815,8 @@ public class BoardManager : Listener
         UBlockly.CSharp.Interpreter.Stop();
         gameOverPanel.SetActive(true);
         blackRect.SetActive(true);
+
+        streamRoom.gameOver();
     }
 
     private void ChangeLaserIntensity(int index, float newIntensity)
