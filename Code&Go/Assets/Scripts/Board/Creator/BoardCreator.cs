@@ -243,7 +243,7 @@ public class BoardCreator : MonoBehaviour
         int columns = int.Parse(columnsField.text), rows = int.Parse(rowsField.text);
         if (columns <= 0 || rows <= 0) return;
 
-        buildLimits = limits.isOn;
+        buildLimits = true; // limits.isOn;
         board.SetColumns(columns);
         board.SetRows(rows);
 
