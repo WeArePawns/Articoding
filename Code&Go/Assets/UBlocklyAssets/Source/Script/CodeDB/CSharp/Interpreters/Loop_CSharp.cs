@@ -52,7 +52,7 @@ namespace UBlockly
 
         protected bool CheckInfiniteLoop()
         {
-            if (++mLoopCount >= Int16.MaxValue)
+            if (++mLoopCount >= 20)
             {
                 mLoopCount = 0;
                 CSharp.Interpreter.Error("Infinite loop!");
@@ -172,9 +172,9 @@ namespace UBlockly
                 //reset flow control
                 if (NeedBreak) break;
                 if (NeedContinue) ResetFlowState();
-                if (CheckInfiniteLoop()) break;
-            }
-        }
+                if (CheckInfiniteLoop()) yield return null; 
+            }            
+        }        
     }
 
     [CodeInterpreter(BlockType = "controls_for")]

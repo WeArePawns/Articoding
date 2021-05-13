@@ -70,6 +70,11 @@ namespace UBlockly.UGUI
         
         public void OnPointerClick(PointerEventData eventData)
         {
+            if (mOnCloseEvent != null)
+            {
+                mOnCloseEvent.Invoke();
+                mOnCloseEvent = null;
+            }
             GameObject.Destroy(this.gameObject);
         }
 
