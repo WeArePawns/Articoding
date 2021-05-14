@@ -24,7 +24,6 @@ public class CategoryManager : MonoBehaviour
     public Image levelPreview;
 
     public Text levelCreatedName;
-    public Image levelCreatedPreviewImage;
 
     public GameObject categoriesPanel;
     public GameObject levelsPanel;
@@ -79,14 +78,12 @@ public class CategoryManager : MonoBehaviour
                 //currentLevelCreatedPanel.SetActive(true);
                 levelCreatedIndex = index;
                 levelCreatedName.text = levelData.levelName;
-                levelCreatedPreviewImage.sprite = levelData.levelPreview;
             });
         }
         createLevelButton.gameObject.SetActive(true);
         createLevelButton.onClick.AddListener(() =>
         {
             levelCreatedName.text = "Crear nivel";
-            //TODO//levelCreatedPreviewImage.text = "Juega a este modo de juego para crear tus propios niveles. Recuerda que para aceptar tu nivel, antes tienes que pasártelo";
             levelCreatedIndex = -1; // Reserved for creator mode
         });
         createLevelButton.transform.SetParent(levelsCreatedParent.transform);
