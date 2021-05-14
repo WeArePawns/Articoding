@@ -24,6 +24,7 @@ public class BoardCreator : MonoBehaviour
     [SerializeField] GameObject indicatorPrefab;
 
     [SerializeField] private bool keyBoardControls = false;
+    [SerializeField] private int maxSize = 15;
 
     private string fileName = "level";
     private int nLevel = 1;
@@ -45,6 +46,8 @@ public class BoardCreator : MonoBehaviour
         board.SetArgLoader(argumentLoader);
         material.color = Color.yellow;
         GetComponent<MeshRenderer>().enabled = keyBoardControls;
+        columnsField.onValueChanged.AddListener(delegate { CheckInputField(columnsField); });
+        rowsField.onValueChanged.AddListener(delegate { CheckInputField(rowsField); });
     }
 
 #if UNITY_EDITOR
@@ -59,8 +62,19 @@ public class BoardCreator : MonoBehaviour
         cursorPos.x = ((cursorPos.x + nX) + columns) % columns;
         cursorPos.y = ((cursorPos.y + nY) + rows) % rows;
         transform.localPosition = new Vector3(cursorPos.x + offset.x, 0, cursorPos.y + offset.y);
-    }
 #endif
+    }
+
+    private void CheckInputField(InputField field)
+    {
+        if (field.text.Length == 0) return;
+
+            int value = int.Parse(field.text);
+        if (value <= 0)
+            field.text = "1";
+        else if (value > maxSize)
+            field.text = maxSize.ToString();
+    }
 
     private void AddObject(int id)
     {

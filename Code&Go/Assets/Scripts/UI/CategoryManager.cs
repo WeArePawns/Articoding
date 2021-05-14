@@ -39,6 +39,9 @@ public class CategoryManager : MonoBehaviour
     private int currentLevel;
     private int levelCreatedIndex = -1000;
 
+    public Color deactivatedCategoryColor;
+    public Sprite deactivatedImage;
+
     private void Start()
     {
         for (int i = 0; i < categories.Length; i++)
@@ -51,8 +54,14 @@ public class CategoryManager : MonoBehaviour
             {
                 SelectCategory(index);
             });
+
             //If it's not unlocked it can't be selected
-            if (!ProgressManager.Instance.IsCategoryUnlocked(index)) card.button.enabled = false;
+            if (!ProgressManager.Instance.IsCategoryUnlocked(index))
+            {
+                card.button.enabled = false;
+                card.image.sprite = deactivatedImage;
+                card.button.image.color = deactivatedCategoryColor;
+            }
             //TODO: Poner icono de candado o algo
         }
         //currentLevelCreatedPanel.SetActive(false);

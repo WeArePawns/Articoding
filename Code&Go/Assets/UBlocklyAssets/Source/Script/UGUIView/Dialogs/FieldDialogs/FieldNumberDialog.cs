@@ -36,7 +36,7 @@ namespace UBlockly.UGUI
         private Dictionary<Button, int> mBtnNums;
         private Button mBtnNeg;
         private Button mBtnPoint;
-        
+
         protected override void OnInit()
         {
             mBtnNums = new Dictionary<Button, int>();
@@ -57,10 +57,10 @@ namespace UBlockly.UGUI
 
             if (mFieldNumber.IntOnly)
                 mBtnPoint.gameObject.SetActive(false);
-            
+
             ClearNum();
             m_BtnClear.onClick.AddListener(ClearNum);
-            
+
             AddCloseEvent(() =>
             {
                 if (!string.IsNullOrEmpty(m_LabelNum.text))
@@ -72,7 +72,7 @@ namespace UBlockly.UGUI
         {
             m_LabelNum.text = "";
         }
-        
+
         private void OnClickPad(Button btn)
         {
             if (m_LabelNum.text == null)
@@ -87,7 +87,7 @@ namespace UBlockly.UGUI
                 if (!m_LabelNum.text.Contains("."))
                     m_LabelNum.text += ".";
             }
-            else
+            else /*if (m_LabelNum.text.Length < 1)*/
             {
                 m_LabelNum.text += mBtnNums[btn];
             }
