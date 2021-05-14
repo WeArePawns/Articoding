@@ -21,10 +21,10 @@ public class CategoryManager : MonoBehaviour
     public Text categoryDescription;
 
     public Text levelName;
-    public Text levelDescription;
+    public Image levelPreview;
 
     public Text levelCreatedName;
-    public Text levelCreatdeDescription;
+    public Image levelCreatedPreviewImage;
 
     public GameObject categoriesPanel;
     public GameObject levelsPanel;
@@ -79,14 +79,14 @@ public class CategoryManager : MonoBehaviour
                 //currentLevelCreatedPanel.SetActive(true);
                 levelCreatedIndex = index;
                 levelCreatedName.text = levelData.levelName;
-                levelCreatdeDescription.text = levelData.description;
+                levelCreatedPreviewImage.sprite = levelData.levelPreview;
             });
         }
         createLevelButton.gameObject.SetActive(true);
         createLevelButton.onClick.AddListener(() =>
         {
             levelCreatedName.text = "Crear nivel";
-            levelCreatdeDescription.text = "Juega a este modo de juego para crear tus propios niveles. Recuerda que para aceptar tu nivel, antes tienes que pasártelo";
+            //TODO//levelCreatedPreviewImage.text = "Juega a este modo de juego para crear tus propios niveles. Recuerda que para aceptar tu nivel, antes tienes que pasártelo";
             levelCreatedIndex = -1; // Reserved for creator mode
         });
         createLevelButton.transform.SetParent(levelsCreatedParent.transform);
@@ -132,7 +132,7 @@ public class CategoryManager : MonoBehaviour
                 {
                     currentLevel = index;
                     levelName.text = levelData.levelName;
-                    levelDescription.text = levelData.description;
+                    levelPreview.sprite = levelData.levelPreview;
                 });
                 levelCard.button.onClick.Invoke();
             }

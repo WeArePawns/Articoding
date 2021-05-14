@@ -222,7 +222,7 @@ public class ProgressManager : MonoBehaviour
     private void AddLevelCreated(string board, int index)
     {
         LevelData data = ScriptableObject.CreateInstance<LevelData>();
-        data.description = "Nivel creado por el usuario";
+        //TODO//data.description = "Nivel creado por el usuario";
         data.activeBlocks = activeBlocks;
         data.levelName = "Nivel Creado " + index.ToString();
         data.auxLevelBoard = board;
