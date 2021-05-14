@@ -26,6 +26,8 @@ public class LevelTestManager : MonoBehaviour
 
     [SerializeField] GameObject debugPanel;
     [SerializeField] GameObject changeModeButton;
+    [SerializeField] Sprite changeToEditModeSprite;
+    [SerializeField] Sprite changeToPlayModeSprite;
 
     [SerializeField] GameObject loadBoardPanel;
     [SerializeField] GameObject saveBoardPanel;
@@ -86,12 +88,16 @@ public class LevelTestManager : MonoBehaviour
             completed = false;
             cameraFit.FitBoard(board.GetRows(), board.GetColumns());
             initialState = board.GetBoardState();
+
+            changeModeButton.GetComponent<Image>().sprite = changeToEditModeSprite;
         }
         else
         {
             board.transform.position = Vector3.zero;
             board.transform.localScale = Vector3.one;
             boardCreator.FitBoard();
+
+            changeModeButton.GetComponent<Image>().sprite = changeToPlayModeSprite;
         }
     }
 
