@@ -27,8 +27,6 @@ public class OrbitCamera : MonoBehaviour
     // this is where we want to go.
     private Quaternion _targetRotation;
 
-    private Camera cam;
-
     public FocusPoint Target
     {
         get { return _target; }
@@ -85,8 +83,6 @@ public class OrbitCamera : MonoBehaviour
 
         _iniYaw = _yaw;
         _iniPitch = _pitch;
-
-        cam = GetComponent<Camera>();
     }
 
     void Update()
