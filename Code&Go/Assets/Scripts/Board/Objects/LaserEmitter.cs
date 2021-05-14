@@ -80,7 +80,14 @@ public class LaserEmitter : BoardObject, ILaserEmitter
     override public void LoadArgs(string[] args)
     {
         if (args != null && args.Length > 0)
-            intensity = float.Parse(args[0]);
+            try
+            {
+                intensity = float.Parse(args[0]);
+            }
+            catch
+            {
+                Debug.Log("Parametro no valido");
+            }
     }
 
 }

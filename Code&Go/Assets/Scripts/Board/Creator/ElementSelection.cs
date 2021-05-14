@@ -18,10 +18,9 @@ public class ElementSelection : MonoBehaviour
     {
         DestroySelector();
 
-        rows = Mathf.Min(board.GetRows(), elements.Length);
-        columns = Mathf.CeilToInt(elements.Length / (float)rows);
+        columns = elements.Length;
+        rows = 1;
         int elementIndex = 0;
-        columns = Mathf.Clamp(columns, 1, int.MaxValue);
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < columns; x++)
@@ -38,6 +37,8 @@ public class ElementSelection : MonoBehaviour
                 }
             }
         }
+        transform.position = board.transform.position + (Vector3.back * (rows + 1)) + Vector3.right * (board.GetColumns() - columns) / 2.0f;
+
     }
 
     public void DestroySelector()

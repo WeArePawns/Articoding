@@ -87,7 +87,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
                 if (board.GetBoardCellType(newPos.x, newPos.y) == 1 || board.IsCellOccupied(newPos.x, newPos.y))
                 {
                     //Se elimina el objeto en la posicion anterior
-                    board.RemoveBoardObject(lastPos.x, lastPos.y, false);
+                    board.RemoveBoardObject(lastPos.x, lastPos.y);
                     Destroy(gameObject, 0.3f);
                     return;
                 }
@@ -100,7 +100,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
             }
             else
             {
-                board.RemoveBoardObject(lastPos.x, lastPos.y, false);
+                board.RemoveBoardObject(lastPos.x, lastPos.y);
                 Destroy(gameObject, 0.3f);
             }
         }

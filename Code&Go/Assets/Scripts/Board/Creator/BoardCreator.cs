@@ -19,16 +19,12 @@ public class BoardCreator : MonoBehaviour
 
     [SerializeField] InputField loadFileNameField;
 
-    [SerializeField] Toggle limits;
+    [SerializeField] CameraFit cameraFit;
 
     [SerializeField] GameObject indicatorPrefab;
 
-    [SerializeField] private Vector2 boardInitOffsetLeftDown;
-    [SerializeField] private Vector2 boardInitOffsetRightUp;
-    [SerializeField] private Camera mainCamera;
     [SerializeField] private bool keyBoardControls = false;
 
-    private bool buildLimits = false;
     private string fileName = "level";
     private int nLevel = 1;
     private string filePath = "";
@@ -49,32 +45,6 @@ public class BoardCreator : MonoBehaviour
         board.SetArgLoader(argumentLoader);
         material.color = Color.yellow;
         GetComponent<MeshRenderer>().enabled = keyBoardControls;
-        FitBoard();
-    }
-
-    public void FitBoard()
-    {
-        if (mainCamera != null)
-        {
-            float height = mainCamera.orthographicSize * 2, width = height * mainCamera.aspect;
-            float xPos = Mathf.Lerp(-width / 2.0f, width / 2.0f, boardInitOffsetLeftDown.x);
-            float yPos = Mathf.Lerp(-height / 2.0f, height / 2.0f, boardInitOffsetLeftDown.y);
-            height *= (1.0f - (boardInitOffsetLeftDown.y + boardInitOffsetRightUp.y));
-            width *= (1.0f - (boardInitOffsetLeftDown.x + boardInitOffsetRightUp.x));
-
-            int limits = (buildLimits) ? 0 : 0;//Ver si queremos que se tenga en cuenta para el fit
-            float boardHeight = (float)board.GetRows() + limits, boardWidth = (float)board.GetColumns() + limits;
-            float xRatio = width / boardWidth, yRatio = height / boardHeight;
-            float ratio = Mathf.Min(xRatio, yRatio);
-            float offsetX = (-boardWidth * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio, offsetY = (-boardHeight * ratio) / 2.0f + (limits / 2.0f + 0.5f) * ratio;
-
-            //Fit the board on the screen and resize it
-            board.transform.position = new Vector3(xPos + width / 2.0f + offsetX, 0, yPos + height / 2.0f + offsetY);
-            board.transform.localScale = new Vector3(ratio, ratio, ratio);
-
-            elementSelection.transform.position = board.transform.position + (2.0f * Vector3.left * elementSelection.GetColumns() * ratio) + Vector3.forward * (boardHeight - elementSelection.GetRows()) / 2.0f * ratio;
-            elementSelection.transform.localScale = new Vector3(ratio, ratio, ratio);
-        }
     }
 
 #if UNITY_EDITOR
@@ -135,7 +105,6 @@ public class BoardCreator : MonoBehaviour
                 else if (selectedPos != -Vector2Int.one)
                 {
                     board.MoveBoardObject(selectedPos, cursorPos);
-                    //board.MoveObject(selectedPos, cursorPos - selectedPos, 0.5f);
                     selectedPos = cursorPos;
                     if (selectedIndicator != null)
                         selectedIndicator.transform.localPosition = new Vector3(cursorPos.x + offset.x, cursorPos.y + offset.y, 0);
@@ -148,7 +117,6 @@ public class BoardCreator : MonoBehaviour
             if (selectedPos != -Vector2Int.one)
             {
                 board.RotateBoardObject(selectedPos, Input.GetKeyDown(KeyCode.E) ? 1 : -1);
-                //board.RotateObject(selectedPos, Input.GetKeyDown(KeyCode.E) ? 1 : -1, 0.5f);
             }
         }
 
@@ -238,34 +206,41 @@ public class BoardCreator : MonoBehaviour
         }
     }
 
-    public void GenerateNewBoard()
+    private void ResetCursor()
     {
-        int columns = int.Parse(columnsField.text), rows = int.Parse(rowsField.text);
-        if (columns <= 0 || rows <= 0) return;
-
-        buildLimits = true; // limits.isOn;
-        board.SetColumns(columns);
-        board.SetRows(rows);
-
-        //Create an empty board
-        board.transform.localScale = Vector3.one;
-        board.transform.localPosition = Vector3.zero;
-        board.GenerateBoard();
-        board.GenerateHoles();
-        if (buildLimits) board.GenerateLimits();
-
-        //Initialize the element selection section
-        elementSelection.transform.localScale = Vector3.one;
-        elementSelection.transform.localPosition = Vector3.zero;
-        elementSelection.GenerateSelector();
-
         //Reset the cursor
         DeselectObject();
         cursorPos = Vector2Int.zero;
         transform.localPosition = Vector3.zero;
         this.rows = board.GetRows();
         this.columns = board.GetColumns();
+    }
+
+    public void GenerateNewBoard()
+    {
+        int columns = int.Parse(columnsField.text), rows = int.Parse(rowsField.text);
+        if (columns <= 0 || rows <= 0) return;
+
+        board.SetColumns(columns);
+        board.SetRows(rows);
+
+        //Create an empty board
+        board.GenerateBoard();
+        board.GenerateHoles();
+        board.GenerateLimits();
+
+        //Initialize the element selection section
+        elementSelection.GenerateSelector();
+
+        ResetCursor();
+
         FitBoard();
+    }
+
+    public void FitBoard()
+    {
+        board.SetFocusPointOffset(new Vector3((board.GetColumns() - 2) / 2.0f + 0.5f, 0.0f, (board.GetRows() - elementSelection.GetRows() - 3) / 2.0f + 0.5f));
+        cameraFit.FitBoard(board.GetRows() + 1 + elementSelection.GetRows(), Mathf.Max(board.GetColumns(), elementSelection.GetColumns()));
     }
 
     public void SaveBoard()
@@ -285,19 +260,12 @@ public class BoardCreator : MonoBehaviour
         using (StreamReader inputFile = new StreamReader(fileName))
         {
             BoardState state = BoardState.FromJson(inputFile.ReadToEnd());
-            board.transform.localScale = Vector3.one;
-            board.transform.localPosition = Vector3.zero;
-            board.LoadBoard(state, buildLimits);
+            board.LoadBoard(state, false);
 
-            elementSelection.transform.localScale = Vector3.one;
-            elementSelection.transform.localPosition = Vector3.zero;
             elementSelection.GenerateSelector();
 
-            DeselectObject();
-            cursorPos = Vector2Int.zero;
-            transform.localPosition = Vector3.zero;
-            this.rows = board.GetRows();
-            this.columns = board.GetColumns();
+            ResetCursor();
+
             FitBoard();
         }
         Console.WriteLine("Archivo Cargado");

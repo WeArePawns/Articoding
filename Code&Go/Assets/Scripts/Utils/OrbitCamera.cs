@@ -96,4 +96,16 @@ public class OrbitCamera : MonoBehaviour
         Vector3 offset = transform.rotation * (-Vector3.forward * _distance);
         transform.position = _target.transform.position + offset + _target.offset;
     }
+    
+    public void ResetInmediate()
+    {
+        Reset();
+        _targetRotation = _yaw * _pitch;
+
+        transform.rotation = _targetRotation;
+
+        // offset the camera at distance from the target position.
+        Vector3 offset = transform.rotation * (-Vector3.forward * _distance);
+        transform.position = _target.transform.position + offset + _target.offset;
+    }
 }

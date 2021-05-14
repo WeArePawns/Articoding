@@ -11,18 +11,22 @@ using UnityEditor;
 public class LevelTestManager : MonoBehaviour
 {
     [SerializeField] Category levelsCreatedCategory;
+    [SerializeField] CameraFit cameraFit;
+    [SerializeField] OrbitCamera cameraOrbit;
+    [SerializeField] CameraZoom cameraZoom;
 
     [SerializeField] GameObject levelObjects;
     [SerializeField] GameObject levelCanvas;
     [SerializeField] GameObject levelButtons;
-    [SerializeField] CameraFit cameraFit;
+    [SerializeField] RectTransform levelViewport;
 
     [SerializeField] GameObject creatorObjects;
     [SerializeField] GameObject creatorCanvas;
+    [SerializeField] RectTransform creatorViewPort;
 
     [SerializeField] BoardManager board;
     [SerializeField] BoardCreator boardCreator;
-    [SerializeField] TextAsset activeBlocks;    
+    [SerializeField] TextAsset activeBlocks;
 
     [SerializeField] GameObject debugPanel;
     [SerializeField] GameObject changeModeButton;
@@ -86,18 +90,20 @@ public class LevelTestManager : MonoBehaviour
         if (!inCreator)
         {
             completed = false;
-            cameraFit.FitBoard(board.GetRows(), board.GetColumns());
             initialState = board.GetBoardState();
+            cameraFit.SetViewPort(levelViewport);
 
             changeModeButton.GetComponent<Image>().sprite = changeToEditModeSprite;
+            board.SetFocusPointOffset(new Vector3((board.GetColumns() - 2) / 2.0f + 0.5f, 0.0f, (board.GetRows() - 2) / 2.0f + 0.5f));
+            cameraFit.FitBoard(board.GetRows(), board.GetColumns());
         }
         else
         {
-            board.transform.position = Vector3.zero;
-            board.transform.localScale = Vector3.one;
-            boardCreator.FitBoard();
-
+            cameraOrbit.ResetInmediate();
+            cameraZoom.ResetInmediate();
+            cameraFit.SetViewPort(creatorViewPort);
             changeModeButton.GetComponent<Image>().sprite = changeToPlayModeSprite;
+            boardCreator.FitBoard();
         }
     }
 

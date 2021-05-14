@@ -22,7 +22,7 @@ public class CameraFit : MonoBehaviour
 
         Canvas.ForceUpdateCanvases();
 
-        mainCamera.rect = new Rect(viewportRect.rect.width / Screen.currentResolution.width, 0.0f,
+        mainCamera.rect = new Rect(1.0f - viewportRect.rect.width / Screen.currentResolution.width, 0.0f,
                                     viewportRect.rect.width / Screen.currentResolution.width, viewportRect.rect.height / Screen.currentResolution.height);
     }
 
@@ -45,5 +45,11 @@ public class CameraFit : MonoBehaviour
                 mainCamera.orthographicSize = (float)(rowsFixed / 2.0f) * differenceInSize;
             }
         }
+    }
+
+    public void SetViewPort(RectTransform viewport)
+    {
+        this.viewportRect = viewport;
+        FitViewPort();
     }
 }
