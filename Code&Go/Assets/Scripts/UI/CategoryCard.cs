@@ -16,17 +16,6 @@ public class CategoryCard : MonoBehaviour
     [HideInInspector] public Button button;
     public Image image;
 
-#if !UNITY_EDITOR
-    private void Awake()
-    {
-        Configure();
-    }
-#else
-    private void Update()
-    {
-        //Configure();
-    }
-#endif
     private void Configure()
     {
         if (category == null) return;

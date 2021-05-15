@@ -8,7 +8,6 @@ using UBlockly.UGUI;
 
 public class LevelTestManager : MonoBehaviour
 {
-    [SerializeField] Category levelsCreatedCategory;
     [SerializeField] CameraFit cameraFit;
     [SerializeField] OrbitCamera cameraOrbit;
     [SerializeField] CameraZoom cameraZoom;

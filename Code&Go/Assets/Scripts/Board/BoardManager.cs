@@ -271,6 +271,11 @@ public class BoardManager : Listener
         nReceivers++;
     }
 
+    public void DeregisterReceiver()
+    {
+        nReceivers--;
+    }
+
     public void Reset()
     {
         nReceivers = 0;
@@ -538,6 +543,7 @@ public class BoardManager : Listener
                 elementPositions[bObject.GetNameAsLower()].Remove(from);
                 elementPositions[bObject.GetNameAsLower()].Add(to);
             }
+            return true;
         }
         return false;
     }
@@ -573,6 +579,7 @@ public class BoardManager : Listener
 
         BoardCell cell = AddBoardCell(id, x, y);
 
+        cell.SetState(BoardCell.BoardCellState.FREE);
         if (boardObject != null) cell.PlaceObject(boardObject);
 
         if (cells[id].Contains(currentCell)) cells[id].Remove(currentCell);

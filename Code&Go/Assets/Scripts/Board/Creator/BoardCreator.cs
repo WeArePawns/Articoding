@@ -253,7 +253,7 @@ public class BoardCreator : MonoBehaviour
 
     public void FitBoard()
     {
-        board.SetFocusPointOffset(new Vector3((board.GetColumns() - 2) / 2.0f + 0.5f, 0.0f, (board.GetRows() - elementSelection.GetRows() - 3) / 2.0f + 0.5f));
+        board.SetFocusPointOffset(new Vector3((board.GetColumns() - 2) / 2.0f + 0.5f, 0.0f, ((board.GetRows() - 2) / 2.0f + 0.5f) - 1));
         cameraFit.FitBoard(board.GetRows() + 1 + elementSelection.GetRows(), Mathf.Max(board.GetColumns(), elementSelection.GetColumns()));
     }
 

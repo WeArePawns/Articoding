@@ -76,7 +76,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
             pos = new Vector3(Mathf.Round(pos.x), Mathf.Round(pos.y), Mathf.Round(pos.z));
             if (boardObject != null && pos.x < board.GetColumns() && pos.x >= 0 && pos.z < board.GetRows() && pos.z >= 0)
             {
-                Vector2Int newPos = new Vector2Int((int)pos.x, (int)pos.z);
+                Vector2Int newPos = new Vector2Int(Mathf.FloorToInt(pos.x), (Mathf.FloorToInt(pos.z)));
                 //Si la posicion en la que se suelta es donde estaba colocado no se hace nada
                 if (lastPos == newPos)
                 {
@@ -94,8 +94,13 @@ public class DraggableObject : MonoBehaviour, IMouseListener
                 //Si el objeto no se ha añadido al tablero
                 if (lastPos == -Vector2Int.one)
                     board.AddBoardObject(newPos.x, newPos.y, boardObject);
-                else//Se mueve el objeto
-                    board.MoveBoardObject(lastPos, newPos);
+                //Se mueve el objeto
+                else if(!board.MoveBoardObject(lastPos, newPos))
+                {
+                    //Si no se ha podido mover se deja donde estaba
+                    transform.localPosition = new Vector3(lastPos.x, 0, lastPos.y);
+                    return;
+                }
                 lastPos = newPos;
             }
             else

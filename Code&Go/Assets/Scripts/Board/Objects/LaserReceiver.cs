@@ -73,4 +73,17 @@ public class LaserReceiver : BoardObject, ILaserReceiver
             if (registered) boardManager.ReceiverActivated();
         }
     }
+
+    private void OnDestroy()
+    {
+        if (boardManager != null)
+        {
+            if (registered)
+            {
+                boardManager.ReceiverDeactivated();
+                registered = false;
+            }
+            boardManager.DeregisterReceiver();
+        }
+    }
 }

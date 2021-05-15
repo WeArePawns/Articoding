@@ -95,4 +95,10 @@ public class GameManager : MonoBehaviour
         if (Instance == this && loadSave)
             SaveManager.Save();
     }
+
+    public void OnApplicationQuit()
+    {
+        if (loadSave)
+            SaveManager.Save();
+    }
 }
