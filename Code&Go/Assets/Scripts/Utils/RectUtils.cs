@@ -16,6 +16,9 @@ public class RectUtils : MonoBehaviour
     {
         if (camera == null) camera = Camera.main;
 
+        //Sync collider position with transform
+        Physics.SyncTransforms();
+
         Vector3 c = collider.bounds.center;
         Vector3 e = collider.bounds.extents;
 
