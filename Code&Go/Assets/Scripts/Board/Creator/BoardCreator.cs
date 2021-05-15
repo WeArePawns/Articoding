@@ -62,8 +62,8 @@ public class BoardCreator : MonoBehaviour
         cursorPos.x = ((cursorPos.x + nX) + columns) % columns;
         cursorPos.y = ((cursorPos.y + nY) + rows) % rows;
         transform.localPosition = new Vector3(cursorPos.x + offset.x, 0, cursorPos.y + offset.y);
-#endif
     }
+#endif
 
     private void CheckInputField(InputField field)
     {

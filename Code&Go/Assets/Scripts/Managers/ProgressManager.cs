@@ -181,7 +181,11 @@ public class ProgressManager : MonoBehaviour
 #else
                    Application.persistentDataPath;
 #endif
-        string filePath = Path.Combine(path, "Boards/LevelsCreated/" + levelName + ".userLevel");
+        string directory = Path.Combine(path, "Boards/LevelsCreated/");
+        if (!Directory.Exists(directory))    
+            Directory.CreateDirectory(directory);
+        
+        string filePath = directory + levelName + ".userLevel";
         FileStream file = new FileStream(filePath, FileMode.Create);
         file.Close();
         StreamWriter writer = new StreamWriter(filePath);
@@ -213,7 +217,7 @@ public class ProgressManager : MonoBehaviour
                 AddLevelCreated(readerData, i + 1);
             }
             catch
-            {                
+            {
                 Debug.Log("El archivo " + filePath + " no existe");
             }
         }

@@ -5,8 +5,6 @@ using UnityEngine.UI;
 using UnityEngine;
 using AssetPackage;
 using UBlockly.UGUI;
-using UnityEditor;
-
 
 public class LevelTestManager : MonoBehaviour
 {

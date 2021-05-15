@@ -44,6 +44,9 @@ public class CategoryManager : MonoBehaviour
 
     private void Start()
     {
+        if (!GameManager.Instance.IsGameLoaded())
+            GameManager.Instance.LoadGame();
+
         for (int i = 0; i < categories.Length; i++)
         {
             int index = i;

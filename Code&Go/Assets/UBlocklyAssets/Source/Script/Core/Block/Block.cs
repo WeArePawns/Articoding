@@ -158,24 +158,24 @@ namespace UBlockly
             // Remove from block database.
             Workspace.BlockDB.Remove(this.ID);
             Workspace = null;
-            
+
             // Just deleting this block from the DOM would result in a memory leak as
             // well as corruption of the connectoin database. Therefore we must
             // methodically step through the blocks and carefully disassemble them.
-            
+
             // First,dispose of all mychildren.
-            for (int i = ChildBlocks.Count - 1; i >= 0; i--)
-            {
-                this.ChildBlocks[i].Dispose(false);
-            }
-            
+            //for (int i = ChildBlocks.Count - 1; i >= 0; i--)
+            //{
+            //    this.ChildBlocks[i].Dispose(false);
+            //}
+
             // Then dispose of myself.
             // Dispose of all inputs and theri fields.
             foreach (var input in InputList)
             {
                 input.Dispose();
             }
-    
+
             var connections = this.GetConnections();
             foreach (var connection in connections)
             {
