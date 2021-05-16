@@ -61,6 +61,11 @@ namespace UBlockly
             return false;
         }
 
+        protected void StartLoop()
+        {
+            mLoopCount=0;
+        }
+
         /// <summary>
         /// find the parent loop block of the flow block
         /// </summary>
@@ -103,6 +108,7 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
+            StartLoop();
 
             int repeats = int.Parse(block.GetFieldValue("TIMES"));
             for (int i = 0; i < repeats; i++)
@@ -123,6 +129,7 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
+            StartLoop();
 
             CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "TIMES", new DataStruct(0));
             yield return ctor;
@@ -149,6 +156,7 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
+            StartLoop();
 
             bool until = false;
 
@@ -183,6 +191,7 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
+                        StartLoop();
 
             CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "FROM", new DataStruct(0));
             yield return ctor;
@@ -217,6 +226,7 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
+            StartLoop();
 
             CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "LIST");
             yield return ctor;

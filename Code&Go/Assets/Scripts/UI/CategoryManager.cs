@@ -65,7 +65,6 @@ public class CategoryManager : MonoBehaviour
                 card.image.sprite = deactivatedImage;
                 card.button.image.color = deactivatedCategoryColor;
             }
-            //TODO: Poner icono de candado o algo
         }
         //currentLevelCreatedPanel.SetActive(false);
 
@@ -121,7 +120,7 @@ public class CategoryManager : MonoBehaviour
         if (!ProgressManager.Instance.IsCategoryUnlocked(currentCategory)) return;
 
         Category category = categories[currentCategory];
-        currentCategoryLevelsText.text = "Levels - " + category.name_id;
+        currentCategoryLevelsText.text = "Niveles - " + category.name_id;
 
         categoriesPanel.SetActive(false);
         levelsPanel.SetActive(true);

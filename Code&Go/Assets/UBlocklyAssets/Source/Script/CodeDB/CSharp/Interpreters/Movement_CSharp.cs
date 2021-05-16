@@ -163,7 +163,7 @@ namespace UBlockly
             DataStruct returnData = new DataStruct(false);
             returnData.BooleanValue = MessageManager.Instance.SendBoolMessage(msg, MSG_TYPE.CELL_OCCUPIED);
 
-            yield return new WaitForSeconds(Times.instructionWaitTime);
+            yield return null;
 
             ReturnData(returnData);
         }

@@ -278,7 +278,6 @@ public class BoardManager : Listener
 
     public void Reset()
     {
-        nReceivers = 0;
         nReceiversActive = 0;
         DeleteBoardElements();
         elementPositions.Clear();
