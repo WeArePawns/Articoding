@@ -19,8 +19,11 @@ public class TemaryManager : MonoBehaviour
     [Space]
     [SerializeField] private Text titlePrefab;
     [SerializeField] private Text paragraphPrefab;
+    [SerializeField] private Image imagePrefab;
     [SerializeField] private RectTransform contentRect;
     [SerializeField] private Button backButton;
+    [SerializeField] private Text categoryTitle;
+    [SerializeField] private GameObject bodyContent;
     [Space]
     [SerializeField] private PopUpData[] allTutorials;
     private List<string> shownTutorials;
@@ -63,7 +66,11 @@ public class TemaryManager : MonoBehaviour
         for (int i = 0; i < categoryButtons.Length; i++)
         {
             TutorialType type = (TutorialType)(i + 1);
-            categoryButtons[i].interactable = shownTemary.ContainsKey(type);
+            bool enabled = shownTemary.ContainsKey(type);
+            categoryButtons[i].interactable = enabled;
+
+            if (enabled && backButton == null && contentRect.childCount == 0)
+                categoryButtons[i].onClick.Invoke();
         }
     }
 
@@ -104,6 +111,8 @@ public class TemaryManager : MonoBehaviour
         {
             if(lastData == null || data.title != lastData.title)
                 AddTitle(data.title);
+            if(data.image != null)
+                AddImage(data.image);
             AddParagraph(data.content);
             lastData = data;
         }
@@ -112,6 +121,11 @@ public class TemaryManager : MonoBehaviour
 
         if (backButton != null)
             backButton.gameObject.SetActive(true);
+
+        if (bodyContent != null)
+            bodyContent.SetActive(true);
+
+        categoryTitle.text = TypeToString(type);
     }
 
     private void ShowTutorialsCategoryList()
@@ -126,6 +140,9 @@ public class TemaryManager : MonoBehaviour
 
         // Show tutorials category list
         categoryList.gameObject.SetActive(true);
+
+        if (bodyContent != null)
+            bodyContent.SetActive(false);
     }
 
     public void AddTemary(PopUpData data)
@@ -142,6 +159,13 @@ public class TemaryManager : MonoBehaviour
         Text title = Instantiate(titlePrefab, contentRect);
         title.gameObject.SetActive(true);
         title.text = s;
+    }
+
+    private void AddImage(Sprite s)
+    {
+        Image image = Instantiate(imagePrefab, contentRect);
+        image.gameObject.SetActive(true);
+        image.sprite = s;
     }
 
     private void AddParagraph(string s)

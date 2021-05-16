@@ -16,7 +16,7 @@ public class ArgumentLoader : MonoBehaviour
 
         currentObject = newObject;
         gameObject.SetActive(true);
-        text.text = currentObject.GetName();
+        text.text = currentObject.GetNameWithIndex();
 
         string[] argsNames = currentObject.GetArgsNames();
         if (argsNames.Length == 0) gameObject.SetActive(false);

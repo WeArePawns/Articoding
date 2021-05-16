@@ -169,6 +169,7 @@ GameObject:
   - component: {fileID: 3186188285801582460}
   - component: {fileID: -5573327890906912937}
   - component: {fileID: 8683319886470318140}
+  - component: {fileID: 1384491373169822116}
   m_Layer: 0
   m_Name: BasicMirror
   m_TagString: Untagged
@@ -205,7 +206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6858fefd7c3b424dbbb5a576a6521f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anim: {fileID: 0}
+  anim: {fileID: 1384491373169822116}
   reflectCollider: {fileID: 6002287477980514899}
 --- !u!65 &3186188285801582460
 BoxCollider:
@@ -254,6 +255,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameTextPrefab: {fileID: 4709242046270480452, guid: b90e681ada0a75648807752719b128bd, type: 3}
   textPosition: {fileID: 5530012323088845598}
+--- !u!95 &1384491373169822116
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6745913655574259957}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 8cab803bf4a64bd41b23c33006f1ab09, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &7600149719595602126
 PrefabInstance:
   m_ObjectHideFlags: 0

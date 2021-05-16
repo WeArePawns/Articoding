@@ -8,8 +8,7 @@ using UnityEngine;
 public class LevelData : ScriptableObject
 {
     public string levelName;
-    [TextArea(3,6)]
-    public string description;
+    public Sprite levelPreview;
 
     public TextAsset initialState; // Estado inicial en .xml
 

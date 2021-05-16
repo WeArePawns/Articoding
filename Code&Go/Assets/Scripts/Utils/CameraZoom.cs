@@ -50,4 +50,10 @@ public class CameraZoom : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (iniFov == -1.0) return;
         cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, fov, Time.deltaTime * 3.0f);
     }
+
+    public void ResetInmediate()
+    {
+        Reset();
+        cam.orthographicSize = fov;
+    }
 }

@@ -25,7 +25,7 @@ public class ProgressBar : MonoBehaviour
     }
 #endif
 
-    private void Configure()
+    public void Configure()
     {
         float currentOffset = current - minimum;
         float maximumOffset = maximum - minimum;

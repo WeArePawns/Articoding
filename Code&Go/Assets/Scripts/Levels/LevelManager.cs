@@ -38,6 +38,8 @@ public class LevelManager : MonoBehaviour
 
     private int minimosPasos = 0;
 
+    public StreamRoom streamRoom;
+
     private void Awake()
     {
         GameManager gameManager = GameManager.Instance;
@@ -97,6 +99,8 @@ public class LevelManager : MonoBehaviour
             TrackerAsset.Instance.setVar("no_hints", starsController.IsNoHintsStarActive());
             TrackerAsset.Instance.GameObject.Used("level_end");
 
+            streamRoom.FinishLevel();
+
             endPanel.SetActive(true);
             blackRect.SetActive(true);
             if (!GameManager.Instance.InCreatedLevel())
@@ -155,6 +159,8 @@ public class LevelManager : MonoBehaviour
         gameOverPanel.SetActive(false);
         blackRect.SetActive(false);
         gameOverMinimized.SetActive(false);
+
+        streamRoom.Retry();
 
         starsController.DeactivateFirstRunStar();
     }

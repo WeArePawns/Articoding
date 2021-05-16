@@ -10,9 +10,9 @@ public class EmptyCell : BoardCell
         if (rb == null) placedObject.gameObject.AddComponent<Rigidbody>();
         if (rb != null)
             rb.isKinematic = false;
-        // Do stuff
-        // Mandar señal de GameOver o lo que sea
-        //boardManager.DoStuff();
+
+        if (placedObject.GetNameAsLower() == "laser")
+            boardManager.InvokeLevelFailed();
     }
 
     public override string[] GetArgs()

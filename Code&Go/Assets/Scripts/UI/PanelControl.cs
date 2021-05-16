@@ -19,7 +19,7 @@ public class PanelControl : MonoBehaviour
 
     private void Update()
     {
-        if (gameObject.activeSelf)
+        if (panel.activeSelf)
             HideIfClickedOutside();
     }
 
@@ -40,7 +40,7 @@ public class PanelControl : MonoBehaviour
 
     public void Appear()
     {
-        panel.SetActive(!gameObject.activeSelf);
+        panel.SetActive(!panel.activeSelf);
     }
 
     public void DisableDissapear(bool enabled)

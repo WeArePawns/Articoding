@@ -24,6 +24,7 @@ public class SaveManager
         // Si no existe, se crea
         if (!File.Exists(Filepath))
         {
+            Debug.LogWarning("Archivo no encontrado");
             FileStream file = new FileStream(Filepath, FileMode.Create);
             file.Close();
             Save();

@@ -31,6 +31,10 @@ public class ProgressManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             Init();
         }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void Init()
@@ -127,15 +131,31 @@ public class ProgressManager : MonoBehaviour
         return GetLevelStars(categories.IndexOf(category), level);
     }
 
-    public uint GetCategoryProgress(int categoryIndex)
+    public uint GetCategoryTotalStars(int categoryIndex)
     {
         if (categoryIndex >= categoriesData.Length || categoryIndex < 0) return 0;
         return categoriesData[categoryIndex].totalStars;
     }
 
-    public uint GetCategoryProgress(Category category)
+    public uint GetCategoryTotalStars(Category category)
     {
-        return GetCategoryProgress(categories.IndexOf(category));
+        return GetCategoryTotalStars(categories.IndexOf(category));
+    }
+
+    public int GetCategoryCurrentProgress(Category category)
+    {
+        int index = categories.IndexOf(category);
+        if (index >= categoriesData.Length || index < 0) return 0;
+
+        return categoriesData[index].lastLevelUnlocked;
+    }
+
+    public int GetCategoryTotalProgress(Category category)
+    {
+        int index = categories.IndexOf(category);
+        if (index >= categoriesData.Length || index < 0) return 0;
+
+        return categoriesData[index].levelsData.Length;
     }
 
     public int GetHintsRemaining()
@@ -161,7 +181,11 @@ public class ProgressManager : MonoBehaviour
 #else
                    Application.persistentDataPath;
 #endif
-        string filePath = Path.Combine(path, "Boards/LevelsCreated/" + levelName + ".userLevel");
+        string directory = Path.Combine(path, "Boards/LevelsCreated/");
+        if (!Directory.Exists(directory))    
+            Directory.CreateDirectory(directory);
+        
+        string filePath = directory + levelName + ".userLevel";
         FileStream file = new FileStream(filePath, FileMode.Create);
         file.Close();
         StreamWriter writer = new StreamWriter(filePath);
@@ -193,7 +217,7 @@ public class ProgressManager : MonoBehaviour
                 AddLevelCreated(readerData, i + 1);
             }
             catch
-            {                
+            {
                 Debug.Log("El archivo " + filePath + " no existe");
             }
         }
@@ -202,7 +226,7 @@ public class ProgressManager : MonoBehaviour
     private void AddLevelCreated(string board, int index)
     {
         LevelData data = ScriptableObject.CreateInstance<LevelData>();
-        data.description = "Nivel creado por el usuario";
+        //TODO//data.description = "Nivel creado por el usuario";
         data.activeBlocks = activeBlocks;
         data.levelName = "Nivel Creado " + index.ToString();
         data.auxLevelBoard = board;

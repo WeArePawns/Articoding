@@ -23,6 +23,7 @@ public class PopUpData : ScriptableObject
     [TextArea(3, 6)]
     public string content;
     public PopUpData next = null;
+    public Sprite image;
 
     public PopUpData()
     {
@@ -32,5 +33,6 @@ public class PopUpData : ScriptableObject
     {
         title = data.title;
         content = data.content;
+        image = data.image;
     }
 }

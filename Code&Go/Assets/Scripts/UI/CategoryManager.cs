@@ -14,17 +14,16 @@ public class CategoryManager : MonoBehaviour
     [SerializeField] private LevelCard levelCardPrefab;
 
     [SerializeField] private GameObject levelsCreatedParent;
-    [SerializeField] private GameObject createLevelButton;
+    [SerializeField] private Button createLevelButton;
     [SerializeField] private Category levelsCreatedCategory;
 
     public Text categoryName;
     public Text categoryDescription;
 
     public Text levelName;
-    public Text levelDescription;
+    public Image levelPreview;
 
     public Text levelCreatedName;
-    public Text levelCreatdeDescription;
 
     public GameObject categoriesPanel;
     public GameObject levelsPanel;
@@ -38,10 +37,16 @@ public class CategoryManager : MonoBehaviour
 
     public int currentCategory;
     private int currentLevel;
-    private int levelCreatedIndex;
+    private int levelCreatedIndex = -1000;
+
+    public Color deactivatedCategoryColor;
+    public Sprite deactivatedImage;
 
     private void Start()
     {
+        if (!GameManager.Instance.IsGameLoaded())
+            GameManager.Instance.LoadGame();
+
         for (int i = 0; i < categories.Length; i++)
         {
             int index = i;
@@ -52,11 +57,16 @@ public class CategoryManager : MonoBehaviour
             {
                 SelectCategory(index);
             });
+
             //If it's not unlocked it can't be selected
-            if (!ProgressManager.Instance.IsCategoryUnlocked(index)) card.button.enabled = false;
-            //TODO: Poner icono de candado o algo
+            if (!ProgressManager.Instance.IsCategoryUnlocked(index))
+            {
+                card.button.enabled = false;
+                card.image.sprite = deactivatedImage;
+                card.button.image.color = deactivatedCategoryColor;
+            }
         }
-        currentLevelCreatedPanel.SetActive(false);
+        //currentLevelCreatedPanel.SetActive(false);
 
         HideLevels();
 
@@ -76,14 +86,20 @@ public class CategoryManager : MonoBehaviour
             levelCard.DeactivateStars();
             levelCard.button.onClick.AddListener(() =>
             {
-                currentLevelCreatedPanel.SetActive(true);
+                //currentLevelCreatedPanel.SetActive(true);
                 levelCreatedIndex = index;
                 levelCreatedName.text = levelData.levelName;
-                levelCreatdeDescription.text = levelData.description;
             });
         }
-        createLevelButton.SetActive(true);
+        createLevelButton.gameObject.SetActive(true);
+        createLevelButton.onClick.AddListener(() =>
+        {
+            levelCreatedName.text = "Crear nivel";
+            levelCreatedIndex = -1; // Reserved for creator mode
+        });
         createLevelButton.transform.SetParent(levelsCreatedParent.transform);
+
+        createLevelButton.onClick.Invoke();
     }
 
     private void SelectCategory(int index)
@@ -104,7 +120,7 @@ public class CategoryManager : MonoBehaviour
         if (!ProgressManager.Instance.IsCategoryUnlocked(currentCategory)) return;
 
         Category category = categories[currentCategory];
-        currentCategoryLevelsText.text = "Levels - " + category.name_id;
+        currentCategoryLevelsText.text = "Niveles - " + category.name_id;
 
         categoriesPanel.SetActive(false);
         levelsPanel.SetActive(true);
@@ -124,14 +140,13 @@ public class CategoryManager : MonoBehaviour
                 {
                     currentLevel = index;
                     levelName.text = levelData.levelName;
-                    levelDescription.text = levelData.description;
+                    levelPreview.sprite = levelData.levelPreview;
                 });
+                levelCard.button.onClick.Invoke();
             }
             else
                 levelCard.DeactivateCard();
         }
-
-        // TODO: seleccionar primer level sin completar
     }
 
     public void HideLevels()
@@ -154,7 +169,10 @@ public class CategoryManager : MonoBehaviour
     }
 
     public void PlayLevelCreated()
-    {        
-        GameManager.Instance.LoadLevel(levelsCreatedCategory, levelCreatedIndex);
+    {
+        if (levelCreatedIndex == -1)
+            GameManager.Instance.LoadLevelCreator();
+        else
+            GameManager.Instance.LoadLevel(levelsCreatedCategory, levelCreatedIndex);
     }
 }

@@ -15,6 +15,7 @@ public class BoardObject : MonoBehaviour
     [SerializeField] protected Animator anim;
     protected BoardManager boardManager;
     protected string typeName = "";
+    protected int index = 1;
     protected string[] argsNames;
 
     public virtual void SetBoard(BoardManager board)
@@ -37,6 +38,11 @@ public class BoardObject : MonoBehaviour
     public string GetNameAsLower()
     {
         return typeName.ToLower();
+    }
+
+    public string GetNameWithIndex()
+    {
+        return typeName + " " + index.ToString();
     }
 
     public string[] GetArgsNames()
@@ -72,6 +78,16 @@ public class BoardObject : MonoBehaviour
     public Animator GetAnimator()
     {
         return anim;
+    }
+
+    public void SetIndex(int index)
+    {
+        this.index = index;
+    }
+
+    public int GetIndex()
+    {
+        return index;
     }
 
     //Virtual method for seralization of additional arguments in child classes

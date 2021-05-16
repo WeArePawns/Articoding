@@ -35,7 +35,7 @@ public class LaserReceiver : BoardObject, ILaserReceiver
         receiverRenderer.material = onMaterial;
         onParticles.Play();
         light.SetActive(true);
-        Invoke("ReceiverActive", 1.0f);
+        ReceiverActive();
     }
 
     public void OnLaserReceiving()
@@ -54,8 +54,6 @@ public class LaserReceiver : BoardObject, ILaserReceiver
             if (boardManager != null) boardManager.ReceiverDeactivated();
             registered = false;
         }
-        else
-            CancelInvoke("ReceiverActive");
     }
 
     private void ReceiverActive()
@@ -73,6 +71,19 @@ public class LaserReceiver : BoardObject, ILaserReceiver
             registeredOnBoard = true;
             boardManager.RegisterReceiver();
             if (registered) boardManager.ReceiverActivated();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (boardManager != null)
+        {
+            if (registered)
+            {
+                boardManager.ReceiverDeactivated();
+                registered = false;
+            }
+            boardManager.DeregisterReceiver();
         }
     }
 }

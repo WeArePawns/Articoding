@@ -16,17 +16,6 @@ public class CategoryCard : MonoBehaviour
     [HideInInspector] public Button button;
     public Image image;
 
-#if !UNITY_EDITOR
-    private void Awake()
-    {
-        Configure();
-    }
-#else
-    private void Update()
-    {
-        //Configure();
-    }
-#endif
     private void Configure()
     {
         if (category == null) return;
@@ -34,7 +23,11 @@ public class CategoryCard : MonoBehaviour
         button = GetComponent<Button>();
 
         title.text = category.name_id;
-        stars.text = ProgressManager.Instance.GetCategoryProgress(category).ToString() + "/" + (category.levels.Count * 3).ToString(); ; //category.description;
+        stars.text = ProgressManager.Instance.GetCategoryTotalStars(category).ToString() + "/" + (category.levels.Count * 3).ToString(); ; //category.description;
+        progressBar.minimum = 0.0f;
+        progressBar.maximum = category.levels.Count;
+        progressBar.current = ProgressManager.Instance.GetCategoryCurrentProgress(category);
+        progressBar.Configure();
         image.sprite = category.icon;
     }
 
