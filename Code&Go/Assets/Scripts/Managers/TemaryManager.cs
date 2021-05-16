@@ -111,7 +111,8 @@ public class TemaryManager : MonoBehaviour
         {
             if(lastData == null || data.title != lastData.title)
                 AddTitle(data.title);
-            AddImage(data.image);
+            if(data.image != null)
+                AddImage(data.image);
             AddParagraph(data.content);
             lastData = data;
         }
