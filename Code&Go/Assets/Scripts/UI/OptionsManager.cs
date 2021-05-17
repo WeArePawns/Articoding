@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 public class OptionsManager : MonoBehaviour
 {
@@ -11,9 +13,6 @@ public class OptionsManager : MonoBehaviour
 
     void Awake()
     {
-        // TODO: Initialize dropdown using Locale (Localizacion)
-        // ...
-
         Resolution[] resolutions = Screen.resolutions;
         for (int i = 0; i < resolutions.Length; i++)
         {
@@ -24,16 +23,33 @@ public class OptionsManager : MonoBehaviour
             }
         }
 
-
         fullscreenToggle.isOn = Screen.fullScreen;
-
     }
 
-    public void OnLanguageDropdownUsed()
+    IEnumerator Start()
     {
-        // TODO: Change app locale
+        // Wait for the localization system to initialize
+        yield return LocalizationSettings.InitializationOperation;
 
-        // Maybe change flag image
+        // Generate list of available Locales
+        var options = new List<Dropdown.OptionData>();
+        int selected = 0;
+        for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
+        {
+            var locale = LocalizationSettings.AvailableLocales.Locales[i];
+            if (LocalizationSettings.SelectedLocale == locale)
+                selected = i;
+            options.Add(new Dropdown.OptionData(locale.name));
+        }
+        languageDropdown.options = options;
+
+        languageDropdown.value = selected;
+        languageDropdown.onValueChanged.AddListener(OnLanguageDropdownUsed);
+    }
+
+    public void OnLanguageDropdownUsed(int index)
+    {
+        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
     }
 
     public void OnResolutionDropdownUsed()
