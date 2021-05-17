@@ -19,6 +19,7 @@ public class TemaryManager : MonoBehaviour
     [Space]
     [SerializeField] private Text titlePrefab;
     [SerializeField] private Text paragraphPrefab;
+    [SerializeField] private Image imagePrefab;
     [SerializeField] private RectTransform contentRect;
     [SerializeField] private Button backButton;
     [SerializeField] private Text categoryTitle;
@@ -110,6 +111,8 @@ public class TemaryManager : MonoBehaviour
         {
             if(lastData == null || data.title != lastData.title)
                 AddTitle(data.title);
+            if(data.image != null)
+                AddImage(data.image);
             AddParagraph(data.content);
             lastData = data;
         }
@@ -156,6 +159,13 @@ public class TemaryManager : MonoBehaviour
         Text title = Instantiate(titlePrefab, contentRect);
         title.gameObject.SetActive(true);
         title.text = s;
+    }
+
+    private void AddImage(Sprite s)
+    {
+        Image image = Instantiate(imagePrefab, contentRect);
+        image.gameObject.SetActive(true);
+        image.sprite = s;
     }
 
     private void AddParagraph(string s)

@@ -14,6 +14,9 @@ public class LevelCard : MonoBehaviour
 
     [HideInInspector] public Button button;
 
+    private Color buttonColor;
+    public Color deactivatedColor;
+
     int numLevel = 1;
 
 #if !UNITY_EDITOR
@@ -32,6 +35,8 @@ public class LevelCard : MonoBehaviour
         if (level == null) return;
 
         button = GetComponent<Button>();
+        buttonColor = stars[0].color;
+        buttonColor.a = 0.2f;
 
         title.text = numLevel.ToString();
 
@@ -40,7 +45,7 @@ public class LevelCard : MonoBehaviour
         //cambia el color de las estrellas que ha conseguido el jugador en el nivel
         for (int i = 0; i < 3; i++)
             if (i >= levelStars)
-                stars[i].color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                stars[i].color = buttonColor;
     }
 
     public void ConfigureLevel(LevelData level, Category category, int numLevel)
@@ -59,6 +64,7 @@ public class LevelCard : MonoBehaviour
 
     public void DeactivateCard()
     {
-        cardImage.color = Color.grey;
+        cardImage.color = deactivatedColor;
+        button.interactable = false;
     }
 }

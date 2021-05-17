@@ -27,8 +27,6 @@ public class OrbitCamera : MonoBehaviour
     // this is where we want to go.
     private Quaternion _targetRotation;
 
-    private Camera cam;
-
     public FocusPoint Target
     {
         get { return _target; }
@@ -85,8 +83,6 @@ public class OrbitCamera : MonoBehaviour
 
         _iniYaw = _yaw;
         _iniPitch = _pitch;
-
-        cam = GetComponent<Camera>();
     }
 
     void Update()
@@ -95,6 +91,18 @@ public class OrbitCamera : MonoBehaviour
         _targetRotation = _yaw * _pitch;
 
         transform.rotation = Quaternion.Lerp(transform.rotation, _targetRotation, Mathf.Clamp01(Time.smoothDeltaTime * _damping));
+
+        // offset the camera at distance from the target position.
+        Vector3 offset = transform.rotation * (-Vector3.forward * _distance);
+        transform.position = _target.transform.position + offset + _target.offset;
+    }
+    
+    public void ResetInmediate()
+    {
+        Reset();
+        _targetRotation = _yaw * _pitch;
+
+        transform.rotation = _targetRotation;
 
         // offset the camera at distance from the target position.
         Vector3 offset = transform.rotation * (-Vector3.forward * _distance);

@@ -20,6 +20,7 @@ limitations under the License.
 
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace UBlockly.UGUI
 {
@@ -70,40 +71,45 @@ namespace UBlockly.UGUI
             switch (args.Type)
             {
                 case InterpreterUpdateState.RunBlock:
-                {
-                    mRunningBlocks.Push(args.RunningBlock);
-                    mRunBlockView = BlocklyUI.WorkspaceView.GetBlockView(args.RunningBlock);
-                    break;
-                }
+                    {
+                        mRunningBlocks.Push(args.RunningBlock);
+                        mRunBlockView = BlocklyUI.WorkspaceView.GetBlockView(args.RunningBlock);
+                        break;
+                    }
                 case InterpreterUpdateState.FinishBlock:
-                {
-                    if (mRunningBlocks.Count > 0 && mRunningBlocks.Peek() == args.RunningBlock)
                     {
-                        mRunningBlocks.Pop();
-                        if (mRunningBlocks.Count > 0)
-                            mRunBlockView = BlocklyUI.WorkspaceView.GetBlockView(mRunningBlocks.Peek());
+                        if (mRunningBlocks.Count > 0 && mRunningBlocks.Peek() == args.RunningBlock)
+                        {
+                            mRunningBlocks.Pop();
+                            if (mRunningBlocks.Count > 0)
+                                mRunBlockView = BlocklyUI.WorkspaceView.GetBlockView(mRunningBlocks.Peek());
+                        }
+                        break;
                     }
-                    break;
-                }
                 case InterpreterUpdateState.Stop:
-                {
-                    enabled = false;
-                    mRunningBlocks.Clear();
-                    mRunBlockView = null;
-                    break;
-                }
-                case InterpreterUpdateState.Error:
-                {
-                    if (!string.IsNullOrEmpty(args.Msg))
                     {
-                        MsgDialog dialog = DialogFactory.CreateDialog("message") as MsgDialog;
-                        dialog.SetMsg(args.Msg);    
+                        enabled = false;
+                        mRunningBlocks.Clear();
+                        mRunBlockView = null;
+                        break;
                     }
-                    enabled = false;
-                    mRunningBlocks.Clear();
-                    mRunBlockView = null;
-                    break;
-                }
+                case InterpreterUpdateState.Error:
+                    {
+                        if (!string.IsNullOrEmpty(args.Msg))
+                        {
+                            MsgDialog dialog = DialogFactory.CreateDialog("message") as MsgDialog;
+                            dialog.SetMsg(args.Msg);
+                            Action closeEvent = () =>
+                            {
+                                MessageManager.Instance.SendMessage("", MSG_TYPE.CODE_END);
+                            };
+                            dialog.AddCloseEvent(closeEvent);
+                        }
+                        enabled = false;
+                        mRunningBlocks.Clear();
+                        mRunBlockView = null;
+                        break;
+                    }
             }
         }
 

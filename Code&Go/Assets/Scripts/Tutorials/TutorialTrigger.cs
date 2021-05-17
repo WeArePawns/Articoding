@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -17,16 +18,46 @@ public class TutorialTrigger : MonoBehaviour, IComparable<TutorialTrigger>
     private RectTransform mRectTransform;
     private Renderer mRenderer;
     private Collider mCollider;
+    private bool waitColliderSync = false;
+    private bool waitCanvasSync = false;
 
     private void Awake()
     {
-        if ((mRectTransform = GetComponent<RectTransform>()) != null) return;
+        if ((mRectTransform = GetComponent<RectTransform>()) != null) { waitCanvasSync = true; return; }
         if ((mRenderer = GetComponent<Renderer>()) != null) return;
-        if ((mCollider = GetComponent<Collider>()) != null) return;
+        if ((mCollider = GetComponent<Collider>()) != null) { waitColliderSync = true; return; }
     }
 
     public void Start()
     {
+        if(waitColliderSync)
+        {
+            StartCoroutine(AsyncColliderStart());
+            return;
+        }
+
+        if (waitCanvasSync)
+        {
+            StartCoroutine(AsyncCanvasStart());
+            return;
+        }
+
+        if (TutorialManager.Instance != null)
+            TutorialManager.Instance.AddTutorialTrigger(this, true);
+    }
+
+    public IEnumerator AsyncColliderStart()
+    {
+        yield return new WaitForFixedUpdate();
+
+        if (TutorialManager.Instance != null)
+            TutorialManager.Instance.AddTutorialTrigger(this, true);
+    }
+
+    public IEnumerator AsyncCanvasStart()
+    {
+        yield return new WaitForEndOfFrame();
+
         if (TutorialManager.Instance != null)
             TutorialManager.Instance.AddTutorialTrigger(this, true);
     }

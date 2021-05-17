@@ -52,13 +52,18 @@ namespace UBlockly
 
         protected bool CheckInfiniteLoop()
         {
-            if (++mLoopCount >= Int16.MaxValue)
+            if (++mLoopCount >= 20)
             {
                 mLoopCount = 0;
                 CSharp.Interpreter.Error("Infinite loop!");
                 return true;
             }
             return false;
+        }
+
+        protected void StartLoop()
+        {
+            mLoopCount=0;
         }
 
         /// <summary>
@@ -103,6 +108,7 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
+            StartLoop();
 
             int repeats = int.Parse(block.GetFieldValue("TIMES"));
             for (int i = 0; i < repeats; i++)
@@ -123,6 +129,7 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
+            StartLoop();
 
             CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "TIMES", new DataStruct(0));
             yield return ctor;
@@ -149,6 +156,7 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
+            StartLoop();
 
             bool until = false;
 
@@ -172,9 +180,9 @@ namespace UBlockly
                 //reset flow control
                 if (NeedBreak) break;
                 if (NeedContinue) ResetFlowState();
-                if (CheckInfiniteLoop()) break;
-            }
-        }
+                if (CheckInfiniteLoop()) yield return null; 
+            }            
+        }        
     }
 
     [CodeInterpreter(BlockType = "controls_for")]
@@ -183,6 +191,7 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
+                        StartLoop();
 
             CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "FROM", new DataStruct(0));
             yield return ctor;
@@ -217,6 +226,7 @@ namespace UBlockly
         protected override IEnumerator Execute(Block block)
         {
             ResetFlowState();
+            StartLoop();
 
             CustomEnumerator ctor = CSharp.Interpreter.ValueReturn(block, "LIST");
             yield return ctor;

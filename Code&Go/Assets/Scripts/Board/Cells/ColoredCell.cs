@@ -11,9 +11,8 @@ public class ColoredCell : BoardCell
     [SerializeField] protected Renderer mRenderer;
     protected Material mMaterial;
 
-#if UNITY_EDITOR
 
-    private void Start()
+    private void Awake()
     {
         if (mMaterial == null)
             mMaterial = new Material(cellMaterial);
@@ -21,6 +20,7 @@ public class ColoredCell : BoardCell
         mRenderer.material = mMaterial;
     }
 
+#if UNITY_EDITOR
     private void Update()
     {
         if (mMaterial == null)

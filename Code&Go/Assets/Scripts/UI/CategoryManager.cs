@@ -21,10 +21,9 @@ public class CategoryManager : MonoBehaviour
     public Text categoryDescription;
 
     public Text levelName;
-    public Text levelDescription;
+    public Image levelPreview;
 
     public Text levelCreatedName;
-    public Text levelCreatdeDescription;
 
     public GameObject categoriesPanel;
     public GameObject levelsPanel;
@@ -40,8 +39,14 @@ public class CategoryManager : MonoBehaviour
     private int currentLevel;
     private int levelCreatedIndex = -1000;
 
+    public Color deactivatedCategoryColor;
+    public Sprite deactivatedImage;
+
     private void Start()
     {
+        if (!GameManager.Instance.IsGameLoaded())
+            GameManager.Instance.LoadGame();
+
         for (int i = 0; i < categories.Length; i++)
         {
             int index = i;
@@ -52,9 +57,14 @@ public class CategoryManager : MonoBehaviour
             {
                 SelectCategory(index);
             });
+
             //If it's not unlocked it can't be selected
-            if (!ProgressManager.Instance.IsCategoryUnlocked(index)) card.button.enabled = false;
-            //TODO: Poner icono de candado o algo
+            if (!ProgressManager.Instance.IsCategoryUnlocked(index))
+            {
+                card.button.enabled = false;
+                card.image.sprite = deactivatedImage;
+                card.button.image.color = deactivatedCategoryColor;
+            }
         }
         //currentLevelCreatedPanel.SetActive(false);
 
@@ -79,14 +89,12 @@ public class CategoryManager : MonoBehaviour
                 //currentLevelCreatedPanel.SetActive(true);
                 levelCreatedIndex = index;
                 levelCreatedName.text = levelData.levelName;
-                levelCreatdeDescription.text = levelData.description;
             });
         }
         createLevelButton.gameObject.SetActive(true);
         createLevelButton.onClick.AddListener(() =>
         {
             levelCreatedName.text = "Crear nivel";
-            levelCreatdeDescription.text = "Juega a este modo de juego para crear tus propios niveles. Recuerda que para aceptar tu nivel, antes tienes que pasártelo";
             levelCreatedIndex = -1; // Reserved for creator mode
         });
         createLevelButton.transform.SetParent(levelsCreatedParent.transform);
@@ -112,7 +120,7 @@ public class CategoryManager : MonoBehaviour
         if (!ProgressManager.Instance.IsCategoryUnlocked(currentCategory)) return;
 
         Category category = categories[currentCategory];
-        currentCategoryLevelsText.text = "Levels - " + category.name_id;
+        currentCategoryLevelsText.text = "Niveles - " + category.name_id;
 
         categoriesPanel.SetActive(false);
         levelsPanel.SetActive(true);
@@ -132,7 +140,8 @@ public class CategoryManager : MonoBehaviour
                 {
                     currentLevel = index;
                     levelName.text = levelData.levelName;
-                    levelDescription.text = levelData.description;
+                    levelPreview.sprite = levelData.levelPreview;
+                    levelCard.button.Select();
                 });
                 levelCard.button.onClick.Invoke();
             }

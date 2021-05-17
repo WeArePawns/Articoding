@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Category category;
     public int levelIndex;
+    private bool gameLoaded = false;
 
     void Awake()
     {
@@ -26,8 +27,21 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        if (loadSave)
+        LoadGame();
+    }
+
+    public void LoadGame()
+    {
+        if (loadSave && !gameLoaded)
+        {
             SaveManager.Load();
+            gameLoaded = true;
+        }
+    }
+
+    public bool IsGameLoaded()
+    {
+        return gameLoaded;
     }
 
     public Category GetCurrentCategory()
@@ -79,6 +93,12 @@ public class GameManager : MonoBehaviour
     public void OnDestroy()
     {
         if (Instance == this && loadSave)
+            SaveManager.Save();
+    }
+
+    public void OnApplicationQuit()
+    {
+        if (loadSave)
             SaveManager.Save();
     }
 }

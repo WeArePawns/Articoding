@@ -41,6 +41,10 @@ public class BoardManager : Listener
     public GameObject gameOverPanel;
     public GameObject blackRect;
 
+    public StreamRoom streamRoom;
+
+    public Color deactivatedColor;
+
     private void Awake()
     {
         cells = new List<List<BoardCell>>();
@@ -77,10 +81,16 @@ public class BoardManager : Listener
         nReceivers = 0;
         nReceiversActive = 0;
 
+        SetFocusPointOffset(new Vector3(columns / 2.0f + 0.5f, 0.0f, rows / 2.0f + 0.5f));
+    }
+
+
+    public void SetFocusPointOffset(Vector3 offset)
+    {        
         //Set focus point of the camera
         FocusPoint fPoint = GetComponent<FocusPoint>();
         if (fPoint != null)
-            fPoint.offset = new Vector3(columns / 2.0f + 0.5f, 0.0f, rows / 2.0f + 0.5f);
+            fPoint.offset = offset;
     }
 
     public void GenerateLimits()
@@ -261,9 +271,13 @@ public class BoardManager : Listener
         nReceivers++;
     }
 
+    public void DeregisterReceiver()
+    {
+        nReceivers--;
+    }
+
     public void Reset()
     {
-        nReceivers = 0;
         nReceiversActive = 0;
         DeleteBoardElements();
         elementPositions.Clear();
@@ -453,13 +467,16 @@ public class BoardManager : Listener
             }
             if (elementPositions != null)
             {
-                if (!elementPositions.ContainsKey(boardObject.GetNameAsLower()))
-                    elementPositions[boardObject.GetNameAsLower()] = new List<Vector2Int>();
-                elementPositions[boardObject.GetNameAsLower()].Add(new Vector2Int(x, y));
+                string name = boardObject.GetNameAsLower();
+                if (!elementPositions.ContainsKey(name))
+                    elementPositions[name] = new List<Vector2Int>();
+
+                elementPositions[name].Add(new Vector2Int(x, y));
+                boardObject.SetIndex(elementPositions[name].Count);
 
                 FollowingText text = boardObject.GetComponent<FollowingText>();
                 if (text != null)
-                    text.SetName(boardObject.GetName() + " " + elementPositions[boardObject.GetNameAsLower()].Count.ToString());
+                    text.SetName(boardObject.GetNameWithIndex());
             }
 
             if (boardModifiable)
@@ -485,21 +502,25 @@ public class BoardManager : Listener
         {
             string name = board[x, y].GetPlacedObject().GetNameAsLower();
             board[x, y].RemoveObject(delete);
-            if (updatePositions && elementPositions.ContainsKey(name)) elementPositions[name].Remove(new Vector2Int(x, y));
-            RefreshNames(name);
+            if (updatePositions)
+            {
+                if (elementPositions.ContainsKey(name)) elementPositions[name].Remove(new Vector2Int(x, y));
+                RefreshNames(name);
+            }
         }
     }
 
     private void RefreshNames(string name)
     {
         if (!elementPositions.ContainsKey(name)) return;
+        int i = 1;
         foreach (Vector2Int pos in elementPositions[name])
         {
-            if (board[pos.x, pos.y].GetPlacedObject() == null) continue;
-
-            FollowingText text = board[pos.x, pos.y].GetPlacedObject().GetComponent<FollowingText>();
+            BoardObject boardObject = board[pos.x, pos.y].GetPlacedObject();            
+            boardObject.SetIndex(i++);
+            FollowingText text = boardObject.GetComponent<FollowingText>();
             if (text != null)
-                text.SetName(name + " " + (elementPositions[name].IndexOf(pos) + 1).ToString());
+                text.SetName(boardObject.GetNameWithIndex());
         }
     }
 
@@ -516,6 +537,11 @@ public class BoardManager : Listener
 
             board[from.x, from.y].RemoveObject(false);
             board[to.x, to.y].PlaceObject(bObject);
+            if (elementPositions != null)
+            {
+                elementPositions[bObject.GetNameAsLower()].Remove(from);
+                elementPositions[bObject.GetNameAsLower()].Add(to);
+            }
             return true;
         }
         return false;
@@ -552,6 +578,7 @@ public class BoardManager : Listener
 
         BoardCell cell = AddBoardCell(id, x, y);
 
+        cell.SetState(BoardCell.BoardCellState.FREE);
         if (boardObject != null) cell.PlaceObject(boardObject);
 
         if (cells[id].Contains(currentCell)) cells[id].Remove(currentCell);
@@ -813,6 +840,8 @@ public class BoardManager : Listener
         UBlockly.CSharp.Interpreter.Stop();
         gameOverPanel.SetActive(true);
         blackRect.SetActive(true);
+
+        streamRoom.GameOver();
     }
 
     private void ChangeLaserIntensity(int index, float newIntensity)
@@ -870,7 +899,7 @@ public class BoardManager : Listener
     private void DeactivateHintButton()
     {
         if (hintButton == null) return;
-        hintButton.GetComponent<Image>().color = Color.grey;
+        hintButton.GetComponent<Image>().color = deactivatedColor;
         hintButton.enabled = false;
     }
 

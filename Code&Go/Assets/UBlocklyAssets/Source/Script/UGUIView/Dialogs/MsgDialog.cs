@@ -27,7 +27,7 @@ namespace UBlockly.UGUI
 
         public void SetMsg(string msg)
         {
-            m_MsgText.text = msg;
+            //m_MsgText.text = msg;
         }
     }
 }
