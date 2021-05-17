@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Localization.Components;
 using UnityEngine.UI;
 
 [ExecuteInEditMode]
@@ -8,10 +7,11 @@ public class CategoryCard : MonoBehaviour
 {
     [SerializeField] private Category category;
 
+    [SerializeField] private LocalizeStringEvent localizeString;
     [SerializeField] private Text title;
     [SerializeField] private Text stars;
 
-    [SerializeField] private ProgressBar progressBar; // TODO: hacer algo con esto
+    [SerializeField] private ProgressBar progressBar;
 
     [HideInInspector] public Button button;
     public Image image;
@@ -22,7 +22,11 @@ public class CategoryCard : MonoBehaviour
 
         button = GetComponent<Button>();
 
-        title.text = category.name_id;
+        localizeString.StringReference = category.nameIDLocalized;
+        localizeString.RefreshString();
+        var op = localizeString.StringReference.GetLocalizedString();
+        title.text = op.Result;
+
         stars.text = ProgressManager.Instance.GetCategoryTotalStars(category).ToString() + "/" + (category.levels.Count * 3).ToString(); ; //category.description;
         progressBar.minimum = 0.0f;
         progressBar.maximum = category.levels.Count;

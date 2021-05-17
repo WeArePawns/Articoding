@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.Localization.Components;
 
 public class CategoryManager : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class CategoryManager : MonoBehaviour
 
     public Text categoryName;
     public Text categoryDescription;
+    public LocalizeStringEvent localizedCategoryName;
+    public LocalizeStringEvent localizedCategoryDescription;
 
     public Text levelName;
     public Image levelPreview;
@@ -110,8 +113,14 @@ public class CategoryManager : MonoBehaviour
         {
             currentCategory = index;
 
-            categoryName.text = categories[currentCategory].name_id;
-            categoryDescription.text = categories[currentCategory].description;
+            localizedCategoryName.StringReference = categories[currentCategory].nameIDLocalized;
+            localizedCategoryName.RefreshString();
+
+            localizedCategoryDescription.StringReference = categories[currentCategory].descriptionLocalized;
+            localizedCategoryDescription.RefreshString();
+
+            //categoryName.text = categories[currentCategory].name_id;
+            //categoryDescription.text = categories[currentCategory].description;
         }
     }
 
