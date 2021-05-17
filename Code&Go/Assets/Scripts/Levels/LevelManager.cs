@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UBlockly.UGUI;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
@@ -10,9 +11,6 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private LevelData currentLevel;
     private int currentLevelIndex = 0;
 
-    //Values between 0 and 1 that indicate the limits of the board
-    [SerializeField] private Vector2 boardInitOffsetLeftDown;
-    [SerializeField] private Vector2 boardInitOffsetRightUp;
     [SerializeField] private bool buildLimits = true;
 
     [Space]
@@ -24,6 +22,8 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private Category defaultCategory;
     [SerializeField] private int defaultLevelIndex;
+
+    [SerializeField] private Text levelName;
 
     public GameObject endPanel;
     public GameObject blackRect;
@@ -59,14 +59,6 @@ public class LevelManager : MonoBehaviour
             minimosPasos = currentLevel.minimosPasos;
         }
 
-        //Clamp values between 0 and 1
-        boardInitOffsetRightUp = new Vector2(Mathf.Clamp(boardInitOffsetRightUp.x, 0.0f, 1.0f), Mathf.Clamp(boardInitOffsetRightUp.y, 0.0f, 1.0f));
-        boardInitOffsetLeftDown = new Vector2(Mathf.Clamp(boardInitOffsetLeftDown.x, 0.0f, 1.0f), Mathf.Clamp(boardInitOffsetLeftDown.y, 0.0f, 1.0f));
-        if (boardInitOffsetLeftDown.x + boardInitOffsetRightUp.x >= 1.0f)
-            boardInitOffsetLeftDown.x = boardInitOffsetRightUp.x = 0;
-        if (boardInitOffsetLeftDown.y + boardInitOffsetRightUp.y >= 1.0f)
-            boardInitOffsetLeftDown.y = boardInitOffsetRightUp.y = 0;
-
         endPanel.SetActive(false);
         //blackRect.SetActive(false);
     }
@@ -78,6 +70,7 @@ public class LevelManager : MonoBehaviour
         TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
         TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
         TrackerAsset.Instance.GameObject.Used("level_start");
+        levelName.text = currentLevel.levelName;
     }
 
     private void Update()
