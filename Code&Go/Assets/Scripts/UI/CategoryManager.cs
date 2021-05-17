@@ -141,6 +141,7 @@ public class CategoryManager : MonoBehaviour
                     currentLevel = index;
                     levelName.text = levelData.levelName;
                     levelPreview.sprite = levelData.levelPreview;
+                    levelCard.button.Select();
                 });
                 levelCard.button.onClick.Invoke();
             }
