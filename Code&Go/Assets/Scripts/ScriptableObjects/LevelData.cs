@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Localization;
 
 [CreateAssetMenu(fileName = "Level", menuName = "ScriptableObjects/Level")]
 public class LevelData : ScriptableObject
 {
+    public LocalizedString levelNameLocalized;
     public string levelName;
     public Sprite levelPreview;
 

@@ -24,6 +24,7 @@ public class CategoryManager : MonoBehaviour
     public LocalizeStringEvent localizedCategoryDescription;
 
     public Text levelName;
+    public LocalizeStringEvent localizedLevelName;
     public Image levelPreview;
 
     public Text levelCreatedName;
@@ -148,7 +149,11 @@ public class CategoryManager : MonoBehaviour
                 levelCard.button.onClick.AddListener(() =>
                 {
                     currentLevel = index;
-                    levelName.text = levelData.levelName;
+
+                    localizedLevelName.StringReference = levelData.levelNameLocalized;
+                    localizedLevelName.RefreshString();
+
+                    //levelName.text = levelData.levelName;
                     levelPreview.sprite = levelData.levelPreview;
                     levelCard.button.Select();
                 });
