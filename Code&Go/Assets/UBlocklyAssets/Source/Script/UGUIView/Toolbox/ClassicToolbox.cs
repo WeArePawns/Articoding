@@ -140,8 +140,8 @@ namespace UBlockly.UGUI
         }
 
         public override bool CheckBin(BlockView blockView)
-        {
-            if (blockView.InToolbox) return false;
+        {            
+            if (blockView.InToolbox || nActiveCategories == 0) return false;
 
             RectTransform toggleTrans = m_BinArea.transform as RectTransform;
             if (RectTransformUtility.RectangleContainsScreenPoint(toggleTrans, UnityEngine.Input.mousePosition, BlocklyUI.UICanvas.worldCamera))

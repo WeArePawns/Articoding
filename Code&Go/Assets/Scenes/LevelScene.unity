@@ -2835,6 +2835,7 @@ GameObject:
   m_Component:
   - component: {fileID: 795378577}
   - component: {fileID: 795378578}
+  - component: {fileID: 795378579}
   m_Layer: 5
   m_Name: Center
   m_TagString: Untagged
@@ -2876,6 +2877,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   priority: 150
   info: {fileID: 11400000, guid: b6280e6e9c685ee4fb9d7c02f0ceebf6, type: 2}
+  highlightObject: 1
+  destroyOnShowed: 1
+  isSaveCheckpoint: 1
+  OnShowed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &795378579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 795378576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 400
+  info: {fileID: 11400000, guid: d6552d1cd8c5b8d4fb614abb068a4c98, type: 2}
   highlightObject: 1
   destroyOnShowed: 1
   isSaveCheckpoint: 1
@@ -3691,6 +3712,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1303084800989337387, guid: 30bdd5fddc725438796726c39f29cd83, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1303549644360732535, guid: 30bdd5fddc725438796726c39f29cd83, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -3946,6 +3971,10 @@ PrefabInstance:
       propertyPath: levelName
       value: 
       objectReference: {fileID: 1887757314}
+    - target: {fileID: 2411621852826482954, guid: da67a30aee492a24ea85ddecd86eb910, type: 3}
+      propertyPath: saveButton
+      value: 
+      objectReference: {fileID: 1487090113}
     - target: {fileID: 2411621852826482955, guid: da67a30aee492a24ea85ddecd86eb910, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4209,7 +4238,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1249310112}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
   m_Name: 

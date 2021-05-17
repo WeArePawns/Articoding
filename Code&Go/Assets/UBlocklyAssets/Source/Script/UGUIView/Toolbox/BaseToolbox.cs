@@ -47,10 +47,14 @@ namespace UBlockly.UGUI
 
         protected bool allActive = false;
         protected Dictionary<string, CategoryBlocks> activeCategories;
+        protected int nActiveCategories = 0;
 
         public void SetActiveBlocks(Dictionary<string, CategoryBlocks> activeCategories)
         {
             this.activeCategories = activeCategories;
+            nActiveCategories = activeCategories.Keys.Count;
+            TutorialTrigger trigger = GetComponent<TutorialTrigger>();
+            if (trigger != null) trigger.enabled = nActiveCategories > 0;
 
             Block.blocksAvailable = new Dictionary<string, int>();
             //Activate the category if it's not in the active list

@@ -25,6 +25,8 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private Text levelName;
 
+    [SerializeField] private GameObject saveButton;
+
     public GameObject endPanel;
     public GameObject blackRect;
 
@@ -61,6 +63,10 @@ public class LevelManager : MonoBehaviour
 
         endPanel.SetActive(false);
         //blackRect.SetActive(false);
+
+#if UNITY_EDITOR
+        saveButton.SetActive(true);
+#endif
     }
 
     private void Start()
