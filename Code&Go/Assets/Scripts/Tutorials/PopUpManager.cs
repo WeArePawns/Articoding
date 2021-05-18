@@ -6,7 +6,7 @@ public class PopUpManager : MonoBehaviour
 {
     public static PopUpManager Instance;
 
-    [SerializeField] private CanvasScaler canvasScaler;
+    [SerializeField] private RectTransform bodyRect;
     [SerializeField] private GraphicRaycaster graphicRaycaster;
     [SerializeField] private GameObject mainContent;
     [SerializeField] private PopUp popupPanel;
@@ -51,8 +51,8 @@ public class PopUpManager : MonoBehaviour
         PopUpData data = new PopUpData();
         data.title = title;
         data.content = content;
-        float xPadding = highlightPadding * Screen.width / canvasScaler.referenceResolution.x;
-        float yPadding = highlightPadding * Screen.height / canvasScaler.referenceResolution.y;
+        float xPadding = highlightPadding * Screen.width / bodyRect.rect.width;
+        float yPadding = highlightPadding * Screen.height / bodyRect.rect.height;
         Vector2 position = new Vector2(rect.x + rect.width / 2.0f, rect.y + rect.height / 2.0f);
         Vector2 offset = new Vector2(rect.width / 2.0f + xPadding, rect.height / 2.0f + yPadding);
 
@@ -70,8 +70,8 @@ public class PopUpManager : MonoBehaviour
 
     public void Show(PopUpData data, Rect rect)
     {
-        float xPadding = highlightPadding * Screen.width / canvasScaler.referenceResolution.x;
-        float yPadding = highlightPadding * Screen.height / canvasScaler.referenceResolution.y;
+        float xPadding = highlightPadding * Screen.width / bodyRect.rect.width;
+        float yPadding = highlightPadding * Screen.height / bodyRect.rect.height;
         Vector2 position = new Vector2(rect.x + rect.width / 2.0f, rect.y + rect.height / 2.0f);
         Vector2 offset = new Vector2(rect.width / 2.0f + xPadding, rect.height / 2.0f + yPadding);
 
