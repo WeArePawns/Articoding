@@ -592,10 +592,14 @@ public class BoardManager : Listener
     public IEnumerator MoveObject(string name, int index, Vector2Int direction, int amount, float time)
     {
         name = name.ToLower();
+
         if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
+            Vector2Int position = elementPositions[name][index];
+            if (!board[position.x,position.y].GetPlacedObject().IsMovable()) yield break;
+
             int i = 0;
-            while (i++ < amount && MoveObject(elementPositions[name][index], direction, time))
+            while (i++ < amount && MoveObject(position, direction, time))
             {
                 elementPositions[name][index] += direction;
                 yield return new WaitForSeconds(time + 0.05f);
@@ -609,6 +613,10 @@ public class BoardManager : Listener
         name = name.ToLower();
         if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
+
+            Vector2Int position = elementPositions[name][index];
+            if (!board[position.x, position.y].GetPlacedObject().IsRotatable()) yield break;
+
             currentSteps += amount / 2;
 
             for (int i = 0; i < amount % 8; i++)

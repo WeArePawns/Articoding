@@ -18,6 +18,9 @@ public class BoardObject : MonoBehaviour
     protected int index = 1;
     protected string[] argsNames;
 
+    [SerializeField] protected bool isMovable;
+    [SerializeField] protected bool isRotatable;
+
     public virtual void SetBoard(BoardManager board)
     {
         boardManager = board;
@@ -88,6 +91,16 @@ public class BoardObject : MonoBehaviour
     public int GetIndex()
     {
         return index;
+    }
+
+    public bool IsMovable()
+    {
+        return isMovable;
+    }
+
+    public bool IsRotatable()
+    {
+        return isRotatable;
     }
 
     //Virtual method for seralization of additional arguments in child classes
