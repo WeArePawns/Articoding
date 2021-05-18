@@ -68,7 +68,8 @@ namespace UBlockly.UGUI
         protected override Vector2 CalculateSize()
         {
             float width = m_InputField.textComponent.CalculateTextWidth(m_InputField.text);
-            width += mHorizontalMargin;
+
+            width += mHorizontalMargin + 2.0f; // extra offset
 
             Debug.LogFormat(">>>>> CalculateSize-TextInput: text: {0}, width: {1}", m_InputField.text, width);
             return new Vector2(width, BlockViewSettings.Get().ContentHeight);
