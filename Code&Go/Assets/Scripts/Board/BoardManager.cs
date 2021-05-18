@@ -51,7 +51,6 @@ public class BoardManager : Listener
     {
         cells = new List<List<BoardCell>>();
         InitIDs();
-        //currentPasos = 0;
     }
 
     public int GetCurrentSteps()
@@ -280,11 +279,10 @@ public class BoardManager : Listener
 
     public void Reset()
     {
-        nReceiversActive = 0;
         DeleteBoardElements();
         elementPositions.Clear();
         completed = false;
-        //currentSteps = 0;
+        currentSteps = 0;
     }
 
     public bool HasHint(Vector2Int pos)
@@ -599,7 +597,7 @@ public class BoardManager : Listener
             if (!board[position.x,position.y].GetPlacedObject().IsMovable()) yield break;
 
             int i = 0;
-            while (i++ < amount && MoveObject(position, direction, time))
+            while (i++ < amount && MoveObject(elementPositions[name][index], direction, time))
             {
                 elementPositions[name][index] += direction;
                 yield return new WaitForSeconds(time + 0.05f);

@@ -59,6 +59,12 @@ namespace UBlockly
     }
 
     [Serializable]
+    public class BlockTextResWithSelectionParam : BlockTextResParam
+    {
+        public bool Selected;
+    }
+
+    [Serializable]
     public class BlockTutorialTriggerInfo
     {
         public PopUpData Tutorial;
@@ -84,7 +90,7 @@ namespace UBlockly
     public class BlockResMgr : ScriptableObject
     {
         [SerializeField] private BlockResLoadType m_LoadType;
-        [SerializeField] private List<BlockTextResParam> m_I18nFiles;
+        [SerializeField] private List<BlockTextResWithSelectionParam> m_I18nFiles;
         [SerializeField] private List<BlockTextResParam> m_BlockJsonFiles;
         [SerializeField] private List<BlockTextResParam> m_ToolboxFiles;
         [SerializeField] private List<BlockTutorialParam> m_BlockTutorials;
@@ -136,7 +142,7 @@ namespace UBlockly
 
         #region I18n Files
 
-        public void LoadI18n(string language)
+        public void LoadI18n()
         {
             if (m_I18nFiles == null || m_I18nFiles.Count == 0)
             {
@@ -144,32 +150,41 @@ namespace UBlockly
                 return;
             }
 
-            foreach (BlockTextResParam resParam in m_I18nFiles)
+            var i18nSelected = m_I18nFiles.FindAll(file => file.Selected);
+            if (i18nSelected.Count == 0)
             {
-                if (language.Equals(resParam.IndexName))
-                {
-                    TextAsset textAsset = null;
-                    switch (m_LoadType)
-                    {
-                        case BlockResLoadType.Assetbundle:
-                            if (mABSyncLoad != null)
-                                textAsset = mABSyncLoad(resParam.ResName) as TextAsset;
-                            break;
-                        case BlockResLoadType.Resources:
-                            textAsset = Resources.Load<TextAsset>(resParam.ResName);
-                            break;
-                        case BlockResLoadType.Serialized:
-                            textAsset = resParam.TextFile;
-                            break;
-                    }
-                    if (textAsset != null)
-                    {
-                        I18n.AddI18nFile(textAsset.text);
-                        if (m_LoadType == BlockResLoadType.Assetbundle && mABUnload != null)
-                            mABUnload(resParam.ResName);
-                    }
-                }
+                Debug.LogWarning("Please select an i18n file in BlockResSettings.asset. Default select \'en\'.");
+                i18nSelected.Add(m_I18nFiles.Find(file => file.IndexName == "en"));
             }
+            else if (i18nSelected.Count > 1)
+            {
+                Debug.LogWarning("You have selected more than one i18n files in BlockResSettings.asset. The first one will be used.");
+            }
+
+            var resParam = i18nSelected[0];
+            TextAsset textAsset = null;
+            switch (m_LoadType)
+            {
+                case BlockResLoadType.Assetbundle:
+                    if (mABSyncLoad != null)
+                        textAsset = mABSyncLoad(resParam.ResName) as TextAsset;
+                    break;
+                case BlockResLoadType.Resources:
+                    textAsset = Resources.Load<TextAsset>(resParam.ResName);
+                    break;
+                case BlockResLoadType.Serialized:
+                    textAsset = resParam.TextFile;
+                    break;
+            }
+
+            if (textAsset != null)
+            {
+                I18n.AddI18nFile(textAsset.text);
+                if (m_LoadType == BlockResLoadType.Assetbundle && mABUnload != null)
+                    mABUnload(resParam.ResName);
+            }
+
+            Debug.Log("Select I18n: " + resParam.IndexName);
         }
 
         #endregion
