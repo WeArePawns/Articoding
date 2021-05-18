@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Components;
 using UnityEngine.UI;
 
 public class TemaryManager : MonoBehaviour
@@ -24,6 +26,9 @@ public class TemaryManager : MonoBehaviour
     [SerializeField] private Button backButton;
     [SerializeField] private Text categoryTitle;
     [SerializeField] private GameObject bodyContent;
+    [Space]
+    [SerializeField] private LocalizeStringEvent localizedCategoryTitle;
+    [SerializeField] private LocalizedString[] stringReferences;
     [Space]
     [SerializeField] private PopUpData[] allTutorials;
     private List<string> shownTutorials;
@@ -86,7 +91,11 @@ public class TemaryManager : MonoBehaviour
             Button button = Instantiate(categoryButton, categoryList);
             button.onClick.AddListener(() => ShowCategory(type));
 
-            button.transform.GetChild(0).GetComponent<Text>().text = TypeToString(type);
+            //button.transform.GetChild(0).GetComponent<Text>().text = TypeToString(type);
+            LocalizeStringEvent localized = button.GetComponent<LocalizeStringEvent>();
+            localized.StringReference = TypeToString(type);
+            localized.RefreshString();
+
             categoryButtons[i - 1] = button;
         }
         categoryButton.gameObject.SetActive(false);
@@ -125,7 +134,9 @@ public class TemaryManager : MonoBehaviour
         if (bodyContent != null)
             bodyContent.SetActive(true);
 
-        categoryTitle.text = TypeToString(type);
+        //categoryTitle.text = TypeToString(type);
+        localizedCategoryTitle.StringReference = TypeToString(type);
+        localizedCategoryTitle.RefreshString();
     }
 
     private void ShowTutorialsCategoryList()
@@ -181,10 +192,8 @@ public class TemaryManager : MonoBehaviour
         Configure();
     }
 
-    private string TypeToString(TutorialType type)
+    private LocalizedString TypeToString(TutorialType type)
     {
-        string[] arr = { "Ninguna", "General", "Tablero", "Variables", "Tipos", "Operadores", "Bucles", "Condiciones", "Acciones" };
-
-        return arr[(int)type];
+        return stringReferences[(int)type];
     }
 }
