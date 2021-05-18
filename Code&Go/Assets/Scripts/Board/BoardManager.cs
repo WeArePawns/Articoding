@@ -594,7 +594,7 @@ public class BoardManager : Listener
         if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
             Vector2Int position = elementPositions[name][index];
-            if (!board[position.x,position.y].GetPlacedObject().IsMovable()) yield break;
+            if (!board[position.x, position.y].GetPlacedObject().IsMovable()) yield break;
 
             int i = 0;
             while (i++ < amount && MoveObject(elementPositions[name][index], direction, time))
@@ -649,7 +649,25 @@ public class BoardManager : Listener
             if (toCell.GetPlacedObject() != null)
             {
                 if (bObject.GetAnimator() != null)
-                    bObject.GetAnimator().Play("Collision");
+                {
+                    if (bObject.GetDirection() == BoardObject.Direction.LEFT ||
+                        bObject.GetDirection() == BoardObject.Direction.RIGHT ||
+                        bObject.GetDirection() == BoardObject.Direction.DOWN_RIGHT ||
+                        bObject.GetDirection() == BoardObject.Direction.UP_LEFT)
+                    {
+                        if (direction.y != 0)
+                            bObject.GetAnimator().Play("Collision");
+                        else
+                            bObject.GetAnimator().Play("Collision2");
+                    }
+                    else
+                    {
+                        if (direction.y != 0)
+                            bObject.GetAnimator().Play("Collision2");
+                        else
+                            bObject.GetAnimator().Play("Collision");
+                    }
+                }
                 return false;
             }
 
@@ -795,7 +813,7 @@ public class BoardManager : Listener
                     time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
                     StartCoroutine(MoveObject(laserName, 0, dir, amount, time));
                     break;
-                case MSG_TYPE.MOVE:                    
+                case MSG_TYPE.MOVE:
                     name = args[0].Split('_')[0] + "_";
                     index = int.Parse(args[0].Split('_')[1]);
                     amount = int.Parse(args[1]);
@@ -825,7 +843,7 @@ public class BoardManager : Listener
                 case MSG_TYPE.ACTIVATE_DOOR:
                     name = args[0].Split('_')[0] + "_";
                     index = int.Parse(args[0].Split('_')[1]);
-                    active = bool.Parse(args[1]);                    
+                    active = bool.Parse(args[1]);
                     ActivateDoor(name, index - 1, active);
                     break;
                 case MSG_TYPE.CODE_END:

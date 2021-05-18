@@ -11,8 +11,13 @@ public class EmptyCell : BoardCell
         if (rb != null)
             rb.isKinematic = false;
 
-        if (placedObject.GetNameAsLower() == "laser")
+        placedObject.gameObject.GetComponent<Animator>().Play("Fall");
+
+        if (placedObject.GetNameAsLower() == "laser_")
+        {
+            placedObject.GetComponent<LaserEmitter>().ChangeIntensity(0.0f);
             boardManager.InvokeLevelFailed();
+        }
     }
 
     public override string[] GetArgs()
