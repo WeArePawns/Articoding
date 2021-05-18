@@ -45,6 +45,8 @@ public class BoardManager : Listener
 
     public Color deactivatedColor;
 
+    private string laserName = "laser_";
+
     private void Awake()
     {
         cells = new List<List<BoardCell>>();
@@ -86,7 +88,7 @@ public class BoardManager : Listener
 
 
     public void SetFocusPointOffset(Vector3 offset)
-    {        
+    {
         //Set focus point of the camera
         FocusPoint fPoint = GetComponent<FocusPoint>();
         if (fPoint != null)
@@ -304,7 +306,8 @@ public class BoardManager : Listener
     {
         return completed;
     }
-    public bool AllReceiving() {
+    public bool AllReceiving()
+    {
         return nReceivers > 0 && nReceiversActive >= nReceivers;
     }
 
@@ -315,8 +318,8 @@ public class BoardManager : Listener
 
     public int GetNEmitters()
     {
-        if (!elementPositions.ContainsKey("laser")) return 0;
-        return elementPositions["laser"].Count;
+        if (!elementPositions.ContainsKey(laserName)) return 0;
+        return elementPositions[laserName].Count;
     }
 
     public void SetRows(int rows)
@@ -516,7 +519,7 @@ public class BoardManager : Listener
         int i = 1;
         foreach (Vector2Int pos in elementPositions[name])
         {
-            BoardObject boardObject = board[pos.x, pos.y].GetPlacedObject();            
+            BoardObject boardObject = board[pos.x, pos.y].GetPlacedObject();
             boardObject.SetIndex(i++);
             FollowingText text = boardObject.GetComponent<FollowingText>();
             if (text != null)
@@ -772,6 +775,7 @@ public class BoardManager : Listener
         try
         {
             string[] args = msg.Split(' ');
+            string name;
             int amount = 0, index = -1, rot = 0;
             float intensity = 0.0f, time = 0.5f;
             bool active;
@@ -783,27 +787,29 @@ public class BoardManager : Listener
                     amount = int.Parse(args[0]);
                     dir = GetDirectionFromString(args[1]);
                     time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                    StartCoroutine(MoveObject("Laser", 0, dir, amount, time));
+                    StartCoroutine(MoveObject(laserName, 0, dir, amount, time));
                     break;
-                case MSG_TYPE.MOVE:
-                    index = int.Parse(args[1]);
-                    amount = int.Parse(args[2]);
-                    dir = GetDirectionFromString(args[3]);
+                case MSG_TYPE.MOVE:                    
+                    name = args[0].Split('_')[0] + "_";
+                    index = int.Parse(args[0].Split('_')[1]);
+                    amount = int.Parse(args[1]);
+                    dir = GetDirectionFromString(args[2]);
                     time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                    StartCoroutine(MoveObject(args[0], index - 1, dir, amount, time));
+                    StartCoroutine(MoveObject(name, index - 1, dir, amount, time));
                     break;
                 case MSG_TYPE.ROTATE_LASER:
                     amount = int.Parse(args[0]) * 2;
                     rot = GetRotationFromString(args[1]);
                     time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                    StartCoroutine(RotateObject("Laser", 0, rot, amount, time));
+                    StartCoroutine(RotateObject(laserName, 0, rot, amount, time));
                     break;
                 case MSG_TYPE.ROTATE:
-                    index = int.Parse(args[1]);
-                    amount = int.Parse(args[2]) * 2;
-                    rot = GetRotationFromString(args[3]);
+                    name = args[0].Split('_')[0] + "_";
+                    index = int.Parse(args[0].Split('_')[1]);
+                    amount = int.Parse(args[1]) * 2;
+                    rot = GetRotationFromString(args[2]);
                     time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                    StartCoroutine(RotateObject(args[0], index - 1, rot, amount, time));
+                    StartCoroutine(RotateObject(name, index - 1, rot, amount, time));
                     break;
                 case MSG_TYPE.CHANGE_INTENSITY:
                     index = int.Parse(args[0]);
@@ -811,9 +817,10 @@ public class BoardManager : Listener
                     ChangeLaserIntensity(index - 1, intensity);
                     break;
                 case MSG_TYPE.ACTIVATE_DOOR:
-                    active = bool.Parse(args[2]);
-                    index = int.Parse(args[1]);
-                    ActivateDoor(args[0], index - 1, active);
+                    name = args[0].Split('_')[0] + "_";
+                    index = int.Parse(args[0].Split('_')[1]);
+                    active = bool.Parse(args[1]);                    
+                    ActivateDoor(name, index - 1, active);
                     break;
                 case MSG_TYPE.CODE_END:
                     if (AllReceiving())
@@ -846,9 +853,9 @@ public class BoardManager : Listener
 
     private void ChangeLaserIntensity(int index, float newIntensity)
     {
-        if (elementPositions.ContainsKey("laser") && index < elementPositions["laser"].Count)
+        if (elementPositions.ContainsKey(laserName) && index < elementPositions[laserName].Count)
         {
-            Vector2Int pos = elementPositions["laser"][index];
+            Vector2Int pos = elementPositions[laserName][index];
             LaserEmitter laser = (LaserEmitter)board[pos.x, pos.y].GetPlacedObject();
             if (laser != null)
             {
@@ -861,7 +868,7 @@ public class BoardManager : Listener
     private void ActivateDoor(string name, int index, bool active)
     {
         name = name.ToLower();
-        if (name == "puerta" && elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
+        if (name == "puerta_" && elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
             Vector2Int pos = elementPositions[name][index];
             Door door = (Door)board[pos.x, pos.y].GetPlacedObject();

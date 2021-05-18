@@ -9,7 +9,7 @@ public class Door : BoardObject
     // DO STUFF I GUESS
     private void Awake()
     {
-        typeName = "Puerta";
+        typeName = "Puerta_";
         argsNames = new string[1] { "Activada" };
     }
 

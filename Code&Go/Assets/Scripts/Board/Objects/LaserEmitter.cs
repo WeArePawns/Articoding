@@ -16,7 +16,7 @@ public class LaserEmitter : BoardObject, ILaserEmitter
 
     private void Awake()
     {
-        typeName = "Laser";
+        typeName = "Laser_";
         argsNames = new string[1] { "Intensidad" };
     }
 

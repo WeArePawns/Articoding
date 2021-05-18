@@ -22,7 +22,7 @@ public class ModifiableBoardCell : MonoBehaviour, IMouseListener
     public void OnMouseButtonDown(int index)
     {
         //Change the type of the cell
-        if (index == 0 && modifiable)
+        if (index == 0 && modifiable && cell.GetPlacedObject() == null)
         {
             Vector2Int pos = cell.GetPosition();
             boardManager.ReplaceCell(cell.GetNextID(), pos.x, pos.y);

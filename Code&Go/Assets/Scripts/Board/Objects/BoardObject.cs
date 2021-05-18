@@ -42,7 +42,7 @@ public class BoardObject : MonoBehaviour
 
     public string GetNameWithIndex()
     {
-        return typeName + " " + index.ToString();
+        return typeName + index.ToString();
     }
 
     public string[] GetArgsNames()

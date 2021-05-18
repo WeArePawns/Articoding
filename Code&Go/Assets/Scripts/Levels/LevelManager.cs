@@ -7,6 +7,13 @@ using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
+    [System.Serializable]
+    public struct CategoryTutorialsData
+    {
+        public PopUpData data;
+        public string categoryName;
+    }
+
     private Category currentCategory;
     [SerializeField] private LevelData currentLevel;
     private int currentLevelIndex = 0;
@@ -26,6 +33,10 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private Text levelName;
 
     [SerializeField] private GameObject saveButton;
+
+    [SerializeField] private CategoryTutorialsData[] categoriesTutorials;
+
+    [SerializeField] private int pasosOffset = 0;
 
     public GameObject endPanel;
     public GameObject blackRect;
@@ -84,7 +95,7 @@ public class LevelManager : MonoBehaviour
         if (boardManager == null)
             return;
 
-        if (boardManager.GetCurrentSteps() > minimosPasos)
+        if (boardManager.GetCurrentSteps() > minimosPasos + pasosOffset)
             starsController.DeactivateMinimumStepsStar();
 
 
@@ -238,9 +249,17 @@ public class LevelManager : MonoBehaviour
         else if (textAsset != null)
         {
             ActiveBlocks blocks = ActiveBlocks.FromJson(textAsset.text);
-            BlocklyUI.WorkspaceView.Toolbox.SetActiveBlocks(blocks.AsMap());
+            BlocklyUI.WorkspaceView.Toolbox.SetActiveBlocks(blocks.AsMap(), CategoriesTutorialsAsMap());
         }
 
         yield return null;
+    }
+
+    public Dictionary<string, PopUpData> CategoriesTutorialsAsMap()
+    {
+        Dictionary<string, PopUpData> map = new Dictionary<string, PopUpData>();
+        foreach (CategoryTutorialsData c in categoriesTutorials)//For each category       
+            map[c.categoryName.ToUpper()] = c.data;
+        return map;
     }
 }

@@ -49,7 +49,7 @@ namespace UBlockly.UGUI
         protected Dictionary<string, CategoryBlocks> activeCategories;
         protected int nActiveCategories = 0;
 
-        public void SetActiveBlocks(Dictionary<string, CategoryBlocks> activeCategories)
+        public void SetActiveBlocks(Dictionary<string, CategoryBlocks> activeCategories, Dictionary<string, PopUpData> categoriesTutorials = null)
         {
             this.activeCategories = activeCategories;
             nActiveCategories = activeCategories.Keys.Count;
@@ -57,9 +57,20 @@ namespace UBlockly.UGUI
             if (trigger != null) trigger.enabled = nActiveCategories > 0;
 
             Block.blocksAvailable = new Dictionary<string, int>();
+            int priority = 400;
             //Activate the category if it's not in the active list
             foreach (var category in mConfig.BlockCategoryList)
+            {
                 mMenuList[category.CategoryName].gameObject.SetActive(activeCategories.ContainsKey(category.CategoryName.ToLower()));
+                if(categoriesTutorials != null && categoriesTutorials.ContainsKey(category.CategoryName))
+                {
+                    TutorialTrigger categoryTrigger = mMenuList[category.CategoryName].gameObject.AddComponent<TutorialTrigger>();
+                    categoryTrigger.isSaveCheckpoint = true;
+                    categoryTrigger.priority = priority++;
+                    categoryTrigger.highlightObject = true;
+                    categoryTrigger.info = categoriesTutorials[category.CategoryName];
+                }
+            }
         }
 
         public void SetActiveAllBlocks()

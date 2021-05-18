@@ -8,7 +8,7 @@ public class BasicMirror : BoardObject, ILaserReflector
 
     private void Awake()
     {
-        typeName = "Espejo";
+        typeName = "Espejo_";
         argsNames = new string[0];
     }
 
