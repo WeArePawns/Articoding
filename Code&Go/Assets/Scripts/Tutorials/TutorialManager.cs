@@ -21,6 +21,11 @@ public class TutorialManager : MonoBehaviour
 
     private bool needToBeDestroyed = false;
 
+    private float lastWidth;
+    private float lastHeight;
+
+    private TutorialTrigger lastTutorialTrigger;
+
     private void Awake()
     {
         if (Instance == null)
@@ -40,6 +45,7 @@ public class TutorialManager : MonoBehaviour
         }
         Instance.tutorialsON = tutorialsON;
         needToBeDestroyed = true;
+        lastTutorialTrigger = null;
     }
 
     private void Start()
@@ -63,6 +69,20 @@ public class TutorialManager : MonoBehaviour
     private void Update()
     {
         if (!tutorialsON) return;
+
+
+        if (lastWidth != Screen.width || lastHeight != Screen.height)
+        {
+            if (lastTutorialTrigger != null && popUpManager.IsShowing())
+            {
+                StartCoroutine(RecalculateShownTutorial());
+            }
+
+            lastWidth = Screen.width;
+            lastHeight = Screen.height;
+        }
+
+        if (popUpManager.IsShowing()) return;
 
         TutorialTrigger prior = TryPopPriorityTriggers();
         TutorialTrigger cond = TryPopConditionalTriggers();
@@ -114,6 +134,13 @@ public class TutorialManager : MonoBehaviour
     {
         if (t == null) return;
 
+        if(lastTutorialTrigger != null)
+        {
+            if (lastTutorialTrigger.destroyOnShowed)
+                Destroy(lastTutorialTrigger);
+            lastTutorialTrigger = null;
+        }
+
         PopUpData info = t.info;
         if (t.highlightObject)
             popUpManager.Show(info, t.GetRect());
@@ -134,8 +161,10 @@ public class TutorialManager : MonoBehaviour
         if (t.isSaveCheckpoint)
             SavePendingTriggers();
 
-        if (t.destroyOnShowed)
-            Destroy(t);
+        lastTutorialTrigger = t;
+
+        /*if (t.destroyOnShowed)
+            Destroy(t);*/
 
     }
 
@@ -186,5 +215,15 @@ public class TutorialManager : MonoBehaviour
         Save();
 
         savePending.Clear();
+    }
+
+    private IEnumerator RecalculateShownTutorial()
+    {
+        yield return new WaitForEndOfFrame();
+
+        if (lastTutorialTrigger.highlightObject)
+            popUpManager.Show(lastTutorialTrigger.info, lastTutorialTrigger.GetRect());
+        else
+            popUpManager.Show(lastTutorialTrigger.info.title, lastTutorialTrigger.info.content);
     }
 }
