@@ -174,11 +174,19 @@ public class TutorialManager : MonoBehaviour
 
         if (t.condition != null)
         {
+            if (conditionTriggers.Find((TutorialTrigger other) => other.GetHash() == t.GetHash()) != null) 
+                return;
+
             conditionTriggers.Add(t);
             conditionTriggers.Sort();
         }
         else
+        {
+            List<TutorialTrigger> prior = priorTriggers.ToList();
+            if (prior.Find((TutorialTrigger other) => other.GetHash() == t.GetHash()) != null) 
+                return;
             priorTriggers.Add(t);
+        }
     }
 
     public HashSet<string> GetTriggeredTutorials()
