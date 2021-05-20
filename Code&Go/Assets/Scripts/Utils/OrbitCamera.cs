@@ -75,8 +75,8 @@ public class OrbitCamera : MonoBehaviour
 
         // We'll simply use lerp to move a bit towards the focus target's orientation. Just enough to get back within the constraints.
         // This way we don't need to worry about wether we need to move left or right, up or down.
-        if (yawOverflow > 0) { _yaw = Mathf.Lerp(_yaw, targetYaw, yawOverflow / yawDifference); }
-        if (pitchOverflow > 0) { _pitch = Mathf.Lerp(_pitch, targetPitch, pitchOverflow / pitchDifference); }
+        //if (yawOverflow > 0) { _yaw = Mathf.Lerp(_yaw, targetYaw, yawOverflow / yawDifference); }
+        //if (pitchOverflow > 0) { _pitch = Mathf.Lerp(_pitch, targetPitch, pitchOverflow / pitchDifference); }
     }
 
     void Awake()

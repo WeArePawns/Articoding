@@ -14,12 +14,14 @@ public class CameraMouseInput : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        mousePressed = true;
+        if (eventData.button == PointerEventData.InputButton.Left)
+            mousePressed = true;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        mousePressed = false;
+        if (eventData.button == PointerEventData.InputButton.Left)
+            mousePressed = false;
     }
 
     void Update()
