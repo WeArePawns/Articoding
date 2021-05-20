@@ -143,13 +143,14 @@ namespace UBlockly.UGUI
         {            
             if (blockView.InToolbox || nActiveCategories == 0) return false;
 
+            m_BinArea.SetActive(true);
             RectTransform toggleTrans = m_BinArea.transform as RectTransform;
             if (RectTransformUtility.RectangleContainsScreenPoint(toggleTrans, UnityEngine.Input.mousePosition, BlocklyUI.UICanvas.worldCamera))
             {
-                m_BinArea.gameObject.SetActive(true);
+                m_BinArea.transform.GetChild(0).GetComponent<Image>().color = Color.white;
                 return true;
             }
-            m_BinArea.gameObject.SetActive(false);
+            m_BinArea.transform.GetChild(0).GetComponent<Image>().color = Color.grey;
             return false;
         }
 

@@ -3,11 +3,11 @@
         <variable type="" id="n:WsN1pJ9hJ.ue!#m#{U">Objeto</variable>
         <variable type="" id="An]Sn_i2fD:nVJ/Y]5_A">Desplazamiento</variable>
     </variables>
-    <block type="variables_set" id="q7*vM`_bKyO/@ED6M%Pz" x="143" y="-146">
+    <block type="variables_set" id="q7*vM`_bKyO/@ED6M%Pz" x="1" y="-127">
         <field name="VAR" id="n:WsN1pJ9hJ.ue!#m#{U" variableType="">Objeto</field>
         <value name="VALUE">
             <block type="text" id="Kgf)VE~u~}-+:C5+)WJi">
-                <field name="TEXT" />
+                <field name="TEXT">Laser_1</field>
             </block>
         </value>
         <next>
@@ -15,17 +15,46 @@
                 <field name="VAR" id="An]Sn_i2fD:nVJ/Y]5_A" variableType="">Desplazamiento</field>
                 <value name="VALUE">
                     <block type="math_number" id="gy6Zv}mXv(ro1e!#^[Yf">
-                        <field name="NUM">0</field>
+                        <field name="NUM">3</field>
                     </block>
                 </value>
                 <next>
                     <block type="movement_activate_door" id="Xl=e+^x1bJ.OJ}ptylus">
-                        <field name="INDEX">1</field>
-                        <value name="ACTIVE">
-                            <block type="logic_compare" id="_K}v*T~*x@;swvm*AG_v">
-                                <field name="OP">NEQ</field>
+                        <value name="NAME">
+                            <block type="text" id="{!AYsiguOrGGyXRkZ;pM">
+                                <field name="TEXT">Puerta_1</field>
                             </block>
                         </value>
+                        <value name="ACTIVE">
+                            <block type="logic_compare" id="_K}v*T~*x@;swvm*AG_v">
+                                <field name="OP">GT</field>
+                                <value name="A">
+                                    <block type="variables_get" id="(iwMuCx6jT_WpxCpgf?m">
+                                        <field name="VAR" id="An]Sn_i2fD:nVJ/Y]5_A" variableType="">Desplazamiento</field>
+                                    </block>
+                                </value>
+                                <value name="B">
+                                    <block type="math_number" id="DIeNUjI*k@QA}FJPKF|s">
+                                        <field name="NUM">0</field>
+                                    </block>
+                                </value>
+                            </block>
+                        </value>
+                        <next>
+                            <block type="movement_move" id="/jyZv]QxY*,accYVYt71">
+                                <field name="DIRECTION">LEFT</field>
+                                <value name="NAME">
+                                    <block type="variables_get" id="+Fo?}_3Wrdf#HEh)olq3">
+                                        <field name="VAR" id="n:WsN1pJ9hJ.ue!#m#{U" variableType="">Objeto</field>
+                                    </block>
+                                </value>
+                                <value name="AMOUNT">
+                                    <block type="variables_get" id="EEi;2,[G-K2g{w^{*Jl-">
+                                        <field name="VAR" id="An]Sn_i2fD:nVJ/Y]5_A" variableType="">Desplazamiento</field>
+                                    </block>
+                                </value>
+                            </block>
+                        </next>
                     </block>
                 </next>
             </block>

@@ -3,11 +3,11 @@
         <variable type="" id="n:WsN1pJ9hJ.ue!#m#{U">Objeto</variable>
         <variable type="" id="An]Sn_i2fD:nVJ/Y]5_A">Desplazamiento</variable>
     </variables>
-    <block type="variables_set" id="q7*vM`_bKyO/@ED6M%Pz" x="68" y="-152">
+    <block type="variables_set" id="q7*vM`_bKyO/@ED6M%Pz" x="143" y="-146">
         <field name="VAR" id="n:WsN1pJ9hJ.ue!#m#{U" variableType="">Objeto</field>
         <value name="VALUE">
             <block type="text" id="Kgf)VE~u~}-+:C5+)WJi">
-                <field name="TEXT">Espejo_1</field>
+                <field name="TEXT">Laser_1</field>
             </block>
         </value>
         <next>
@@ -19,18 +19,11 @@
                     </block>
                 </value>
                 <next>
-                    <block type="movement_move" id="TXot^2LNWUvc5:V!aUsd">
-                        <field name="DIRECTION">LEFT</field>
-                        <value name="NAME">
-                            <block type="variables_get" id="P/I))NrS:swgt8-ZUW,)">
-                                <field name="VAR" id="n:WsN1pJ9hJ.ue!#m#{U" variableType="">Objeto</field>
-                            </block>
-                        </value>
-                        <value name="AMOUNT">
-                            <block type="variables_get" id="hil+bMXb7(Z}ZbTO;!]p">
-                                <field name="VAR" id="An]Sn_i2fD:nVJ/Y]5_A" variableType="">Desplazamiento</field>
-                            </block>
-                        </value>
+                    <block type="controls_repeat" id=":]b[IMqQC[ekU?~{.1e/">
+                        <field name="TIMES">2</field>
+                        <statement name="DO">
+                            <block type="movement_activate_door" id="{[I*YP^a#+VPh+#NC;p?" />
+                        </statement>
                     </block>
                 </next>
             </block>

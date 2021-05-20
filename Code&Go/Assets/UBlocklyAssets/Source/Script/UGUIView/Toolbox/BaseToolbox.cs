@@ -76,6 +76,7 @@ namespace UBlockly.UGUI
         public void SetActiveAllBlocks()
         {
             allActive = true;
+            nActiveCategories = mConfig.BlockCategoryList.Count;
             foreach (ToolboxBlockCategory category in mConfig.BlockCategoryList)
             {
                 mMenuList[category.CategoryName].gameObject.SetActive(true);

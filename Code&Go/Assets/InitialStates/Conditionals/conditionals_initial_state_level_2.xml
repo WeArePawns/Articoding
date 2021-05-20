@@ -1,34 +1,29 @@
 <xml>
     <variables>
-        <variable type="" id="n:WsN1pJ9hJ.ue!#m#{U">Objeto</variable>
-        <variable type="" id="An]Sn_i2fD:nVJ/Y]5_A">Desplazamiento</variable>
+        <variable type="" id="Tz@@pswS,d6/W%fW{7H3">Desplazamiento</variable>
+        <variable type="" id="RpIbn}p]Rtf-_1(qs5p/">Objeto</variable>
     </variables>
-    <block type="variables_set" id="q7*vM`_bKyO/@ED6M%Pz" x="143" y="-146">
-        <field name="VAR" id="n:WsN1pJ9hJ.ue!#m#{U" variableType="">Objeto</field>
+    <block type="variables_set" id="rii{xqWtp+Jfc-VCZO0@" x="82" y="-142">
+        <field name="VAR" id="RpIbn}p]Rtf-_1(qs5p/" variableType="">Objeto</field>
         <value name="VALUE">
-            <block type="text" id="Kgf)VE~u~}-+:C5+)WJi">
+            <block type="text" id="W@l]A)sqSPV`5jk38%L~">
                 <field name="TEXT" />
             </block>
         </value>
         <next>
-            <block type="variables_set" id="%wfzC[9p(,l=~`R:|wRb">
-                <field name="VAR" id="An]Sn_i2fD:nVJ/Y]5_A" variableType="">Desplazamiento</field>
+            <block type="variables_set" id="hVz6%Ny(0Tin:f;iRTi#">
+                <field name="VAR" id="Tz@@pswS,d6/W%fW{7H3" variableType="">Desplazamiento</field>
                 <value name="VALUE">
-                    <block type="math_number" id="gy6Zv}mXv(ro1e!#^[Yf">
+                    <block type="math_number" id="(,|/KPVfG@Sc33NWJL,W">
                         <field name="NUM">0</field>
                     </block>
                 </value>
                 <next>
-                    <block type="controls_whileUntil" id=":gbe_pPljv*+kn15Ig39">
-                        <value name="BOOL">
-                            <block type="logic_negate" id="=9G+p`G.$PEar3*zJBGE">
-                                <value name="BOOL">
-                                    <block type="movement_cells_occupied" id="NtNM3HeQ$*8d*_z3@02k">
-                                        <field name="TYPE">GREEN</field>
-                                    </block>
-                                </value>
-                            </block>
-                        </value>
+                    <block type="controls_repeat" id="-$r:Kd$IF/Xj*Y:#~:)!">
+                        <field name="TIMES">3</field>
+                        <statement name="DO">
+                            <block type="logic_ifelse" id="av.UcWzEaDda-|0[X35K" />
+                        </statement>
                     </block>
                 </next>
             </block>

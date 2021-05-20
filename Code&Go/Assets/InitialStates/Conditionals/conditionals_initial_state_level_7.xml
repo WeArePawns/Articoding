@@ -1,0 +1,32 @@
+<xml>
+    <variables>
+        <variable type="" id="n:WsN1pJ9hJ.ue!#m#{U">Objeto</variable>
+        <variable type="" id="An]Sn_i2fD:nVJ/Y]5_A">Desplazamiento</variable>
+    </variables>
+    <block type="variables_set" id="q7*vM`_bKyO/@ED6M%Pz" x="143" y="-146">
+        <field name="VAR" id="n:WsN1pJ9hJ.ue!#m#{U" variableType="">Objeto</field>
+        <value name="VALUE">
+            <block type="text" id="Kgf)VE~u~}-+:C5+)WJi">
+                <field name="TEXT" />
+            </block>
+        </value>
+        <next>
+            <block type="variables_set" id="%wfzC[9p(,l=~`R:|wRb">
+                <field name="VAR" id="An]Sn_i2fD:nVJ/Y]5_A" variableType="">Desplazamiento</field>
+                <value name="VALUE">
+                    <block type="math_number" id="gy6Zv}mXv(ro1e!#^[Yf">
+                        <field name="NUM">0</field>
+                    </block>
+                </value>
+                <next>
+                    <block type="controls_repeat" id="LpLOo1]Rfdz!xRdJXxck">
+                        <field name="TIMES">2</field>
+                        <statement name="DO">
+                            <block type="logic_ifelse" id="f[^vM:XYoW)*WsGqec.;" />
+                        </statement>
+                    </block>
+                </next>
+            </block>
+        </next>
+    </block>
+</xml>

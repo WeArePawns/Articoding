@@ -7,7 +7,7 @@
         <field name="VAR" id="n:WsN1pJ9hJ.ue!#m#{U" variableType="">Objeto</field>
         <value name="VALUE">
             <block type="text" id="Kgf)VE~u~}-+:C5+)WJi">
-                <field name="TEXT">Puerta 4</field>
+                <field name="TEXT" />
             </block>
         </value>
         <next>
@@ -19,11 +19,16 @@
                     </block>
                 </value>
                 <next>
-                    <block type="controls_repeat" id="L?/WW!n[Acrl]G7*_sJl">
-                        <field name="TIMES">3</field>
-                        <statement name="DO">
-                            <block type="logic_ifelse" id="Y~W$4].z8kQ[5QP0zA70" />
-                        </statement>
+                    <block type="controls_whileUntil" id=":gbe_pPljv*+kn15Ig39">
+                        <value name="BOOL">
+                            <block type="logic_negate" id="=9G+p`G.$PEar3*zJBGE">
+                                <value name="BOOL">
+                                    <block type="movement_cells_occupied" id="NtNM3HeQ$*8d*_z3@02k">
+                                        <field name="TYPE">GREEN</field>
+                                    </block>
+                                </value>
+                            </block>
+                        </value>
                     </block>
                 </next>
             </block>
