@@ -74,7 +74,7 @@ public class TemaryManager : MonoBehaviour
             bool enabled = shownTemary.ContainsKey(type);
             categoryButtons[i].interactable = enabled;
 
-            if (enabled && backButton == null && contentRect.childCount == 0)
+            if (enabled && backButton == null && contentRect.childCount <= 1)
                 categoryButtons[i].onClick.Invoke();
         }
     }

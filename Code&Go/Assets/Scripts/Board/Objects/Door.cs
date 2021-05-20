@@ -10,7 +10,7 @@ public class Door : BoardObject
     private void Awake()
     {
         typeName = "Puerta_";
-        argsNames = new string[1] { "Activada" };
+        argsNames = new string[1] { "Abierta" };
     }
 
     override public string[] GetArgs()

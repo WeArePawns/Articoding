@@ -6,7 +6,7 @@ using UnityEngine;
 public class ArgInput : MonoBehaviour
 {
     [SerializeField] Text argName;
-    [SerializeField] InputField argField;
+    [SerializeField] Toggle argField;
 
     public void FillArg(string name)
     {
@@ -16,6 +16,6 @@ public class ArgInput : MonoBehaviour
 
     public string GetInput()
     {
-        return argField.text;
+        return argField.isOn ? "1" : "0";
     }
 }
