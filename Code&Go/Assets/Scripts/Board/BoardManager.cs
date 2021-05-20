@@ -47,6 +47,9 @@ public class BoardManager : Listener
 
     private string laserName = "laser_";
 
+    [SerializeField] private CameraMouseInput cameraInput;
+    [SerializeField] private OrbitCamera orbitCamera;
+
     private void Awake()
     {
         cells = new List<List<BoardCell>>();
@@ -84,7 +87,6 @@ public class BoardManager : Listener
 
         SetFocusPointOffset(new Vector3(columns / 2.0f + 0.5f, 0.0f, rows / 2.0f + 0.5f));
     }
-
 
     public void SetFocusPointOffset(Vector3 offset)
     {
@@ -488,6 +490,8 @@ public class BoardManager : Listener
                     drag = boardObject.gameObject.AddComponent<DraggableObject>();
                     drag.SetBoard(this);
                     drag.SetArgumentLoader(argLoader);
+                    drag.SetCameraInput(cameraInput);
+                    drag.SetOrbitCamera(orbitCamera);
                     drag.SetLastPos(new Vector2Int(x, y));
                 }
                 drag.SetModifiable(objectsModifiable);
@@ -873,6 +877,16 @@ public class BoardManager : Listener
         blackRect.SetActive(true);
 
         streamRoom.GameOver();
+    }
+
+    public CameraMouseInput GetMouseInput()
+    {
+        return cameraInput;
+    }
+
+    public OrbitCamera GetOrbitCamera()
+    {
+        return orbitCamera;
     }
 
     private void ChangeLaserIntensity(int index, float newIntensity)

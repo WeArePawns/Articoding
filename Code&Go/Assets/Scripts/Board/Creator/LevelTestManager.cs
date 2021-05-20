@@ -46,6 +46,8 @@ public class LevelTestManager : MonoBehaviour
     private BoardState initialState;
     private bool completed = false;
 
+    [SerializeField] Button resetViewButton;
+
     private void Start()
     {
         Invoke("ChangeMode", 0.01f);
@@ -58,6 +60,8 @@ public class LevelTestManager : MonoBehaviour
 
     private void Update()
     {
+        resetViewButton.interactable = !cameraOrbit.IsReset();
+
         if (inCreator)
         {
             bool enabled = board.GetNEmitters() == board.GetNReceivers() && board.GetNEmitters() > 0 && !board.AllReceiving();

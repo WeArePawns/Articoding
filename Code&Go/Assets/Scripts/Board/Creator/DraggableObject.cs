@@ -15,6 +15,9 @@ public class DraggableObject : MonoBehaviour, IMouseListener
     private bool dragging = false;
     private bool modifiable = true;
 
+    private CameraMouseInput cameraInput = null;
+    private OrbitCamera orbitCamera = null;
+
     private Vector3 GetMouseWorldPos()
     {
         Vector3 mousePoint = Input.mousePosition;
@@ -29,7 +32,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
 
     private void Update()
     {
-        if (modifiable && dragging)
+        if (modifiable && dragging && cameraInput)
         {
             transform.position = GetMouseWorldPos() + mouseOffset;
             if (Input.GetMouseButtonUp(0))
@@ -42,16 +45,28 @@ public class DraggableObject : MonoBehaviour, IMouseListener
         this.board = board;
     }
 
+    public void SetOrbitCamera(OrbitCamera orbitCamera)
+    {
+        this.orbitCamera = orbitCamera;
+    }
+
     public void SetArgumentLoader(ArgumentLoader loader)
     {
         this.argumentLoader = loader;
     }
 
+    public void SetCameraInput(CameraMouseInput cameraInput)
+    {
+        this.cameraInput = cameraInput;
+    }
+
     private void OnLeftDown()
     {
         if (!modifiable) return;
+        if (orbitCamera != null && !orbitCamera.IsReset()) return;
         if (boardObject == null) boardObject = GetComponent<BoardObject>();
         if (argumentLoader != null) argumentLoader.SetBoardObject(boardObject);
+        if (cameraInput != null) cameraInput.SetDragging(true);
 
         zCoord = Camera.main.WorldToScreenPoint(transform.position).z;
         mouseOffset = transform.position - GetMouseWorldPos();
@@ -61,6 +76,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
     private void OnRightDown()
     {
         if (!modifiable) return;
+        if (dragging) return;
         if (boardObject == null) boardObject = GetComponent<BoardObject>();
         if (argumentLoader != null) argumentLoader.SetBoardObject(boardObject);
 
@@ -69,9 +85,11 @@ public class DraggableObject : MonoBehaviour, IMouseListener
 
     private void OnLeftUp()
     {
-        if (modifiable && dragging)
+        if (modifiable && dragging && orbitCamera.IsReset())
         {
             dragging = false;
+            if (cameraInput != null) cameraInput.SetDragging(false);
+
             Vector3 pos = board.GetLocalPosition(transform.position);
             pos = new Vector3(Mathf.Round(pos.x), Mathf.Round(pos.y), Mathf.Round(pos.z));
             if (boardObject != null && pos.x < board.GetColumns() && pos.x >= 0 && pos.z < board.GetRows() && pos.z >= 0)
@@ -132,5 +150,10 @@ public class DraggableObject : MonoBehaviour, IMouseListener
     public void SetModifiable(bool modifiable)
     {
         this.modifiable = modifiable;
+    }
+
+    public void OnMouseButtonUpAnywhere(int index)
+    {
+        //throw new System.NotImplementedException();
     }
 }

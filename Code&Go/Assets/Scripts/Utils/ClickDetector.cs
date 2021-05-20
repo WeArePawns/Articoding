@@ -7,7 +7,9 @@ public class ClickDetector : MonoBehaviour
     [SerializeField] private bool handleRightClick = true;
     [SerializeField] private bool handleMiddleClick = false;
 
-    private LayerMask layerMask;    
+    private LayerMask layerMask;
+
+    private IMouseListener lastMouseListener = null;
 
     void Update()
     {
@@ -22,8 +24,18 @@ public class ClickDetector : MonoBehaviour
                 mouseListener = clickedGmObj.GetComponent<IMouseListener>();
                 if (mouseListener != null)
                     if (Input.GetMouseButtonDown(0))
+                    {
+                        lastMouseListener = mouseListener;
                         mouseListener.OnMouseButtonDown(0);
-                    else mouseListener.OnMouseButtonUp(0); ;
+                    }
+                    else
+                        mouseListener.OnMouseButtonUp(0);
+            }
+
+            if (lastMouseListener != null && Input.GetMouseButtonUp(0))
+            {
+                lastMouseListener.OnMouseButtonUpAnywhere(0);
+                lastMouseListener = null;
             }
         }
         // Right click 
@@ -36,7 +48,7 @@ public class ClickDetector : MonoBehaviour
                 if (mouseListener != null)
                     if (Input.GetMouseButtonDown(1))
                         mouseListener.OnMouseButtonDown(1);
-                    else mouseListener.OnMouseButtonUp(1); ;
+                    else mouseListener.OnMouseButtonUp(1);
             }
         }
         // Middle click 
@@ -49,7 +61,7 @@ public class ClickDetector : MonoBehaviour
                 if (mouseListener != null)
                     if (Input.GetMouseButtonDown(2))
                         mouseListener.OnMouseButtonDown(2);
-                    else mouseListener.OnMouseButtonUp(2); ;
+                    else mouseListener.OnMouseButtonUp(2);
             }
         }
     }

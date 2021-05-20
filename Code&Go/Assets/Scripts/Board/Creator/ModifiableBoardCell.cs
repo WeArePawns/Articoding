@@ -9,33 +9,45 @@ public class ModifiableBoardCell : MonoBehaviour, IMouseListener
     private BoardManager boardManager;
     private bool modifiable = true;
 
+    private OrbitCamera orbitCamera;
+    private CameraMouseInput cameraInput;
+
     private void Start()
     {
         cell = GetComponent<BoardCell>();
+
     }
 
     public void SetBoardManager(BoardManager board)
     {
         boardManager = board;
+        orbitCamera = boardManager.GetOrbitCamera();
+        cameraInput = boardManager.GetMouseInput();
     }
 
     public void OnMouseButtonDown(int index)
     {
         //Change the type of the cell
-        if (index == 0 && modifiable && cell.GetPlacedObject() == null)
+        if (index == 0 && modifiable && cell.GetPlacedObject() == null && orbitCamera.IsReset())
         {
             Vector2Int pos = cell.GetPosition();
             boardManager.ReplaceCell(cell.GetNextID(), pos.x, pos.y);
+            if (cameraInput != null) cameraInput.SetDragging(true);
         }
     }
 
-    public void OnMouseButtonUp(int index)
+    public void OnMouseButtonUpAnywhere(int index)
     {
-        //throw new System.NotImplementedException();
+        if (cameraInput != null) cameraInput.SetDragging(false);
     }
 
     public void SetModifiable(bool modifiable)
     {
         this.modifiable = modifiable;
+    }
+
+    public void OnMouseButtonUp(int index)
+    {
+        //throw new System.NotImplementedException();
     }
 }

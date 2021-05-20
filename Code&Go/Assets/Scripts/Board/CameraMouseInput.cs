@@ -5,12 +5,11 @@ using UnityEngine.EventSystems;
 
 public class CameraMouseInput : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    [SerializeField]
-    private OrbitCamera _cam;
-
+    [SerializeField] private OrbitCamera _cam;
     private Vector3 _prevMousePos;
 
     private bool mousePressed;
+    private bool draggingObject = false;
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -26,7 +25,7 @@ public class CameraMouseInput : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     void Update()
     {
-        if (mousePressed)
+        if (mousePressed && !draggingObject)
         {
             // mouse movement in pixels this frame
             Vector3 mouseDelta = Input.mousePosition - _prevMousePos;
@@ -38,5 +37,10 @@ public class CameraMouseInput : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         }
 
         _prevMousePos = Input.mousePosition;
+    }
+
+    public void SetDragging(bool dragging)
+    {
+        draggingObject = dragging;
     }
 }

@@ -60,6 +60,8 @@ public class OrbitCamera : MonoBehaviour
     {
         _yaw = _iniYaw;
         _pitch = _iniPitch;
+        _currentRotationPitch %= 360.0f;
+        _currentRotationYaw %= 360.0f;
     }
 
     private void ApplyConstraints()
@@ -122,5 +124,10 @@ public class OrbitCamera : MonoBehaviour
         // offset the camera at distance from the target position.
         Vector3 offset = transform.rotation * (-Vector3.forward * _distance);
         transform.position = _target.transform.position + offset + _target.offset;
+    }
+
+    public bool IsReset()
+    {
+        return Mathf.Approximately(_yaw,_iniYaw) && Mathf.Approximately(_pitch, _iniPitch);
     }
 }
