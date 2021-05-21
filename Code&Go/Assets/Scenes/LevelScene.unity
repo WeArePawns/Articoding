@@ -1115,6 +1115,7 @@ GameObject:
   - component: {fileID: 245747986}
   - component: {fileID: 245747985}
   - component: {fileID: 245747984}
+  - component: {fileID: 245747987}
   m_Layer: 5
   m_Name: HintsButton
   m_TagString: Untagged
@@ -1246,6 +1247,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 245747982}
   m_CullTransparentMesh: 0
+--- !u!114 &245747987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245747982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 300
+  info: {fileID: 11400000, guid: bd21cd1442f54e34d98b0a844f851a72, type: 2}
+  highlightObject: 1
+  destroyOnShowed: 1
+  isSaveCheckpoint: 0
+  OnShowed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &283044347 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5615152996578002579, guid: a489794761ad7a94680d475b9707ab21, type: 3}
@@ -2587,6 +2608,7 @@ GameObject:
   - component: {fileID: 710475101}
   - component: {fileID: 710475100}
   - component: {fileID: 710475099}
+  - component: {fileID: 710475102}
   m_Layer: 5
   m_Name: TemaryButton
   m_TagString: Untagged
@@ -2718,6 +2740,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 710475097}
   m_CullTransparentMesh: 0
+--- !u!114 &710475102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710475097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 290
+  info: {fileID: 11400000, guid: 458b86697f807bc44a1c2658d517ef8c, type: 2}
+  highlightObject: 1
+  destroyOnShowed: 1
+  isSaveCheckpoint: 0
+  OnShowed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &716498951
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7044,6 +7086,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1688585942}
     m_Modifications:
     - target: {fileID: 841759375814602587, guid: 32484a33b43740a41b605cc751032f70, type: 3}
+      propertyPath: allTutorials.Array.size
+      value: 44
+      objectReference: {fileID: 0}
+    - target: {fileID: 841759375814602587, guid: 32484a33b43740a41b605cc751032f70, type: 3}
       propertyPath: imagePrefab
       value: 
       objectReference: {fileID: 6788673670920329864, guid: 3bdb0619d337b1f4da46e7bf901d2534, type: 3}
@@ -7051,6 +7097,30 @@ PrefabInstance:
       propertyPath: localizedCategoryTitle
       value: 
       objectReference: {fileID: 3114027486971627371}
+    - target: {fileID: 841759375814602587, guid: 32484a33b43740a41b605cc751032f70, type: 3}
+      propertyPath: allTutorials.Array.data[38]
+      value: 
+      objectReference: {fileID: 11400000, guid: 12f6aa923afa74640944c7c55ef3212f, type: 2}
+    - target: {fileID: 841759375814602587, guid: 32484a33b43740a41b605cc751032f70, type: 3}
+      propertyPath: allTutorials.Array.data[39]
+      value: 
+      objectReference: {fileID: 11400000, guid: 974df938faffd744087fdd11d790813b, type: 2}
+    - target: {fileID: 841759375814602587, guid: 32484a33b43740a41b605cc751032f70, type: 3}
+      propertyPath: allTutorials.Array.data[40]
+      value: 
+      objectReference: {fileID: 11400000, guid: d6552d1cd8c5b8d4fb614abb068a4c98, type: 2}
+    - target: {fileID: 841759375814602587, guid: 32484a33b43740a41b605cc751032f70, type: 3}
+      propertyPath: allTutorials.Array.data[41]
+      value: 
+      objectReference: {fileID: 11400000, guid: 6df275ff49be63c4bb240cac1436e00f, type: 2}
+    - target: {fileID: 841759375814602587, guid: 32484a33b43740a41b605cc751032f70, type: 3}
+      propertyPath: allTutorials.Array.data[42]
+      value: 
+      objectReference: {fileID: 11400000, guid: 458b86697f807bc44a1c2658d517ef8c, type: 2}
+    - target: {fileID: 841759375814602587, guid: 32484a33b43740a41b605cc751032f70, type: 3}
+      propertyPath: allTutorials.Array.data[43]
+      value: 
+      objectReference: {fileID: 11400000, guid: bd21cd1442f54e34d98b0a844f851a72, type: 2}
     - target: {fileID: 3114027487447242642, guid: 32484a33b43740a41b605cc751032f70, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
