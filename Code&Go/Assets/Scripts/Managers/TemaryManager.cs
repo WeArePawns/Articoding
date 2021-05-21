@@ -19,12 +19,12 @@ public class TemaryManager : MonoBehaviour
     [SerializeField] private RectTransform categoryList;
     [SerializeField] private Button categoryButton;
     [Space]
-    [SerializeField] private Text titlePrefab;
-    [SerializeField] private Text paragraphPrefab;
+    [SerializeField] private LocalizeStringEvent titlePrefab;
+    [SerializeField] private LocalizeStringEvent paragraphPrefab;
     [SerializeField] private Image imagePrefab;
     [SerializeField] private RectTransform contentRect;
     [SerializeField] private Button backButton;
-    [SerializeField] private Text categoryTitle;
+    [SerializeField] private LocalizeStringEvent categoryTitle;
     [SerializeField] private GameObject bodyContent;
     [Space]
     [SerializeField] private LocalizeStringEvent localizedCategoryTitle;
@@ -118,11 +118,11 @@ public class TemaryManager : MonoBehaviour
         PopUpData lastData = null;
         foreach(PopUpData data in tutorials)
         {
-            if(lastData == null || data.title != lastData.title)
-                AddTitle(data.title);
+            if(lastData == null || data.localizedTitle.ToString() != lastData.localizedTitle.ToString())
+                AddTitle(data.localizedTitle);
             if(data.image != null)
                 AddImage(data.image);
-            AddParagraph(data.content);
+            AddParagraph(data.localizedContent);
             lastData = data;
         }
 
@@ -165,11 +165,12 @@ public class TemaryManager : MonoBehaviour
         Configure();
     }
 
-    private void AddTitle(string s)
+    private void AddTitle(LocalizedString s)
     {
-        Text title = Instantiate(titlePrefab, contentRect);
+        LocalizeStringEvent title = Instantiate(titlePrefab, contentRect);
         title.gameObject.SetActive(true);
-        title.text = s;
+        title.StringReference = s;
+        title.RefreshString();
     }
 
     private void AddImage(Sprite s)
@@ -179,11 +180,12 @@ public class TemaryManager : MonoBehaviour
         image.sprite = s;
     }
 
-    private void AddParagraph(string s)
+    private void AddParagraph(LocalizedString s)
     {
-        Text paragraph = Instantiate(paragraphPrefab, contentRect);
+        LocalizeStringEvent paragraph = Instantiate(paragraphPrefab, contentRect);
         paragraph.gameObject.SetActive(true);
-        paragraph.text = s;
+        paragraph.StringReference = s;
+        paragraph.RefreshString();
     }
 
     public void Load(TutorialSaveData data)

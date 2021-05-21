@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-
+using UnityEngine.Localization;
+using UnityEngine.Localization.Components;
 
 // Class that controls inner functionality
 public class PopUp : MonoBehaviour
@@ -10,8 +11,8 @@ public class PopUp : MonoBehaviour
     [SerializeField] private RectTransform panelRect;
     [SerializeField] private GameObject titleContent;
     [SerializeField] private GameObject contentContent;
-    [SerializeField] private Text titleText;
-    [SerializeField] private Text contentText;
+    [SerializeField] private LocalizeStringEvent titleText;
+    [SerializeField] private LocalizeStringEvent contentText;
     [SerializeField] private Text buttonText;
     [SerializeField] private Button nextButton;
     [Space]
@@ -32,15 +33,20 @@ public class PopUp : MonoBehaviour
     // Warning: this method empties button listeners
     public void Show(PopUpData data)
     {
-        // Set texts
-        titleContent.SetActive(!string.IsNullOrEmpty(data.title));
-        titleText.gameObject.SetActive(!string.IsNullOrEmpty(data.title));
-     
-        titleText.text = data.title;
+        data.localizedTitle.RefreshString();
+        data.localizedContent.RefreshString();
 
-        contentContent.SetActive(!string.IsNullOrEmpty(data.content));
-        contentText.gameObject.SetActive(!string.IsNullOrEmpty(data.content));
-        contentText.text = data.content;
+        // Set texts
+        titleContent.SetActive(!string.IsNullOrEmpty(data.localizedTitle.GetLocalizedString().ToString()));
+        titleText.gameObject.SetActive(!string.IsNullOrEmpty(data.localizedTitle.GetLocalizedString().ToString()));
+     
+        titleText.StringReference = data.localizedTitle;
+        titleText.RefreshString();
+
+        contentContent.SetActive(!string.IsNullOrEmpty(data.localizedContent.GetLocalizedString().ToString()));
+        contentText.gameObject.SetActive(!string.IsNullOrEmpty(data.localizedContent.GetLocalizedString().ToString()));
+        contentText.StringReference = data.localizedContent;
+        contentText.RefreshString();
 
         // Set action
         nextButton.onClick.RemoveAllListeners();
@@ -143,7 +149,7 @@ public class PopUp : MonoBehaviour
 
     private void UpdateCapLimit()
     {
-        bool capPassed = contentText.text.Length >= contentCharacterCap || titleText.text.Length >= titleCharacterCap;
+        bool capPassed = contentText.StringReference.ToString().Length >= contentCharacterCap || titleText.StringReference.ToString().Length >= titleCharacterCap;
         capLayoutElement.enabled = capPassed;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Localization;
 
 public class PopUpManager : MonoBehaviour
 {
@@ -32,11 +33,11 @@ public class PopUpManager : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void Show(string title, string content)
+    public void Show(LocalizedString title, LocalizedString content)
     {
         PopUpData data = ScriptableObject.CreateInstance<PopUpData>();
-        data.title = title;
-        data.content = content;
+        data.localizedTitle = title;
+        data.localizedContent = content;
 
         imageMaterial.SetVector("_PositionSize", Vector4.zero);
         mainContent.SetActive(true);
@@ -46,11 +47,11 @@ public class PopUpManager : MonoBehaviour
         popupPanel.AddListener(Hide);
     }
 
-    public void Show(string title, string content, Rect rect)
+    public void Show(LocalizedString title, LocalizedString content, Rect rect)
     {
         PopUpData data = new PopUpData();
-        data.title = title;
-        data.content = content;
+        data.localizedTitle = title;
+        data.localizedContent = content;
         float xPadding = highlightPadding * Screen.width / bodyRect.rect.width;
         float yPadding = highlightPadding * Screen.height / bodyRect.rect.height;
         Vector2 position = new Vector2(rect.x + rect.width / 2.0f, rect.y + rect.height / 2.0f);
