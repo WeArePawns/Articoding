@@ -160,7 +160,7 @@ namespace UBlockly
             if (textAsset != null)
             {
                 I18n.AddI18nFile(textAsset.text);
-                if (m_LoadType == BlockResLoadType.Assetbundle && mABUnload != null)
+                if (mABUnload != null)
                     mABUnload(m_I18nFiles.ResName);
             }
 
