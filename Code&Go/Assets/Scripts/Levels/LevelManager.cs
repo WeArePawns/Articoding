@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UBlockly.UGUI;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Localization;
 
 public class LevelManager : MonoBehaviour
 {
@@ -216,19 +217,25 @@ public class LevelManager : MonoBehaviour
         GameManager.Instance.LoadScene("MenuScene");
     }
 
-    // Copiado y modificado (TODO: cambiar de lugar si eso)
-    public void LoadInitialBlocks(TextAsset textAsset)
+    public void LoadInitialBlocks(LocalizedAsset<TextAsset> textAsset)
     {
         if (textAsset == null) return;
 
         StartCoroutine(AsyncLoadInitialBlocks(textAsset));
     }
 
-    IEnumerator AsyncLoadInitialBlocks(TextAsset textAsset)
+    IEnumerator AsyncLoadInitialBlocks(LocalizedAsset<TextAsset> textAsset)
     {
+        var loadingOp = textAsset.LoadAssetAsync();
+        if (!loadingOp.IsDone)
+            yield return loadingOp;
+
+        TextAsset localizedTextAsset = loadingOp.Result;
+        if (localizedTextAsset == null) yield break;
+
         BlocklyUI.WorkspaceView.CleanViews();
 
-        var dom = UBlockly.Xml.TextToDom(textAsset.text);
+        var dom = UBlockly.Xml.TextToDom(localizedTextAsset.text);
 
         UBlockly.Xml.DomToWorkspace(dom, BlocklyUI.WorkspaceView.Workspace);
         BlocklyUI.WorkspaceView.BuildViews();

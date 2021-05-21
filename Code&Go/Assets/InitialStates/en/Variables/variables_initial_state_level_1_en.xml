@@ -1,0 +1,22 @@
+<xml>
+    <variables>
+        <variable type="" id=";saw6[nb!0fr-)S^huKL">Intensity</variable>
+    </variables>
+    <block type="variables_set" id="ewYWY.];?izb^z2z.ze5" x="123" y="-150">
+        <field name="VAR" id=";saw6[nb!0fr-)S^huKL" variableType="">Intensity</field>
+        <value name="VALUE">
+            <block type="math_number" id="z)I9*?=~:#t;Tg}8U5!B">
+                <field name="NUM">1</field>
+            </block>
+        </value>
+        <next>
+            <block type="movement_laser_change_intensity" id="`|1hs9vX3j!KG_((dMXI">
+                <value name="AMOUNT">
+                    <block type="variables_get" id="H5]2yym$yHm6PMD=HdSy">
+                        <field name="VAR" id=";saw6[nb!0fr-)S^huKL" variableType="">Intensity</field>
+                    </block>
+                </value>
+            </block>
+        </next>
+    </block>
+</xml>

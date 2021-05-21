@@ -1,0 +1,45 @@
+<xml>
+    <variables>
+        <variable type="" id="n:WsN1pJ9hJ.ue!#m#{U">Object</variable>
+        <variable type="" id="An]Sn_i2fD:nVJ/Y]5_A">Amount</variable>
+        <variable type="" id="T5MLVG+W[93if;JDwPVe">Rotation</variable>
+    </variables>
+    <block type="variables_set" id="q7*vM`_bKyO/@ED6M%Pz" x="158" y="-154">
+        <field name="VAR" id="n:WsN1pJ9hJ.ue!#m#{U" variableType="">Object</field>
+        <value name="VALUE">
+            <block type="text" id="Kgf)VE~u~}-+:C5+)WJi">
+                <field name="TEXT" />
+            </block>
+        </value>
+        <next>
+            <block type="variables_set" id="%wfzC[9p(,l=~`R:|wRb">
+                <field name="VAR" id="An]Sn_i2fD:nVJ/Y]5_A" variableType="">Amount</field>
+                <value name="VALUE">
+                    <block type="math_number" id="gy6Zv}mXv(ro1e!#^[Yf">
+                        <field name="NUM">0</field>
+                    </block>
+                </value>
+                <next>
+                    <block type="variables_set" id="3Po,.`{qU[I3|wG4B:W2">
+                        <field name="VAR" id="T5MLVG+W[93if;JDwPVe" variableType="">Rotation</field>
+                        <value name="VALUE">
+                            <block type="math_number" id="yH?(J@y?D@SMF.(/7g|O">
+                                <field name="NUM">0</field>
+                            </block>
+                        </value>
+                        <next>
+                            <block type="variables_set" id="g@R%foA$r7~C}P)ot5!N">
+                                <field name="VAR" id="An]Sn_i2fD:nVJ/Y]5_A" variableType="">Amount</field>
+                                <value name="VALUE">
+                                    <block type="math_arithmetic" id="]]/|]Q8nJGa/K@^-+HX=">
+                                        <field name="OP">ADD</field>
+                                    </block>
+                                </value>
+                            </block>
+                        </next>
+                    </block>
+                </next>
+            </block>
+        </next>
+    </block>
+</xml>

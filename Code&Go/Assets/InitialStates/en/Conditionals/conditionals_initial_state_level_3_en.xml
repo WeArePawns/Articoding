@@ -1,0 +1,37 @@
+<xml>
+    <variables>
+        <variable type="" id="n:WsN1pJ9hJ.ue!#m#{U">Object</variable>
+        <variable type="" id="An]Sn_i2fD:nVJ/Y]5_A">Amount</variable>
+    </variables>
+    <block type="variables_set" id="q7*vM`_bKyO/@ED6M%Pz" x="143" y="-146">
+        <field name="VAR" id="n:WsN1pJ9hJ.ue!#m#{U" variableType="">Object</field>
+        <value name="VALUE">
+            <block type="text" id="Kgf)VE~u~}-+:C5+)WJi">
+                <field name="TEXT" />
+            </block>
+        </value>
+        <next>
+            <block type="variables_set" id="%wfzC[9p(,l=~`R:|wRb">
+                <field name="VAR" id="An]Sn_i2fD:nVJ/Y]5_A" variableType="">Amount</field>
+                <value name="VALUE">
+                    <block type="math_number" id="gy6Zv}mXv(ro1e!#^[Yf">
+                        <field name="NUM">0</field>
+                    </block>
+                </value>
+                <next>
+                    <block type="controls_whileUntil" id=":gbe_pPljv*+kn15Ig39">
+                        <value name="BOOL">
+                            <block type="logic_negate" id="=9G+p`G.$PEar3*zJBGE">
+                                <value name="BOOL">
+                                    <block type="movement_cells_occupied" id="NtNM3HeQ$*8d*_z3@02k">
+                                        <field name="TYPE">GREEN</field>
+                                    </block>
+                                </value>
+                            </block>
+                        </value>
+                    </block>
+                </next>
+            </block>
+        </next>
+    </block>
+</xml>
