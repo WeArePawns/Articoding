@@ -152,7 +152,7 @@ namespace UBlockly
         public void LoadFiles()
         {
             var loadingOp = m_I18nFiles.LocalizedTextFile.LoadAssetAsync();
-            while (!loadingOp.IsDone)
+            if (!loadingOp.IsDone)
                 ;
 
             TextAsset textAsset = loadingOp.Result;

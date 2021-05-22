@@ -77,17 +77,34 @@ public class GameManager : MonoBehaviour
             SaveManager.Save();
         this.category = category;
         this.levelIndex = levelIndex;
-        LoadScene("LevelScene");
+
+        if (LoadManager.Instance == null)
+        {
+            SceneManager.LoadScene("LevelScene");
+            return;
+        }
+
+        LoadManager.Instance.LoadScene("LevelScene");
     }
 
     public void LoadLevelCreator()
     {
-        LoadScene("BoardCreation");
+        if (LoadManager.Instance == null)
+        {
+            SceneManager.LoadScene("BoardCreation");
+            return;
+        }
+        LoadManager.Instance.LoadScene("BoardCreation");
     }
 
     public void LoadScene(string name)
     {
-        SceneManager.LoadScene(name);
+        if (LoadManager.Instance == null)
+        {
+            SceneManager.LoadScene(name);
+            return;
+        }
+        LoadManager.Instance.LoadScene(name);
     }
 
     public void OnDestroy()

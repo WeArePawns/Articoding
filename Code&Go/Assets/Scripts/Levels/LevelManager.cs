@@ -5,6 +5,7 @@ using UBlockly.UGUI;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Localization;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
@@ -214,7 +215,13 @@ public class LevelManager : MonoBehaviour
         TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
         TrackerAsset.Instance.GameObject.Used("main_menu_return");
 
-        GameManager.Instance.LoadScene("MenuScene");
+        if(LoadManager.Instance == null)
+        {
+            SceneManager.LoadScene("MenuScene");
+            return;
+        }
+
+        LoadManager.Instance.LoadScene("MenuScene");
     }
 
     public void LoadInitialBlocks(LocalizedAsset<TextAsset> textAsset)

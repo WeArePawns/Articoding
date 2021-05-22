@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using AssetPackage;
 using UBlockly.UGUI;
+using UnityEngine.SceneManagement;
 
 public class LevelTestManager : MonoBehaviour
 {
@@ -115,7 +116,14 @@ public class LevelTestManager : MonoBehaviour
     {
         //TrackerAsset.Instance.setVar("steps", board.GetCurrentSteps());
         TrackerAsset.Instance.GameObject.Used("main_menu_return");
-        GameManager.Instance.LoadScene("MenuScene");
+
+        if(LoadManager.Instance == null)
+        {
+            SceneManager.LoadScene("MenuScene");
+            return;
+        }
+
+        LoadManager.Instance.LoadScene("MenuScene");
     }
 
     public void ResetLevel()
