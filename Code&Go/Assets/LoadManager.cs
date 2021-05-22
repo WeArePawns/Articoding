@@ -87,6 +87,7 @@ public class LoadManager : MonoBehaviour
                 yield return null;
             }
         }
+        loadOperations.Clear();
 
         // Wait for localization operations
         while (!LocalizationSettings.InitializationOperation.IsDone)
