@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Localization;
 using UnityEngine.SceneManagement;
+using UnityEngine.Localization.Components;
 
 public class LevelManager : MonoBehaviour
 {
@@ -33,6 +34,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private int defaultLevelIndex;
 
     [SerializeField] private Text levelName;
+    [SerializeField] private LocalizeStringEvent levelNameLocalized;
 
     [SerializeField] private GameObject saveButton;
 
@@ -89,7 +91,10 @@ public class LevelManager : MonoBehaviour
         TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
         TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
         TrackerAsset.Instance.GameObject.Used("level_start");
-        levelName.text = currentLevel.levelName;
+
+        //levelName.text = currentLevel.levelName;
+        levelNameLocalized.StringReference = currentLevel.levelNameLocalized;
+        levelNameLocalized.RefreshString();
     }
 
     private void Update()

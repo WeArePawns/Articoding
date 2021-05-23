@@ -7,11 +7,11 @@ public class Door : BoardObject
     private bool open = false;
     [SerializeField] GameObject objectCollider;
     // DO STUFF I GUESS
-    private void Awake()
+    /*private void Awake()
     {
         typeName = "Puerta_";
         argsNames = new string[1] { "Abierta" };
-    }
+    }*/
 
     override public string[] GetArgs()
     {

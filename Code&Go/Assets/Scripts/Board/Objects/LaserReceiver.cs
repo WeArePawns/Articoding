@@ -17,7 +17,7 @@ public class LaserReceiver : BoardObject, ILaserReceiver
 
     private void Awake()
     {
-        typeName = "Receiver";
+        typeName = Hash.ToHash(Time.realtimeSinceStartup.ToString(), Random.Range(float.MinValue, float.MaxValue).ToString());
         argsNames = new string[0];
     }
 

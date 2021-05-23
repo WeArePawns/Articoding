@@ -14,11 +14,11 @@ public class LaserEmitter : BoardObject, ILaserEmitter
     [SerializeField] private ParticleSystem moveParticles;
     [SerializeField] private GameObject pointLight;
 
-    private void Awake()
+    /*private void Awake()
     {
         typeName = "Laser_";
         argsNames = new string[1] { "Activado" };
-    }
+    }*/
 
     public void Start()
     {
