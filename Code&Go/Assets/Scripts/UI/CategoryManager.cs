@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.Localization.Components;
+using UnityEngine.Localization;
 
 public class CategoryManager : MonoBehaviour
 {
@@ -38,6 +39,9 @@ public class CategoryManager : MonoBehaviour
     public GameObject currentLevelCreatedPanel;
 
     public Text currentCategoryLevelsText;
+    public LocalizeStringEvent currentCategoryLevelsTextLocalized;
+    public LocalizedString categoryNameLocaliced;
+    public LocalizedString[] selectedCategoryNameLocaliced;
 
     public int currentCategory;
     private int currentLevel;
@@ -132,7 +136,11 @@ public class CategoryManager : MonoBehaviour
         if (!ProgressManager.Instance.IsCategoryUnlocked(currentCategory)) return;
 
         Category category = categories[currentCategory];
-        currentCategoryLevelsText.text = "Niveles - " + category.name_id;
+        //currentCategoryLevelsText.text = "Niveles - " + category.name_id;
+
+        //selectedCategoryNameLocaliced.Arguments = new object[] { selectedLevelName };
+        currentCategoryLevelsTextLocalized.StringReference = selectedCategoryNameLocaliced[currentCategory];
+        currentCategoryLevelsTextLocalized.RefreshString();
 
         categoriesPanel.SetActive(false);
         levelsPanel.SetActive(true);
@@ -168,7 +176,9 @@ public class CategoryManager : MonoBehaviour
 
     public void HideLevels()
     {
-        currentCategoryLevelsText.text = "Categories";
+        //currentCategoryLevelsText.text = "Categories";
+        currentCategoryLevelsTextLocalized.StringReference = categoryNameLocaliced;
+        currentCategoryLevelsTextLocalized.RefreshString();
 
         categoriesPanel.SetActive(true);
         levelsPanel.SetActive(false);
