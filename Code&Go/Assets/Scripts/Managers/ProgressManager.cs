@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System;
+using UnityEngine.Localization;
 
 public class ProgressManager : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class ProgressManager : MonoBehaviour
 
     private LevelsCreatedSaveData levelsCreated;
     private List<string> levelsCreatedHash;
+
+    public LocalizedString createdLevelString;
 
     private void Awake()
     {
@@ -231,6 +234,8 @@ public class ProgressManager : MonoBehaviour
         data.levelName = "Nivel Creado " + index.ToString();
         data.auxLevelBoard = board;
         data.minimosPasos = 10;
+
+        data.levelNameLocalized = createdLevelString;
 
         levelsCreatedCategory.levels.Add(data);
         levelsCreatedHash.Add(board);

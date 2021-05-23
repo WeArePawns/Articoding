@@ -29,6 +29,8 @@ public class CategoryManager : MonoBehaviour
     public Image levelPreview;
 
     public Text levelCreatedName;
+    public LocalizeStringEvent localizedLevelCreatedName;
+    public LocalizedString createLevelLocalizeString;
 
     public GameObject categoriesPanel;
     public GameObject levelsPanel;
@@ -98,13 +100,21 @@ public class CategoryManager : MonoBehaviour
             {
                 //currentLevelCreatedPanel.SetActive(true);
                 levelCreatedIndex = index;
-                levelCreatedName.text = levelData.levelName;
+                //levelCreatedName.text = levelData.levelName;
+
+                localizedLevelCreatedName.StringReference = levelData.levelNameLocalized;
+                localizedLevelCreatedName.StringReference.Arguments = new object[] { index + 1 };
+                localizedLevelCreatedName.RefreshString();
             });
         }
         createLevelButton.gameObject.SetActive(true);
         createLevelButton.onClick.AddListener(() =>
         {
-            levelCreatedName.text = "Crear nivel";
+            //levelCreatedName.text = "Crear nivel";
+
+            localizedLevelCreatedName.StringReference = createLevelLocalizeString;
+            localizedLevelCreatedName.RefreshString();
+
             levelCreatedIndex = -1; // Reserved for creator mode
         });
         createLevelButton.transform.SetParent(levelsCreatedParent.transform);
