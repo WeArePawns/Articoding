@@ -28,6 +28,7 @@ public class PopUpData : ScriptableObject
 
     public LocalizedString localizedTitle;
     public LocalizedString localizedContent;
+    public LocalizedSprite localizedImage;
 
     public PopUpData()
     {
@@ -40,5 +41,6 @@ public class PopUpData : ScriptableObject
         image = data.image;
         localizedTitle = data.localizedTitle;
         localizedContent = data.localizedContent;
+        localizedImage = data.localizedImage;
     }
 }

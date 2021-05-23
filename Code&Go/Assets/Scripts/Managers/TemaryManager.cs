@@ -21,7 +21,7 @@ public class TemaryManager : MonoBehaviour
     [Space]
     [SerializeField] private LocalizeStringEvent titlePrefab;
     [SerializeField] private LocalizeStringEvent paragraphPrefab;
-    [SerializeField] private Image imagePrefab;
+    [SerializeField] private LocalizeSpriteEvent imagePrefab;
     [SerializeField] private RectTransform contentRect;
     [SerializeField] private Button backButton;
     [SerializeField] private LocalizeStringEvent categoryTitle;
@@ -120,8 +120,8 @@ public class TemaryManager : MonoBehaviour
         {
             if(lastData == null || data.localizedTitle.ToString() != lastData.localizedTitle.ToString())
                 AddTitle(data.localizedTitle);
-            if(data.image != null)
-                AddImage(data.image);
+            if(!data.localizedImage.IsEmpty)
+                AddImage(data.localizedImage);
             AddParagraph(data.localizedContent);
             lastData = data;
         }
@@ -173,11 +173,12 @@ public class TemaryManager : MonoBehaviour
         title.RefreshString();
     }
 
-    private void AddImage(Sprite s)
+    private void AddImage(LocalizedSprite s)
     {
-        Image image = Instantiate(imagePrefab, contentRect);
+        LocalizeSpriteEvent image = Instantiate(imagePrefab, contentRect);
         image.gameObject.SetActive(true);
-        image.sprite = s;
+        image.AssetReference.SetReference(s.TableReference, s.TableEntryReference);
+        
     }
 
     private void AddParagraph(LocalizedString s)
