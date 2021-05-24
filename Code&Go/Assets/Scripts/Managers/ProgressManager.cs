@@ -75,7 +75,7 @@ public class ProgressManager : MonoBehaviour
 
         if (currentLevel >= currentCategory.lastLevelUnlocked)
         {
-            if (currentLevel + 1 >= currentCategory.levelsData.Length && lastCategoryUnlocked < categories.Count)
+            if (currentLevel + 1 >= currentCategory.levelsData.Length && lastCategoryUnlocked + 1 < categories.Count)
             {
                 lastCategoryUnlocked++;
                 categoriesData[lastCategoryUnlocked].lastLevelUnlocked = 0;
@@ -185,9 +185,9 @@ public class ProgressManager : MonoBehaviour
                    Application.persistentDataPath;
 #endif
         string directory = Path.Combine(path, "Boards/LevelsCreated/");
-        if (!Directory.Exists(directory))    
+        if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
-        
+
         string filePath = directory + levelName + ".userLevel";
         FileStream file = new FileStream(filePath, FileMode.Create);
         file.Close();

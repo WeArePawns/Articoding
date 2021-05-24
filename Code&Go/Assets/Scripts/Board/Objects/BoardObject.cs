@@ -135,6 +135,16 @@ public class BoardObject : MonoBehaviour
         return isRotatable;
     }
 
+    public void SetMovable(bool movable)
+    {
+        isMovable = movable;
+    }
+    public void SetRotatable(bool rotatable)
+    {
+        isRotatable = rotatable;
+    }
+
+
     //Virtual method for seralization of additional arguments in child classes
     public virtual string[] GetArgs() { return new string[] { }; }
 

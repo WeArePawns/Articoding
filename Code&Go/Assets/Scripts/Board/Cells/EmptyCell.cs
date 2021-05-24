@@ -12,6 +12,8 @@ public class EmptyCell : BoardCell
             rb.isKinematic = false;
 
         placedObject.gameObject.GetComponent<Animator>().Play("Fall");
+        placedObject.SetMovable(false);
+        placedObject.SetRotatable(false);
 
         if (placedObject.GetNameAsLower() == "laser_")
         {
