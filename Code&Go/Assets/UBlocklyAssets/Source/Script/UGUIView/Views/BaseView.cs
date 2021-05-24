@@ -423,6 +423,16 @@ namespace UBlockly.UGUI
                             m_Next.UpdateLayout(startPos);
                         }
                     }
+                    // update connection location in ConnectionDB
+                    if (Type == ViewType.ConnectionInput)
+                    {
+                        ConnectionView connectionView = (ConnectionView)this;
+                        if (connectionView != null)
+                        {
+                            connectionView.OnXYUpdated();
+                        }
+                    }
+
                     break;
                 }
                 case ViewType.Connection:
