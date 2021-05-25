@@ -444,7 +444,24 @@ namespace UBlockly.UGUI
                     {
                         m_Parent.UpdateLayout(m_Parent.SiblingIndex == 0 ? m_Parent.HeaderXY : m_Parent.XY);
                     }
-                    break;
+
+                    // update connection location in ConnectionDB
+                    if(Type == ViewType.Block)
+                    {
+                        BlockView blockView = (BlockView)this;
+                        if (blockView != null)
+                        {
+                            foreach (var view in blockView.Childs)
+                            {
+                                if (view.Type == ViewType.Connection)
+                                {
+                                    view.OnXYUpdated();
+                                }
+                            }
+                        }
+                    }
+
+                        break;
                 }
             }
         }
