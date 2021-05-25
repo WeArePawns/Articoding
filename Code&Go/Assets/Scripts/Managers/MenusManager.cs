@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class MenusManager : MonoBehaviour
@@ -55,6 +56,11 @@ public class MenusManager : MonoBehaviour
     public void ExitGame()
     {
         //GameManager.instance.Quit(); //TODO: GameManager
+
+#if UNITY_EDITOR
+        EditorApplication.ExitPlaymode(); ;
+#endif
+
         Application.Quit();
     }
 }

@@ -901,9 +901,9 @@ namespace AssetPackage
         /// Starts Tracking with: 1) An already extracted UserToken (from Login) and
         /// 2) TrackingCode (Shown at Game on a2 server).
         /// </summary>
-		public void Start()
+		public void Start(Action done = null)
         {
-            StartAux(false, null);
+            StartAux(false, done);
             Completable.Initialized("application");
         }
 

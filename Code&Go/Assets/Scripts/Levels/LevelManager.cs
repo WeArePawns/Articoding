@@ -217,7 +217,7 @@ public class LevelManager : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
+        //TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
         TrackerAsset.Instance.GameObject.Used("main_menu_return");
 
         if(LoadManager.Instance == null)
