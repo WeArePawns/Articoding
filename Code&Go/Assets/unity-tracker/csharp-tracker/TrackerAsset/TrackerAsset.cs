@@ -1319,7 +1319,7 @@ namespace AssetPackage
 
 			if (ds != null)
 			{
-				/*ds.WebServiceRequestAsync(
+				ds.WebServiceRequestAsync(
 					new RequestSetttings
 					{
 						method = method,
@@ -1333,7 +1333,7 @@ namespace AssetPackage
 						requestHeaders = headers,
 						//! allowedResponsCodes,     // TODO default is ok
 						body = body, // or method.Equals("GET")?string.Empty:body
-					}, callback);*/
+					}, callback);
 			}
 		}
 

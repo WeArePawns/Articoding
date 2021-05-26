@@ -4,10 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Localization.Settings;
+using uAdventure.Simva;
 
 public class LoadManager : MonoBehaviour
 {
     public static LoadManager Instance;
+
+    public bool AutoStart = true;
 
     public GameObject content;
     public Text loadingText;
@@ -17,21 +20,27 @@ public class LoadManager : MonoBehaviour
 
     private int lastLoadedIndex = -1;
 
-    void Awake()
+    IEnumerator Start()
     {
         if(Instance != null)
         {
             Destroy(gameObject);
-            return;
+            yield break;
         }
 
         Instance = this;
+        //DontDestroyOnLoad(gameObject);
         loadOperations = new List<AsyncOperation>();
 
         if (!LocalizationSettings.InitializationOperation.IsDone)
             loadingText.gameObject.SetActive(false);
 
-        if (lastLoadedIndex == -1)
+
+        yield return SimvaExtension.Instance.OnAfterGameLoad();
+
+        yield return WaitUntilLoadingIsComplete();
+
+        if (AutoStart && lastLoadedIndex == -1)
             LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
@@ -94,7 +103,6 @@ public class LoadManager : MonoBehaviour
         {
             yield return null;
         }
-
 
         yield return new WaitForSeconds(extraLoadingTime);
 
