@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.Localization.Components;
 using UnityEngine.Localization;
+using AssetPackage;
 
 public class CategoryManager : MonoBehaviour
 {
@@ -158,6 +159,9 @@ public class CategoryManager : MonoBehaviour
         currentCategoryPanel.SetActive(false);
         currentLevelPanel.SetActive(true);
 
+        while (levelsParent.transform.childCount != 0)
+            DestroyImmediate(levelsParent.transform.GetChild(0).gameObject);
+
         for (int i = 0; i < category.levels.Count; i++)
         {
             int index = i;
@@ -182,10 +186,16 @@ public class CategoryManager : MonoBehaviour
             else
                 levelCard.DeactivateCard();
         }
+
+        TrackerAsset.Instance.setVar("name", category.name_id.ToLower());
+        TrackerAsset.Instance.Accessible.Accessed("category_enter");
+
     }
 
     public void HideLevels()
     {
+        if (!levelsPanel.activeSelf) return;
+
         //currentCategoryLevelsText.text = "Categories";
         currentCategoryLevelsTextLocalized.StringReference = categoryNameLocaliced;
         currentCategoryLevelsTextLocalized.RefreshString();
@@ -198,6 +208,10 @@ public class CategoryManager : MonoBehaviour
 
         while (levelsParent.transform.childCount != 0)
             DestroyImmediate(levelsParent.transform.GetChild(0).gameObject);
+
+
+        TrackerAsset.Instance.setVar("name", categories[currentCategory].name_id.ToLower());
+        TrackerAsset.Instance.Accessible.Accessed("category_exit");
     }
 
     public void PlaySelectedLevel()

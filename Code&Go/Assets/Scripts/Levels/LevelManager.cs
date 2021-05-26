@@ -88,8 +88,12 @@ public class LevelManager : MonoBehaviour
     {
         Initialize();
 
+        var dom = UBlockly.Xml.WorkspaceToDom(BlocklyUI.WorkspaceView.Workspace);
+        string text = UBlockly.Xml.DomToText(dom);
+
         TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
         TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
+        TrackerAsset.Instance.setVar("code", "\n" + text);
         TrackerAsset.Instance.GameObject.Used("level_start");
 
         //levelName.text = currentLevel.levelName;
@@ -180,6 +184,10 @@ public class LevelManager : MonoBehaviour
         streamRoom.Retry();
 
         starsController.DeactivateFirstRunStar();
+
+        TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
+        TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
+        TrackerAsset.Instance.GameObject.Used("level_retry");
     }
 
     public void MinimizeEndPanel()
@@ -218,7 +226,9 @@ public class LevelManager : MonoBehaviour
     public void LoadMainMenu()
     {
         //TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
-        TrackerAsset.Instance.GameObject.Used("main_menu_return");
+        TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
+        TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
+        TrackerAsset.Instance.GameObject.Used("level_exit");
 
         if(LoadManager.Instance == null)
         {

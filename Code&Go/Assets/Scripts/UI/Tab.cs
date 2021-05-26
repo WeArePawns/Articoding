@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using AssetPackage;
 
 [ExecuteInEditMode]
 public class Tab : MonoBehaviour, IPointerClickHandler
@@ -62,6 +63,8 @@ public class Tab : MonoBehaviour, IPointerClickHandler
 
     public void Select()
     {
+        if (selected) return;
+
         selected = true;
 
         if (callbacks.OnSelected != null)
@@ -69,10 +72,15 @@ public class Tab : MonoBehaviour, IPointerClickHandler
 
         text.color = textSelectedColor;
         image.color = imageSelectedColor;
+
+        TrackerAsset.Instance.setVar("name", gameObject.name.ToLower());
+        TrackerAsset.Instance.Accessible.Accessed("main_menu_section", AccessibleTracker.Accessible.Accessible);
     }
 
     public void Deselect()
     {
+        if (!selected) return;
+
         selected = false;
 
         if (callbacks.OnDeselected != null)
