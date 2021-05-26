@@ -17,6 +17,7 @@ limitations under the License.
 ****************************************************************************/
 
 
+using AssetPackage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,6 +114,9 @@ namespace UBlockly.UGUI
         {
             m_Label.text = newValue;
             UpdateLayout(XY);
+
+            TrackerAsset.Instance.setVar("value", newValue);
+            TrackerAsset.Instance.GameObject.Interacted(mSourceBlockView.Block.ID);
         }
         
         protected override Vector2 CalculateSize()

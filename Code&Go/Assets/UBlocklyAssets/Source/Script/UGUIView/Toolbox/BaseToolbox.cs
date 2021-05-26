@@ -211,8 +211,9 @@ namespace UBlockly.UGUI
 
             OnPickBlockView();
 
-            TrackerAsset.Instance.setVar("block_id", blockView.Block.ToDevString());
-            TrackerAsset.Instance.GameObject.Used("block_used");
+            TrackerAsset.Instance.setVar("block_type", blockView.Block.Type);
+            TrackerAsset.Instance.setVar("action", "create");
+            TrackerAsset.Instance.GameObject.Used(blockView.Block.ID);
         }
 
         protected void UpdatePickedBlockView()

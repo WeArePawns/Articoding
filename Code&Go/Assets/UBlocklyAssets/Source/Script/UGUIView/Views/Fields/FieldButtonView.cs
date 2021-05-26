@@ -17,6 +17,7 @@ limitations under the License.
 ****************************************************************************/
 
 
+using AssetPackage;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -104,6 +105,9 @@ namespace UBlockly.UGUI
                 }
             }
             UpdateLayout(XY);
+
+            TrackerAsset.Instance.setVar("value", newValue);
+            TrackerAsset.Instance.GameObject.Interacted(mSourceBlockView.Block.ID);
         }
         
         protected override Vector2 CalculateSize()

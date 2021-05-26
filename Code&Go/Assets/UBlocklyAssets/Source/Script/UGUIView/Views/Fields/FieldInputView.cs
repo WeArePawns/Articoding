@@ -17,6 +17,7 @@ limitations under the License.
 ****************************************************************************/
 
 
+using AssetPackage;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,6 +26,9 @@ namespace UBlockly.UGUI
     public class FieldInputView : FieldView
     {
         [SerializeField] protected InputField m_InputField;
+
+        private float controllingChanges = -1.0f;
+        private TrackerAsset.TrackerEvent trace;
 
         private FieldTextInput mFieldInput
         {
@@ -57,12 +61,42 @@ namespace UBlockly.UGUI
                 mField.SetValue(newText);
             });
         }
-        
+
+        private void Update()
+        {
+            float threshold = 2.5f;
+            if(controllingChanges != -1.0f && Time.time - controllingChanges > threshold)
+            {
+                TrackerAsset.Instance.setVar("value", m_InputField.text);
+                TrackerAsset.Instance.AddExtensionsToTrace(trace);
+                trace.Completed();
+                controllingChanges = -1.0f;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (controllingChanges != -1.0f)
+            {
+                TrackerAsset.Instance.setVar("value", m_InputField.text);
+                TrackerAsset.Instance.AddExtensionsToTrace(trace);
+                trace.Completed();
+                controllingChanges = -1.0f;
+            }
+        }
+
         protected override void OnValueChanged(string newValue)
         {
             if (!string.Equals(m_InputField.text, newValue))
                 m_InputField.text = newValue;
-            UpdateLayout(XY);    
+            UpdateLayout(XY);
+
+            if (controllingChanges == -1.0f)
+            {
+                trace = TrackerAsset.Instance.GameObject.Interacted(mSourceBlockView.Block.ID);
+                trace.IsPartial();
+            }
+            controllingChanges = Time.time;
         }
 
         protected override Vector2 CalculateSize()

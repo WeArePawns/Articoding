@@ -50,6 +50,8 @@ namespace UBlockly.UGUI
 
         private Text countText;
 
+        private bool parentWasEmpty = false;
+
         public void SetCountText(Text text)
         {
             countText = text;
@@ -155,9 +157,6 @@ namespace UBlockly.UGUI
                     }
                 }
             }
-
-            TrackerAsset.Instance.setVar("block_id", Block.ToDevString());
-            TrackerAsset.Instance.GameObject.Used("block_removed");
 
             //Update available blocks
             if (Block.blocksAvailable.ContainsKey(BlockType))
@@ -329,6 +328,9 @@ namespace UBlockly.UGUI
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (InToolbox) return;
+
+            parentWasEmpty = Block.ParentBlock == null;
+
             mBlock.UnPlug();
             SetOrphan();
 
@@ -376,12 +378,72 @@ namespace UBlockly.UGUI
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            Block parentBlock = null;
+            Block childBlock = Block;
+            Input input = null;
+
             if (mClosestConnection != null)
             {
                 // attach to closest connection
                 mClosestConnection.Connect(mAttachingConnection);
                 mClosestConnection.FireUpdate(Connection.UpdateState.UnHighlight);
+
+                parentBlock = mClosestConnection.SourceBlock;
+                //childBlock = mAttachingConnection.SourceBlock;
+                input = parentBlock == null ? null : parentBlock.GetInputWithBlock(childBlock);
             }
+
+            if (parentBlock != null)
+            {
+                TrackerAsset.Instance.setVar("other_block", parentBlock.ID);
+                TrackerAsset.Instance.setVar("other_block_type", parentBlock.Type);
+            }
+
+            if (parentWasEmpty && parentBlock == null)
+            {
+                TrackerAsset.Instance.setVar("block_type", childBlock.Type);
+                TrackerAsset.Instance.setVar("coords", childBlock.XY.ToString());
+                TrackerAsset.Instance.setVar("action", "move");
+                TrackerAsset.Instance.GameObject.Used(childBlock.ID);
+                Debug.Log("Moving block " + childBlock.ToDevString() + " to " + childBlock.XY.ToString());
+            }
+            else if (mClosestConnection != null && mClosestConnection.Type == Define.EConnection.PrevStatement)
+            {
+                TrackerAsset.Instance.setVar("block_type", childBlock.Type);
+                TrackerAsset.Instance.setVar("action", "attach_on_top");
+                TrackerAsset.Instance.GameObject.Used(childBlock.ID);
+                //Debug.Log("Setting block " + childBlock.ToDevString() + " child to " + (parentBlock == null ? "empty at coords. " + childBlock.XY.ToString() : parentBlock.ToDevString()) + (input != null ? " at input " + input.Name : ""));
+            }
+            else
+            {
+                TrackerAsset.Instance.setVar("block_type", childBlock.Type);
+
+                if (input != null)
+                {
+                    TrackerAsset.Instance.setVar("action", "attach_on_input");
+                    TrackerAsset.Instance.setVar("input_name", input.Name);
+
+                }
+                else if (parentBlock != null)
+                {
+                    TrackerAsset.Instance.setVar("action", "attach_on_bottom");
+                }
+                else
+                {
+                    TrackerAsset.Instance.setVar("action", "deattach");
+                }
+               
+                TrackerAsset.Instance.GameObject.Used(childBlock.ID);
+                //Debug.Log("Setting block " + childBlock.ToDevString() + " parent to " + (parentBlock == null ? "empty at coords. " + childBlock.XY.ToString() : parentBlock.ToDevString()) + (input != null ? " at input " + input.Name : ""));
+            }
+
+            if (BlocklyUI.WorkspaceView.Toolbox.CheckBin(this))
+            {
+                TrackerAsset.Instance.setVar("block_type", Block.Type);
+                TrackerAsset.Instance.setVar("action", "remove");
+                TrackerAsset.Instance.GameObject.Used(Block.ID);
+            }
+
             // check over bin
             BlocklyUI.WorkspaceView.Toolbox.FinishCheckBin(this);
         }
