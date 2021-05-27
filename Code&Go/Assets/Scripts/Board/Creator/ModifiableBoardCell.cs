@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine;
+using AssetPackage;
 
 public class ModifiableBoardCell : MonoBehaviour, IMouseListener
 {
@@ -15,7 +16,6 @@ public class ModifiableBoardCell : MonoBehaviour, IMouseListener
     private void Start()
     {
         cell = GetComponent<BoardCell>();
-
     }
 
     public void SetBoardManager(BoardManager board)
@@ -33,6 +33,9 @@ public class ModifiableBoardCell : MonoBehaviour, IMouseListener
             Vector2Int pos = cell.GetPosition();
             boardManager.ReplaceCell(cell.GetNextID(), pos.x, pos.y);
             if (cameraInput != null) cameraInput.SetDragging(true);
+            TrackerAsset.Instance.setVar("cell_pos", pos.ToString());
+            TrackerAsset.Instance.setVar("new_cell_type", cell.GetNextID());
+            TrackerAsset.Instance.GameObject.Used("board_cell_changed");
         }
     }
 

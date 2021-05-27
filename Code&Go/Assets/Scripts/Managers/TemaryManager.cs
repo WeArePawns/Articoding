@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Components;
 using UnityEngine.UI;
+using AssetPackage;
+
 
 public class TemaryManager : MonoBehaviour
 {
@@ -139,6 +141,9 @@ public class TemaryManager : MonoBehaviour
         //categoryTitle.text = TypeToString(type);
         localizedCategoryTitle.StringReference = TypeToString(type);
         localizedCategoryTitle.RefreshString();
+
+        TrackerAsset.Instance.setVar("tutorial_category", type.ToString());
+        TrackerAsset.Instance.GameObject.Used("temary_category_selected");
     }
 
     private void ShowTutorialsCategoryList()

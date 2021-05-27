@@ -385,6 +385,11 @@ public class BoardManager : Listener
         return GetBoardState().ToJson();
     }
 
+    public string GetBoardStateAsFormatedString()
+    {
+        return GetBoardState().ToJson(true);
+    }
+
     public void AddBoardHint(Vector2Int pos, int amount, int id)
     {
         if (!IsInBoardBounds(pos)) return;

@@ -197,6 +197,7 @@ public class LevelManager : MonoBehaviour
         endPanel.SetActive(false);
         blackRect.SetActive(false);
         debugPanel.SetActive(false);
+        TrackerAsset.Instance.GameObject.Used("end_panel_minimized");
     }
 
     public void MinimizeGameOverPanel()
@@ -206,6 +207,7 @@ public class LevelManager : MonoBehaviour
         //endPanel.SetActive(false);
         blackRect.SetActive(false);
         debugPanel.SetActive(false);
+        TrackerAsset.Instance.GameObject.Used("game_over_panel_minimized");
     }
 
     public void ResetLevel()

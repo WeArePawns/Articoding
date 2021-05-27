@@ -51,6 +51,8 @@ public class LevelTestManager : MonoBehaviour
 
     private void Start()
     {
+        TrackerAsset.Instance.GameObject.Used("creator_scene_start");
+
         Invoke("ChangeMode", 0.01f);
         ActivateLevelBlocks(activeBlocks, false);
 #if UNITY_EDITOR
@@ -76,6 +78,9 @@ public class LevelTestManager : MonoBehaviour
             blackRect.SetActive(true);
             streamRoom.FinishLevel();
             ProgressManager.Instance.UserCreatedLevel(initialState.ToJson());
+
+            TrackerAsset.Instance.setVar("steps", board.GetCurrentSteps());
+            TrackerAsset.Instance.GameObject.Used("level_validated");
         }
     }
 
@@ -101,6 +106,8 @@ public class LevelTestManager : MonoBehaviour
             changeModeButton.GetComponent<Image>().sprite = changeToEditModeSprite;
             board.SetFocusPointOffset(new Vector3((board.GetColumns() - 2) / 2.0f + 0.5f, 0.0f, (board.GetRows() - 2) / 2.0f + 0.5f));
             cameraFit.FitBoard(board.GetRows(), board.GetColumns());
+            TrackerAsset.Instance.setVar("mode", "Validation");
+            TrackerAsset.Instance.setVar("category_id", board.GetBoardStateAsFormatedString());
         }
         else
         {
@@ -109,12 +116,14 @@ public class LevelTestManager : MonoBehaviour
             cameraFit.SetViewPort(creatorViewPort);
             changeModeButton.GetComponent<Image>().sprite = changeToPlayModeSprite;
             boardCreator.FitBoard();
+            TrackerAsset.Instance.setVar("mode", "Creation");
         }
+
+        TrackerAsset.Instance.GameObject.Used("creator_mode_changed");
     }
 
     public void LoadMainMenu()
     {
-        //TrackerAsset.Instance.setVar("steps", board.GetCurrentSteps());
         TrackerAsset.Instance.GameObject.Used("main_menu_return");
 
         if(LoadManager.Instance == null)
@@ -132,6 +141,7 @@ public class LevelTestManager : MonoBehaviour
         board.GenerateBoardElements(initialState);
         debugPanel.SetActive(true);
         cameraFit.FitBoard(board.GetRows(), board.GetColumns());
+        TrackerAsset.Instance.GameObject.Used("level_created_retry");
     }
 
     public void RetryLevel()
@@ -151,6 +161,7 @@ public class LevelTestManager : MonoBehaviour
         endPanel.SetActive(false);
         blackRect.SetActive(false);
         debugPanel.SetActive(false);
+        TrackerAsset.Instance.GameObject.Used("end_panel_minimized");
     }
 
     public void MinimizeGameOverPanel()
@@ -160,6 +171,7 @@ public class LevelTestManager : MonoBehaviour
         //endPanel.SetActive(false);
         blackRect.SetActive(false);
         debugPanel.SetActive(false);
+        TrackerAsset.Instance.GameObject.Used("game_over_panel_minimized");
     }
 
     public void ActivateLevelBlocks(TextAsset textAsset, bool allActive)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using AssetPackage;
 
 public class LevelUIController : MonoBehaviour
 {
@@ -30,6 +31,8 @@ public class LevelUIController : MonoBehaviour
             panel.anchoredPosition = new Vector2(0.0f, 0.0f);
         });
         TweenManager.Instance.AddTween(slideTween);
+
+        TrackerAsset.Instance.GameObject.Used("temary_panel_open");
     }
 
     public void Close(RectTransform panel)
@@ -55,5 +58,7 @@ public class LevelUIController : MonoBehaviour
         });
 
         TweenManager.Instance.AddTween(slideTween);
+
+        TrackerAsset.Instance.GameObject.Used("temary_panel_close");
     }
 }

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using AssetPackage;
 
 public class BoardCreator : MonoBehaviour
 {
@@ -249,6 +250,10 @@ public class BoardCreator : MonoBehaviour
         ResetCursor();
 
         FitBoard();
+
+        TrackerAsset.Instance.setVar("rows", rows);
+        TrackerAsset.Instance.setVar("columns", columns);
+        TrackerAsset.Instance.GameObject.Used("board_created");
     }
 
     public void FitBoard()

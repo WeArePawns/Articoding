@@ -101,8 +101,8 @@ public class BoardState
         return JsonUtility.FromJson<BoardState>(text);
     }
 
-    public string ToJson()
+    public string ToJson(bool pretty = false)
     {
-        return JsonUtility.ToJson(this);
+        return JsonUtility.ToJson(this, pretty);
     }
 }
