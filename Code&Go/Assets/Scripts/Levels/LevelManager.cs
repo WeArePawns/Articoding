@@ -107,7 +107,7 @@ public class LevelManager : MonoBehaviour
             return;
 
         if (boardManager.GetCurrentSteps() > minimosPasos + pasosOffset)
-            starsController.DeactivateMinimumStepsStar();
+            starsController.DeactivateMinimumStepsStar(boardManager.GetCurrentSteps() - (minimosPasos + pasosOffset));
 
 
         if (boardManager.BoardCompleted() && !endPanel.activeSelf && !endPanelMinimized.activeSelf)

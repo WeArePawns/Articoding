@@ -600,6 +600,8 @@ public class BoardManager : Listener
             Vector2Int position = elementPositions[name][index];
             if (!board[position.x, position.y].GetPlacedObject().IsMovable()) yield break;
 
+            currentSteps += amount;
+
             int i = 0;
             while (i++ < amount && MoveObject(elementPositions[name][index], direction, time))
             {
@@ -674,8 +676,6 @@ public class BoardManager : Listener
                 }
                 return false;
             }
-
-            currentSteps++;
 
             StartCoroutine(InternalMoveObject(fromCell, toCell, time));
             return true;
