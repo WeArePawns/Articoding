@@ -535,6 +535,7 @@ GameObject:
   - component: {fileID: 8201222562268177183}
   - component: {fileID: 2894265052207058088}
   - component: {fileID: 8630937218100419415}
+  - component: {fileID: -901830570677440837}
   m_Layer: 0
   m_Name: Block_logic_operation
   m_TagString: Untagged
@@ -626,6 +627,26 @@ MonoBehaviour:
   m_BgImages:
   - {fileID: 2894265052207058088}
   - {fileID: 1283265018319102654}
+--- !u!114 &-901830570677440837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4653527708021810708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 400
+  info: {fileID: 11400000, guid: 5d77a102564a98846bfbe7fe150feec3, type: 2}
+  highlightObject: 1
+  destroyOnShowed: 1
+  isSaveCheckpoint: 1
+  OnShowed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5210815853367360863
 GameObject:
   m_ObjectHideFlags: 0

@@ -48,6 +48,8 @@ public class TemaryManager : MonoBehaviour
     }
     private void Start()
     {
+        if (!GameManager.Instance.IsGameLoaded())
+            GameManager.Instance.LoadGame();
         shownTutorials.AddRange(TutorialManager.Instance.GetTriggeredTutorials());
         Configure();
     }
