@@ -74,7 +74,7 @@ public class Tab : MonoBehaviour, IPointerClickHandler
         image.color = imageSelectedColor;
 
         TrackerAsset.Instance.setVar("name", gameObject.name.ToLower());
-        TrackerAsset.Instance.Accessible.Accessed("main_menu_section", AccessibleTracker.Accessible.Accessible);
+        TrackerAsset.Instance.Accessible.Accessed("main_menu_section");
     }
 
     public void Deselect()

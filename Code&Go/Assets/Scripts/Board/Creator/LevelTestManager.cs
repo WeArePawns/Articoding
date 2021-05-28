@@ -51,7 +51,7 @@ public class LevelTestManager : MonoBehaviour
 
     private void Start()
     {
-        TrackerAsset.Instance.GameObject.Used("creator_scene_start");
+        TrackerAsset.Instance.Accessible.Accessed("creator_scene_start");
 
         Invoke("ChangeMode", 0.01f);
         ActivateLevelBlocks(activeBlocks, false);
@@ -119,12 +119,12 @@ public class LevelTestManager : MonoBehaviour
             TrackerAsset.Instance.setVar("mode", "Creation");
         }
 
-        TrackerAsset.Instance.GameObject.Used("creator_mode_changed");
+        TrackerAsset.Instance.GameObject.Interacted("creator_mode_changed");
     }
 
     public void LoadMainMenu()
     {
-        TrackerAsset.Instance.GameObject.Used("main_menu_return");
+        TrackerAsset.Instance.Accessible.Accessed("main_menu_return");
 
         if(LoadManager.Instance == null)
         {
@@ -141,7 +141,7 @@ public class LevelTestManager : MonoBehaviour
         board.GenerateBoardElements(initialState);
         debugPanel.SetActive(true);
         cameraFit.FitBoard(board.GetRows(), board.GetColumns());
-        TrackerAsset.Instance.GameObject.Used("level_created_retry");
+        TrackerAsset.Instance.Accessible.Accessed("level_created_retry");
     }
 
     public void RetryLevel()

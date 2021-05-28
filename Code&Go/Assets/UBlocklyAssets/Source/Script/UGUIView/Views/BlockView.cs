@@ -442,7 +442,7 @@ namespace UBlockly.UGUI
                 TrackerAsset.Instance.setVar("block_type", Block.Type);
                 TrackerAsset.Instance.setVar("action", "remove");
                 TrackerAsset.Instance.GameObject.Used(Block.ID);
-                TrackerAsset.Instance.Accessible.Accessed("", AccessibleTracker.Accessible.Screen);
+                //TrackerAsset.Instance.Accessible.Accessed("", AccessibleTracker.Accessible.Screen);
             }
 
             // check over bin

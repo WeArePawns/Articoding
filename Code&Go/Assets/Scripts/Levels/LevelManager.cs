@@ -94,7 +94,7 @@ public class LevelManager : MonoBehaviour
         TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
         TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
         TrackerAsset.Instance.setVar("code", "\n" + text);
-        TrackerAsset.Instance.GameObject.Used("level_start");
+        TrackerAsset.Instance.Accessible.Accessed("level_start");
 
         //levelName.text = currentLevel.levelName;
         levelNameLocalized.StringReference = currentLevel.levelNameLocalized;
@@ -118,7 +118,7 @@ public class LevelManager : MonoBehaviour
             TrackerAsset.Instance.setVar("first_execution", starsController.IsFirstRunStarActive());
             TrackerAsset.Instance.setVar("minimum_steps", starsController.IsMinimumStepsStarActive());
             TrackerAsset.Instance.setVar("no_hints", starsController.IsNoHintsStarActive());
-            TrackerAsset.Instance.GameObject.Used("level_end");
+            TrackerAsset.Instance.Accessible.Accessed("level_end");
 
             streamRoom.FinishLevel();
 
@@ -187,7 +187,7 @@ public class LevelManager : MonoBehaviour
 
         TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
         TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
-        TrackerAsset.Instance.GameObject.Used("level_retry");
+        TrackerAsset.Instance.Accessible.Accessed("level_retry");
     }
 
     public void MinimizeEndPanel()
@@ -230,7 +230,7 @@ public class LevelManager : MonoBehaviour
         //TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
         TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
         TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
-        TrackerAsset.Instance.GameObject.Used("level_exit");
+        TrackerAsset.Instance.Accessible.Accessed("level_exit");
 
         if(LoadManager.Instance == null)
         {
