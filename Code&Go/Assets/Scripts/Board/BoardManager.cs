@@ -911,7 +911,7 @@ public class BoardManager : Listener
     private void ActivateDoor(string name, int index, bool active)
     {
         name = name.ToLower();
-        if (name == "puerta_" && elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
+        if (name == boardObjectPrefabs[4].GetNameAsLower() && elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
             Vector2Int pos = elementPositions[name][index];
             Door door = (Door)board[pos.x, pos.y].GetPlacedObject();
