@@ -608,10 +608,11 @@ public class BoardManager : Listener
             currentSteps += amount;
 
             int i = 0;
-            while (i++ < amount && MoveObject(elementPositions[name][index], direction, time))
+            Coroutine coroutine;
+            while (i++ < amount && MoveObject(elementPositions[name][index], direction, time, out coroutine))
             {
                 elementPositions[name][index] += direction;
-                yield return new WaitForSeconds(time + 0.05f);
+                yield return coroutine;
             }
         }
         yield return null;
@@ -628,18 +629,20 @@ public class BoardManager : Listener
 
             currentSteps += amount / 2;
 
+            Coroutine coroutine;
             for (int i = 0; i < amount % 8; i++)
             {
-                RotateObject(elementPositions[name][index], direction, time);
-                yield return new WaitForSeconds(time + 0.05f);
+                RotateObject(elementPositions[name][index], direction, time, out coroutine);
+                yield return coroutine;
             }
         }
         yield return null;
     }
 
     // Smooth interpolation, this code must be called by blocks
-    public bool MoveObject(Vector2Int origin, Vector2Int direction, float time)
+    public bool MoveObject(Vector2Int origin, Vector2Int direction, float time, out Coroutine coroutine)
     {
+        coroutine = null;
         // Check valid direction
         if (!(direction.magnitude == 1.0f && (Mathf.Abs(direction.x) == 1 || Mathf.Abs(direction.y) == 1)))
             return false;
@@ -682,7 +685,7 @@ public class BoardManager : Listener
                 return false;
             }
 
-            StartCoroutine(InternalMoveObject(fromCell, toCell, time));
+            coroutine = StartCoroutine(InternalMoveObject(fromCell, toCell, time));
             return true;
         }
         else
@@ -692,9 +695,10 @@ public class BoardManager : Listener
         }
     }
 
-    public void RotateObject(Vector2Int origin, int direction, float time)
+    public void RotateObject(Vector2Int origin, int direction, float time, out Coroutine coroutine)
     {
         // Check direction
+        coroutine = null;
         if (direction == 0) return;
         direction = direction < 0 ? -1 : 1;
 
@@ -707,7 +711,7 @@ public class BoardManager : Listener
         // You cannot rotate an object that is already rotating
         if (bObject.GetDirection() == BoardObject.Direction.PARTIAL) return;
 
-        StartCoroutine(InternalRotateObject(bObject, direction, time));
+        coroutine = StartCoroutine(InternalRotateObject(bObject, direction, time));
     }
 
     public Vector3 GetLocalPosition(Vector3 position)
@@ -819,7 +823,7 @@ public class BoardManager : Listener
                 case MSG_TYPE.MOVE_LASER:
                     amount = int.Parse(args[0]);
                     dir = GetDirectionFromString(args[1]);
-                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f) - 0.05f;
                     StartCoroutine(MoveObject(laserName, 0, dir, amount, time));
                     break;
                 case MSG_TYPE.MOVE:
@@ -827,13 +831,13 @@ public class BoardManager : Listener
                     index = int.Parse(args[0].Split('_')[1]);
                     amount = int.Parse(args[1]);
                     dir = GetDirectionFromString(args[2]);
-                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f) - 0.05f;
                     StartCoroutine(MoveObject(name, index - 1, dir, amount, time));
                     break;
                 case MSG_TYPE.ROTATE_LASER:
                     amount = int.Parse(args[0]) * 2;
                     rot = GetRotationFromString(args[1]);
-                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / ((amount % 8) + 1), 0.5f) - 0.05f;
                     StartCoroutine(RotateObject(laserName, 0, rot, amount, time));
                     break;
                 case MSG_TYPE.ROTATE:
@@ -841,7 +845,7 @@ public class BoardManager : Listener
                     index = int.Parse(args[0].Split('_')[1]);
                     amount = int.Parse(args[1]) * 2;
                     rot = GetRotationFromString(args[2]);
-                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / ((amount % 8) + 1), 0.5f) - 0.05f;
                     StartCoroutine(RotateObject(name, index - 1, rot, amount, time));
                     break;
                 case MSG_TYPE.CHANGE_INTENSITY:
