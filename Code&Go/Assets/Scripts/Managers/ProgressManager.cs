@@ -65,6 +65,11 @@ public class ProgressManager : MonoBehaviour
         levelsCreatedCategory.levels.Clear();
     }
 
+    public bool IsAllUnlockedModeOn()
+    {
+        return allUnlocked;
+    }
+
     //Setters
     //---------
     public void LevelCompleted(uint starsAchieved)
