@@ -37,6 +37,17 @@ public class TemaryManager : MonoBehaviour
 
     private Button[] categoryButtons;
 
+    private TutorialType[] categoriesOrder = new TutorialType[] { TutorialType.NONE,
+    TutorialType.GENERAL,
+    TutorialType.BOARD,
+    TutorialType.CATEGORY_VARIABLES,
+    TutorialType.ACTION,
+    TutorialType.CATEGORY_TYPES,
+    TutorialType.CATEGORY_OPERATORS,
+    TutorialType.CATEGORY_LOOPS,
+    TutorialType.CATEGORY_CONDITIONS
+     };
+
     private void Awake()
     {
         shownTutorials = new List<string>();
@@ -45,7 +56,7 @@ public class TemaryManager : MonoBehaviour
 
         CreateCategoryList();
 
-        if(backButton != null)
+        if (backButton != null)
             backButton.onClick.AddListener(() => ShowTutorialsCategoryList());
     }
     private void Start()
@@ -74,7 +85,7 @@ public class TemaryManager : MonoBehaviour
 
         for (int i = 0; i < categoryButtons.Length; i++)
         {
-            TutorialType type = (TutorialType)(i + 1);
+            TutorialType type = categoriesOrder[i + 1];
             bool enabled = shownTemary.ContainsKey(type);
             categoryButtons[i].interactable = enabled;
 
@@ -89,7 +100,7 @@ public class TemaryManager : MonoBehaviour
         categoryButtons = new Button[count - 1];
         for (int i = 0; i < count; i++)
         {
-            TutorialType type = (TutorialType)i;
+            TutorialType type = categoriesOrder[i];
             if (type == TutorialType.NONE) continue;
 
             Button button = Instantiate(categoryButton, categoryList);
@@ -120,11 +131,11 @@ public class TemaryManager : MonoBehaviour
         // Show all tutorials
         List<PopUpData> tutorials = shownTemary[type];
         PopUpData lastData = null;
-        foreach(PopUpData data in tutorials)
+        foreach (PopUpData data in tutorials)
         {
-            if(lastData == null || data.localizedTitle.ToString() != lastData.localizedTitle.ToString())
+            if (lastData == null || data.localizedTitle.ToString() != lastData.localizedTitle.ToString())
                 AddTitle(data.localizedTitle);
-            if(!data.localizedImage.IsEmpty)
+            if (!data.localizedImage.IsEmpty)
                 AddImage(data.localizedImage);
             AddParagraph(data.localizedContent);
             lastData = data;
@@ -185,7 +196,7 @@ public class TemaryManager : MonoBehaviour
         LocalizeSpriteEvent image = Instantiate(imagePrefab, contentRect);
         image.gameObject.SetActive(true);
         image.AssetReference.SetReference(s.TableReference, s.TableEntryReference);
-        
+
     }
 
     private void AddParagraph(LocalizedString s)

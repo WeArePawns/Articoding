@@ -86,6 +86,7 @@ namespace UBlockly
     {
         public string BlockType;
         public BlockTutorialTriggerInfo Tutorial;
+        public bool active = true;
     }
 
 
@@ -97,7 +98,8 @@ namespace UBlockly
     public class BlockResMgr : ScriptableObject
     {
         [SerializeField] private BlockResLoadType m_LoadType;
-        [SerializeField] private BlockTextResLocalized m_I18nFiles;
+        [SerializeField] private BlockTextResLocalized m_I18nFileLocalized;
+        [SerializeField] private List<BlockTextResWithSelectionParam> m_I18nFiles;
         [SerializeField] private List<BlockTextResParam> m_BlockJsonFiles;
         [SerializeField] private List<BlockTextResParam> m_ToolboxFiles;
         [SerializeField] private List<BlockTutorialParam> m_BlockTutorials;
@@ -151,7 +153,7 @@ namespace UBlockly
 
         public void LoadFiles()
         {
-            var loadingOp = m_I18nFiles.LocalizedTextFile.LoadAssetAsync();
+            var loadingOp = m_I18nFileLocalized.LocalizedTextFile.LoadAssetAsync();
             if (!loadingOp.IsDone)
                 ;
 
@@ -161,59 +163,61 @@ namespace UBlockly
             {
                 I18n.AddI18nFile(textAsset.text);
                 if (mABUnload != null)
-                    mABUnload(m_I18nFiles.ResName);
+                    mABUnload(m_I18nFileLocalized.ResName);
             }
 
-            Debug.Log("Select I18n: " + m_I18nFiles.IndexName);
+            Debug.Log("Select I18n: " + m_I18nFileLocalized.IndexName);
         }
 
 
-        public void LoadI18n()
+        public void LoadI18n(bool localized = true)
         {
-            if (m_I18nFiles == null)
+            if (m_I18nFileLocalized == null)
             {
                 Debug.LogError("LoadI18n failed. Please assign i18n files to BlockResSettings.asset.");
                 return;
             }
 
-            LoadFiles();
-            //var i18nSelected = m_I18nFiles.FindAll(file => file.Selected);
-            //if (i18nSelected.Count == 0)
-            //{
-            //    Debug.LogWarning("Please select an i18n file in BlockResSettings.asset. Default select \'en\'.");
-            //    i18nSelected.Add(m_I18nFiles.Find(file => file.IndexName == "en"));
-            //}
-            //else if (i18nSelected.Count > 1)
-            //{
-            //    Debug.LogWarning("You have selected more than one i18n files in BlockResSettings.asset. The first one will be used.");
-            //}
+            if (localized)
+                LoadFiles();
+            else
+            {
+                var i18nSelected = m_I18nFiles.FindAll(file => file.Selected);
+                if (i18nSelected.Count == 0)
+                {
+                    Debug.LogWarning("Please select an i18n file in BlockResSettings.asset. Default select \'en\'.");
+                    i18nSelected.Add(m_I18nFiles.Find(file => file.IndexName == "en"));
+                }
+                else if (i18nSelected.Count > 1)
+                {
+                    Debug.LogWarning("You have selected more than one i18n files in BlockResSettings.asset. The first one will be used.");
+                }
 
-            //var resParam = i18nSelected[0];
-            //TextAsset textAsset = null;
-            //switch (m_LoadType)
-            //{
-            //    case BlockResLoadType.Assetbundle:
-            //        if (mABSyncLoad != null)
-            //            textAsset = mABSyncLoad(m_I18nFiles.ResName) as TextAsset;
-            //        break;
-            //    case BlockResLoadType.Resources:
-            //        textAsset = Resources.Load<TextAsset>(m_I18nFiles.ResName);
-            //        break;
-            //    case BlockResLoadType.Serialized:
-            //        var loadingOp = m_I18nFiles.LocalizedTextFile.LoadAssetAsync();
-            //        if (loadingOp.IsDone)
-            //            textAsset = loadingOp.Result;// m_I18nFiles.LocalizedTextFile;
-            //        break;
-            //}
+                var resParam = i18nSelected[0];
+                TextAsset textAsset = null;
+                switch (m_LoadType)
+                {
+                    case BlockResLoadType.Assetbundle:
+                        if (mABSyncLoad != null)
+                            textAsset = mABSyncLoad(resParam.ResName) as TextAsset;
+                        break;
+                    case BlockResLoadType.Resources:
+                        textAsset = Resources.Load<TextAsset>(resParam.ResName);
+                        break;
+                    case BlockResLoadType.Serialized:
+                        textAsset = resParam.TextFile;
+                        break;
+                }
 
-            //if (textAsset != null)
-            //{
-            //    I18n.AddI18nFile(textAsset.text);
-            //    if (m_LoadType == BlockResLoadType.Assetbundle && mABUnload != null)
-            //        mABUnload(m_I18nFiles.ResName);
-            //}
+                if (textAsset != null)
+                {
+                    I18n.AddI18nFile(textAsset.text);
+                    if (m_LoadType == BlockResLoadType.Assetbundle && mABUnload != null)
+                        mABUnload(resParam.ResName);
+                }
 
-            //Debug.Log("Select I18n: " + m_I18nFiles.IndexName);
+                Debug.Log("Select I18n: " + resParam.IndexName);
+            }
         }
 
         #endregion
@@ -301,7 +305,8 @@ namespace UBlockly
             m_BlockTutorialsDictionary = new Dictionary<string, BlockTutorialTriggerInfo>();
             foreach (BlockTutorialParam bT in m_BlockTutorials)
             {
-                m_BlockTutorialsDictionary[bT.BlockType] = bT.Tutorial;
+                if (bT.active)
+                    m_BlockTutorialsDictionary[bT.BlockType] = bT.Tutorial;
             }
         }
 

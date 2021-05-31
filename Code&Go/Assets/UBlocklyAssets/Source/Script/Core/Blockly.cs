@@ -29,9 +29,9 @@ namespace UBlockly
         /// <summary>
         /// Initialize blockly model. Called very first when start blockly
         /// </summary>
-        public static void Init()
+        public static void Init(bool localize = true)
         {
-            BlockResMgr.Get().LoadI18n();
+            BlockResMgr.Get().LoadI18n(localize);
             BlockResMgr.Get().LoadJsonDefinitions();
         }
         

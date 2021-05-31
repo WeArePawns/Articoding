@@ -31,7 +31,7 @@ namespace UBlockly.UGUI
         static void BuildBlockPrefabs()
         {
             Blockly.Dispose();
-            Blockly.Init();
+            Blockly.Init(false);
             Workspace workspace = new Workspace();
 
             var blocks = BlockFactory.Instance.GetAllBlockDefinitions().Keys;

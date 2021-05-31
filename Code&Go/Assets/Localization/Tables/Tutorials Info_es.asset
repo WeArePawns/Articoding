@@ -37,8 +37,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2928527724544
-    m_Localized: "Cuando quieras volver a la vista cenital pulsa este bot\xF3n, puede
-      ser \xFAtil para ver el sistema de coordenadas original."
+    m_Localized: "Cuando quieras volver a la vista desde arriba pulsa este bot\xF3n,
+      puede ser \xFAtil para ver el sistema de coordenadas original."
     m_Metadata:
       m_Items: []
   - m_Id: 3699826675712
@@ -109,16 +109,20 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 21217643515904
-    m_Localized: "Voy a ense\xF1arte c\xF3mo funcionan las cosas."
+    m_Localized: "Voy a ense\xF1arte c\xF3mo funcionan las cosas. A lo largo del
+      juego encontrar\xE1s m\xE1s tarjetas como estas. Algunas te explicar\xE1n cosas
+      muy importantes asi que estate atento."
     m_Metadata:
       m_Items: []
   - m_Id: 21540206465024
-    m_Localized: "Barra de navegaci\xF3n"
+    m_Localized: Menus del juego
     m_Metadata:
       m_Items: []
   - m_Id: 21637497540608
-    m_Localized: "Esta es la barra de navegaci\xF3n. Aqu\xED arriba puedes navegar
-      por los distintos men\xFAs."
+    m_Localized: "Estos son los men\xFAs del juego.  El juego tiene tres men\xFAs,
+      el de jugar donde se accede a los niveles. El de tutoriales donde puedes releer
+      los tutoriales desbloqueados. Y el modo creaci\xF3n donde podr\xE1s crear y
+      guardar tus propios tableros."
     m_Metadata:
       m_Items: []
   - m_Id: 22053882875904
@@ -181,8 +185,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 115190152220672
-    m_Localized: "Esto es un espejo. Cuando un l\xE1ser choca, hace que rebote. \xA1Es
-      muy \xFAtil! "
+    m_Localized: "Esto es un espejo. Cuando un l\xE1ser choca, hace que rebote cambiando
+      la direcci\xF3n del laser 90\xBA. \xA1Es muy \xFAtil! "
     m_Metadata:
       m_Items: []
   - m_Id: 115480574218240
@@ -211,7 +215,8 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 117412940402688
     m_Localized: "Has desbloqueado el movimiento del laser! Esta tarjeta te permite
-      mover el l\xE1ser un n\xFAmero de casillas en una direcci\xF3n."
+      mover el l\xE1ser un n\xFAmero de casillas en una direcci\xF3n. M\xE1s adelante
+      tambi\xE9n podr\xE1s mover otros objetos."
     m_Metadata:
       m_Items: []
   - m_Id: 118035589025792
@@ -221,7 +226,7 @@ MonoBehaviour:
   - m_Id: 117959907004416
     m_Localized: "Esto es un receptor. Tu misi\xF3n es dirigir el l\xE1ser hacia
       el, as\xED har\xE1s que se active. Cuando el receptor est\xE9 activado, la
-      puerta se abrir\xE1 y podr\xE1s avanzar a la siguiente sala."
+      puerta se abrir\xE1 y podr\xE1s avanzar al siguiente nivel."
     m_Metadata:
       m_Items: []
   - m_Id: 139388476116992
@@ -230,8 +235,9 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 139446865022976
     m_Localized: "Hemos conseguido una nueva trajeta! Con esta tarjeta podr\xE1s
-      girar el l\xE1ser en un sentido un m\xFAltiplo de 90 grados. Si usas el + el
-      l\xE1ser girar\xE1 a la derecha, si usas - hacia la izquierda."
+      girar el l\xE1ser (y otros objetos m\xE1s adelante) en un sentido un m\xFAltiplo
+      de 90 grados. Si usas el + el l\xE1ser girar\xE1 en el sentido de las agujas
+      del reloj, si usas - girar\xE1 en sentido contrario."
     m_Metadata:
       m_Items: []
   - m_Id: 140658565894144
@@ -266,7 +272,8 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 209759204200448
     m_Localized: "Con esta tarjeta puedes cambiar el estado de una puerta, si utilizas
-      verdadero la puerta se abrir\xE1, si usas falso se cerrar\xE1."
+      verdadero la puerta se activar\xE1 y cerrar\xE1, si usas falso se apagar\xE1
+      y se abrir\xE1."
     m_Metadata:
       m_Items: []
   - m_Id: 211383465201664
@@ -285,7 +292,8 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 212048866365440
     m_Localized: "Esto es una puerta, puede estar encendida o apagada y podr\xE1s
-      modificar su estado mediante tarjetas."
+      modificar su estado mediante tarjetas. Para abrir la puerta tendr\xE1s que
+      desactivarla con la tarjeta de c\xF3digo correspondiente."
     m_Metadata:
       m_Items: []
   - m_Id: 212346884247552
@@ -314,7 +322,8 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 213547373744128
     m_Localized: "Con esta tarjeta puedes escribir textos. Puedes usar este texto
-      para referirte a objetos espec\xEDficos."
+      para referirte a objetos espec\xEDficos. Para referirte a un objeto introduce
+      su nombre del tablero. Por ejemplo \"Laser_1\"."
     m_Metadata:
       m_Items: []
   - m_Id: 213877238976512
@@ -403,7 +412,7 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 116015675133952
     m_Localized: "Esto es un emisor de l\xE1ser. El l\xE1ser tiene varias intensidades.
-      Puedes variar la intensidad del l\xE1ser utilizando las variables."
+      Si la intensidad del laser es mayor que 0 el l\xE1ser se encender\xE1."
     m_Metadata:
       m_Items: []
   - m_Id: 232223330193408
@@ -446,8 +455,7 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 382920087961600
     m_Localized: "Has desbloqueado una nueva categor\xEDa, completa todos sus niveles
-      para desbloquear la siguiente. Adem\xE1s puedes intentar conseguir todas las
-      estrellas de las categor\xEDas anteriores."
+      para desbloquear la siguiente."
     m_Metadata:
       m_Items: []
   references:

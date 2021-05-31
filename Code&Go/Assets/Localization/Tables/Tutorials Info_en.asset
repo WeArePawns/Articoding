@@ -36,8 +36,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2928527724544
-    m_Localized: When you want to return to the cenital view press this button. It
-      can be useful to see the original coordinates system.
+    m_Localized: When you want to return to the top-down view press this button.
+      It can be useful to see the original coordinates system.
     m_Metadata:
       m_Items: []
   - m_Id: 3699826675712
@@ -107,16 +107,20 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 21217643515904
-    m_Localized: I'm going to teach you how things work.
+    m_Localized: I'm going to teach you how things work. Throughout the game you
+      will find more popups like this one. Some of them will teach you very important
+      things so pay attention.
     m_Metadata:
       m_Items: []
   - m_Id: 21540206465024
-    m_Localized: Navigation bar
+    m_Localized: Game Menus
     m_Metadata:
       m_Items: []
   - m_Id: 21637497540608
-    m_Localized: This is the navigation bar. Up here you can navigate through the
-      menus.
+    m_Localized: These are the menus of the game.  The game has three menus, the
+      play menu where you can access the levels. The tutorial menu where you can
+      reread the unlocked tutorials. And the creation mode where you can create and
+      save your own boards.
     m_Metadata:
       m_Items: []
   - m_Id: 22053882875904
@@ -178,8 +182,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 115190152220672
-    m_Localized: This is a mirror. When a laser collides with it, it will reflect.
-      It can be very useful!
+    m_Localized: "This is a mirror. When a laser collides with it, it will reflect,
+      this will change the laser direction by 90\xBA. It can be very useful!"
     m_Metadata:
       m_Items: []
   - m_Id: 115480574218240
@@ -209,7 +213,8 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 117412940402688
     m_Localized: You have unlocked the Laser movement! This code card allows you
-      to move the laser a number of cells in the direction you want.
+      to move the laser a number of cells in the direction you want. Later on you
+      will be able to move other objects as well.
     m_Metadata:
       m_Items: []
   - m_Id: 118035589025792
@@ -219,7 +224,7 @@ MonoBehaviour:
   - m_Id: 117959907004416
     m_Localized: This is a Receiver. Your mission is to guide the laser to the receiver
       to activate it. When the receiver is activated, the door will open and you
-      can move on to the next room.
+      can move on to the next level.
     m_Metadata:
       m_Items: []
   - m_Id: 139388476116992
@@ -229,8 +234,7 @@ MonoBehaviour:
   - m_Id: 139446865022976
     m_Localized: You got a new code card! With this code card you can rotate the
       laser in a direction a multiple of 90 degrees. If you use the + option, the
-      laser rotates to the right. If you use the - option, the laser rotates to the
-      left.
+      laser rotates clockwise. If you use the - option, the laser rotates anti-clockwise.
     m_Metadata:
       m_Items: []
   - m_Id: 140658565894144
@@ -265,7 +269,8 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 209759204200448
     m_Localized: With this code card you can change the door state. If you use True,
-      the door opens. If you use False, the door closes.
+      the door activates and it closes. If you use False, the door deactivates and 
+      opens up.
     m_Metadata:
       m_Items: []
   - m_Id: 211383465201664
@@ -284,7 +289,8 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 212048866365440
     m_Localized: This is a door. It can be activated or deactivated and you can change
-      its state with code cards.
+      its state with code cards. To open the door you will have to power it down
+      using the correct code card.
     m_Metadata:
       m_Items: []
   - m_Id: 212346884247552
@@ -313,7 +319,8 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 213547373744128
     m_Localized: With this code card you can write texts. You can use that text to
-      reference specific objects.
+      reference specific objects. To reference an object use its name from the board.
+      For example "Laser_1".
     m_Metadata:
       m_Items: []
   - m_Id: 213877238976512
@@ -399,8 +406,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 116015675133952
-    m_Localized: This is a Laser Emitter. The laser has multiple intensities. You
-      can change the laser intensity using variables.
+    m_Localized: This is a Laser Emitter. The laser has multiple intensities. If
+      the laser intensity is greater than 0 the laser will turn on.
     m_Metadata:
       m_Items: []
   - m_Id: 232223330193408
@@ -443,7 +450,7 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 382920087961600
     m_Localized: You have unlocked a new category, complete all its levels to unlock
-      the next one. You can also try to get all the stars of the previous categories.
+      the next one.
     m_Metadata:
       m_Items: []
   references:

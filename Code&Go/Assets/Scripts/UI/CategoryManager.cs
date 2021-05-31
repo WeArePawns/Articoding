@@ -76,8 +76,6 @@ public class CategoryManager : MonoBehaviour
                 card.image.sprite = deactivatedImage;
                 card.button.image.color = deactivatedCategoryColor;
             }
-            else if (index > 0)
-                card.ActivateTutorials();
         }
         //currentLevelCreatedPanel.SetActive(false);
 

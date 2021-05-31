@@ -13,8 +13,6 @@ public class CategoryCard : MonoBehaviour
 
     [SerializeField] private ProgressBar progressBar;
 
-    [SerializeField] private TutorialTrigger categoryUnlockedTutorial;
-
     [HideInInspector] public Button button;
     public Image image;
 
@@ -41,10 +39,5 @@ public class CategoryCard : MonoBehaviour
     {
         this.category = category;
         Configure();
-    }
-
-    public void ActivateTutorials()
-    {
-        categoryUnlockedTutorial.enabled = true;
     }
 }
