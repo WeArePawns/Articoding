@@ -501,5 +501,7 @@ namespace UBlockly.UGUI
             if (m_Parent != null)
                 m_Parent.RemoveChild(this);
         }
+
+        public abstract bool CanBeCloned(BlockView block = null);
     }
 }

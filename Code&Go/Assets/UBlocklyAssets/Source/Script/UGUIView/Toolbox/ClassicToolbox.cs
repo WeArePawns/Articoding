@@ -102,6 +102,24 @@ namespace UBlockly.UGUI
                     BuildBlockViewsForActiveCategory();
             }
 
+            //Set Block Count
+            foreach (BlockView bw in mRootList[categoryName].transform.GetComponentsInChildren<BlockView>())
+            {
+                if (Block.blocksAvailable.ContainsKey(bw.BlockType))
+                    if (Block.blocksAvailable[bw.BlockType] > 0)
+                    {
+                        //If the block was disabled we reactivate it
+                        bw.enabled = true;
+                        bw.ChangeBgColor(GetColorOfBlockView(bw));
+                    }
+                    else
+                    {
+                        bw.enabled = false;
+                        bw.ChangeBgColor(Color.gray);
+                    }
+                bw.UpdateCount();
+            }
+
             //resize the background
             LayoutRebuilder.ForceRebuildLayoutImmediate(contentTrans);
             m_BlockScrollList.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, LayoutUtility.GetPreferredWidth(contentTrans));
@@ -140,7 +158,7 @@ namespace UBlockly.UGUI
         }
 
         public override bool CheckBin(BlockView blockView)
-        {            
+        {
             if (blockView.InToolbox || nActiveCategories == 0) return false;
 
             m_BinArea.SetActive(true);

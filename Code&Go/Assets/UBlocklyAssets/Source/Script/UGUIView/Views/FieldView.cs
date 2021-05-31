@@ -114,5 +114,10 @@ namespace UBlockly.UGUI
                     mViewRef.OnValueChanged(newValue);
             }
         }
+
+        public override bool CanBeCloned(BlockView block = null)
+        {
+            return mSourceBlockView.CanBeCloned(block);
+        }
     }
 }

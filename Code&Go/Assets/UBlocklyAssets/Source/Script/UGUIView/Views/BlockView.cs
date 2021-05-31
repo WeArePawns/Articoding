@@ -73,6 +73,22 @@ namespace UBlockly.UGUI
             }
         }
 
+        public override bool CanBeCloned(BlockView block = null)
+        {
+            if (block == this) return true;
+            Dictionary<string, int> lastBlocksAvailable = new Dictionary<string, int>(Block.blocksAvailable);
+            bool cloned = Block.blocksAvailable.ContainsKey(BlockType) && Block.blocksAvailable[BlockType] > 0;
+            if (!cloned) return false;
+            Block.blocksAvailable[BlockType]--;
+            for (int i = 0; i < Childs.Count && cloned; i++)
+            {
+                cloned = Childs[i].CanBeCloned(this);
+            }
+            if (!cloned && block == null) Block.blocksAvailable = lastBlocksAvailable;
+
+            return cloned;
+        }
+
         public void BindModel(Block block)
         {
             if (mBlock == block) return;
@@ -432,7 +448,7 @@ namespace UBlockly.UGUI
                 {
                     TrackerAsset.Instance.setVar("action", "deattach");
                 }
-               
+
                 TrackerAsset.Instance.GameObject.Used(childBlock.ID);
                 //Debug.Log("Setting block " + childBlock.ToDevString() + " parent to " + (parentBlock == null ? "empty at coords. " + childBlock.XY.ToString() : parentBlock.ToDevString()) + (input != null ? " at input " + input.Name : ""));
             }
@@ -452,8 +468,8 @@ namespace UBlockly.UGUI
         public void OnPointerClick(PointerEventData eventData)
         {
             //todo: background outline
-            /*if (!eventData.dragging && !InToolbox) 
-                BlocklyUI.WorkspaceView.CloneBlockView(this, XYInCodingArea + BlockViewSettings.Get().BumpAwayOffset);*/
+            if (eventData.button == PointerEventData.InputButton.Right && !eventData.dragging && !InToolbox && CanBeCloned(null))
+                BlocklyUI.WorkspaceView.CloneBlockView(this, XY + BlockViewSettings.Get().BumpAwayOffset);
         }
 
         #endregion

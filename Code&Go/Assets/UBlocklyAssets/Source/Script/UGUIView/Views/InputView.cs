@@ -25,13 +25,13 @@ namespace UBlockly.UGUI
     public class InputView : BaseView
     {
         [SerializeField] private bool m_AlignRight = false;
-        
+
         public bool AlignRight
         {
             get { return m_AlignRight; }
             set { m_AlignRight = value; }
         }
-        
+
         public override ViewType Type
         {
             get { return ViewType.Input; }
@@ -69,9 +69,9 @@ namespace UBlockly.UGUI
             {
                 var view = Childs[i];
                 if (view.Type == ViewType.Field)
-                    ((FieldView) view).BindModel(mInput.FieldRow[i]);
+                    ((FieldView)view).BindModel(mInput.FieldRow[i]);
                 else if (view.Type == ViewType.ConnectionInput)
-                    ((ConnectionInputView) view).BindModel(mInput.Connection);
+                    ((ConnectionInputView)view).BindModel(mInput.Connection);
             }
         }
 
@@ -81,9 +81,9 @@ namespace UBlockly.UGUI
             {
                 var view = Childs[i];
                 if (view.Type == ViewType.Field)
-                    ((FieldView) view).UnBindModel();
+                    ((FieldView)view).UnBindModel();
                 else if (view.Type == ViewType.ConnectionInput)
-                    ((ConnectionInputView) view).UnBindModel();
+                    ((ConnectionInputView)view).UnBindModel();
             }
             mInput = null;
         }
@@ -102,6 +102,14 @@ namespace UBlockly.UGUI
                 size.y = Mathf.Max(size.y, Childs[i].Height);
             }
             return size;
+        }
+
+        public override bool CanBeCloned(BlockView block = null)
+        {
+            bool cloned = true;
+            for (int i = 0; i < Childs.Count && cloned; i++)
+                cloned = Childs[i].CanBeCloned(block);
+            return cloned;
         }
     }
 }
