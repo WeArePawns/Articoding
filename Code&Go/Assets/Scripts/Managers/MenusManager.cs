@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenusManager : MonoBehaviour
 {
@@ -51,6 +52,17 @@ public class MenusManager : MonoBehaviour
     {
         exitConfirmationPanel.SetActive(active);
         blackPanel.SetActive(active);
+    }
+
+    public void LoadCreditsScene()
+    {
+        if (LoadManager.Instance == null)
+        {
+            SceneManager.LoadScene("EndScene");
+            return;
+        }
+
+        LoadManager.Instance.LoadScene("EndScene");
     }
 
     public void ExitGame()

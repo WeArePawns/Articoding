@@ -1270,7 +1270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  priority: 300
+  priority: 410
   info: {fileID: 11400000, guid: bd21cd1442f54e34d98b0a844f851a72, type: 2}
   highlightObject: 1
   destroyOnShowed: 1
@@ -2059,6 +2059,8 @@ GameObject:
   - component: {fileID: 575093752}
   - component: {fileID: 575093751}
   - component: {fileID: 575093753}
+  - component: {fileID: 575093755}
+  - component: {fileID: 575093754}
   m_Layer: 5
   m_Name: LeftArea
   m_TagString: Untagged
@@ -2144,6 +2146,40 @@ MonoBehaviour:
   OnShowed:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &575093754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575093749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 130
+  info: {fileID: 11400000, guid: 429464ed5d9978a48ab65d5ece4b1a66, type: 2}
+  highlightObject: 1
+  destroyOnShowed: 1
+  isSaveCheckpoint: 1
+  OnShowed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &575093755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575093749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a4a7d46654560a4d8012ca2935fcaa2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tt: {fileID: 575093754}
+  level: {fileID: 11400000, guid: a61c38913552b9040bb284ea195d4ac4, type: 2}
 --- !u!114 &586603504 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5615152996345754776, guid: a489794761ad7a94680d475b9707ab21, type: 3}
@@ -2778,7 +2814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  priority: 290
+  priority: 405
   info: {fileID: 11400000, guid: 458b86697f807bc44a1c2658d517ef8c, type: 2}
   highlightObject: 1
   destroyOnShowed: 1
