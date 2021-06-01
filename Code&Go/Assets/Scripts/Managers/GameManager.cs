@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using AssetPackage;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -28,6 +29,8 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         LoadGame();
+        TrackerAsset.Instance.Completable.Initialized("articoding", CompletableTracker.Completable.Game);
+        TrackerAsset.Instance.Completable.Progressed("articoding", CompletableTracker.Completable.Game, ProgressManager.Instance.GetGameProgress());
     }
 
     public void LoadGame()
@@ -117,5 +120,21 @@ public class GameManager : MonoBehaviour
     {
         if (loadSave)
             SaveManager.Save();
+    }
+
+    public string GetCurrentLevelName()
+    {
+        // TODO: nombre distinto si estas en el creador
+
+        Category category = GetCurrentCategory();
+        int levelIndex = GetCurrentLevelIndex();
+        string levelName = category.levels[levelIndex].levelName;
+
+        return levelName;
+    }
+
+    public Category[] GetCategories()
+    {
+        return categories;
     }
 }

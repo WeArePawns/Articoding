@@ -40,7 +40,13 @@ public class BoardCreator : MonoBehaviour
 
     private void Start()
     {
-        GenerateNewBoard();
+        GenerateNewBoard(false);
+
+        TrackerAsset.Instance.setVar("rows", rows);
+        TrackerAsset.Instance.setVar("columns", columns);
+        TrackerAsset.Instance.Accessible.Accessed("level_editor");
+
+
         filePath = Application.dataPath + "/LevelsCreated/";
         rows = board.GetRows();
         columns = board.GetColumns();
@@ -231,7 +237,7 @@ public class BoardCreator : MonoBehaviour
         this.columns = board.GetColumns();
     }
 
-    public void GenerateNewBoard()
+    public void GenerateNewBoard(bool trace)
     {
         int columns = int.Parse(columnsField.text), rows = int.Parse(rowsField.text);
         if (columns <= 0 || rows <= 0) return;
@@ -251,9 +257,11 @@ public class BoardCreator : MonoBehaviour
 
         FitBoard();
 
+        if (!trace) return;
+
         TrackerAsset.Instance.setVar("rows", rows);
         TrackerAsset.Instance.setVar("columns", columns);
-        TrackerAsset.Instance.GameObject.Used("board_created");
+        TrackerAsset.Instance.GameObject.Used("create_board_button");
     }
 
     public void FitBoard()

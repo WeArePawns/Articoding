@@ -886,6 +886,11 @@ public class BoardManager : Listener
         blackRect.SetActive(true);
 
         streamRoom.GameOver();
+
+
+        // TODO: key de mierda
+        var levelName = GameManager.Instance.GetCurrentLevelName();
+        TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, false);
     }
 
     public CameraMouseInput GetMouseInput()
@@ -977,7 +982,16 @@ public class BoardManager : Listener
         if (hintsShown >= hintsParent.childCount /*|| ProgressManager.Instance.GetHintsRemaining() == 0*/)
             DeactivateHintButton();
 
+
         TrackerAsset.Instance.setVar("remaining_hints", ProgressManager.Instance.GetHintsRemaining());
-        TrackerAsset.Instance.GameObject.Used("hint_used");
+        TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName());
+        TrackerAsset.Instance.GameObject.Interacted("hint_button");
     }
+
+    public void TraceResetView(string buttonName)
+    {
+        TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName());
+        TrackerAsset.Instance.GameObject.Interacted(buttonName);
+    }
+
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using System;
 using UnityEngine.Localization;
+using AssetPackage;
 
 public class ProgressManager : MonoBehaviour
 {
@@ -78,9 +79,11 @@ public class ProgressManager : MonoBehaviour
         currentCategory.levelsData[currentLevel].stars = currentCategory.levelsData[currentLevel].stars + newStarsAchieved;
         currentCategory.totalStars += newStarsAchieved;
 
+        int categoryIndex = Array.IndexOf(categoriesData, currentCategory);
+
         if (currentLevel >= currentCategory.lastLevelUnlocked)
         {
-            if (currentLevel + 1 >= currentCategory.levelsData.Length && lastCategoryUnlocked + 1 < categories.Count)
+            if (currentLevel + 1 >= currentCategory.levelsData.Length && lastCategoryUnlocked == categoryIndex && lastCategoryUnlocked + 1 < categories.Count)
             {
                 lastCategoryUnlocked++;
                 categoriesData[lastCategoryUnlocked].lastLevelUnlocked = 0;
@@ -88,6 +91,25 @@ public class ProgressManager : MonoBehaviour
             currentCategory.lastLevelUnlocked = currentLevel + 1;
         }
 
+        // TODO: key de mierda
+        var levelName = GameManager.Instance.GetCurrentLevelName();
+        TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, true, starsAchieved);
+
+        // TODO: key de mierda
+        var categoryName = categories[categoryIndex].name_id;
+        if(lastCategoryUnlocked == categoryIndex)
+        {
+            TrackerAsset.Instance.Completable.Progressed(categoryName, CompletableTracker.Completable.Completable, (float)currentCategory.lastLevelUnlocked / categories[categoryIndex].levels.Count);
+        }
+        else
+        {
+            TrackerAsset.Instance.Completable.Completed(categoryName, CompletableTracker.Completable.Completable, true, GetCategoryTotalStars(categoryIndex));
+        }
+
+        if(categoriesData[lastCategoryUnlocked].lastLevelUnlocked == categories[lastCategoryUnlocked].levels.Count && lastCategoryUnlocked + 1 == categories.Count)
+        {
+            TrackerAsset.Instance.Completable.Completed("articoding", CompletableTracker.Completable.Game, true, GetTotalStars());
+        }
     }
 
     public void LevelStarted(int categoryIndex, int level)
@@ -95,6 +117,19 @@ public class ProgressManager : MonoBehaviour
         if (currentCategory == null || (categoryIndex >= 0 && categoryIndex < categoriesData.Length && categoriesData[categoryIndex] != currentCategory))
             currentCategory = categoriesData[categoryIndex];
         currentLevel = level;
+
+
+        if(currentLevel == 0 && !currentCategory.completableInitialized)
+        {
+            // TODO: key de mierda
+            var categoryName = categories[categoryIndex].nameIDLocalized.TableEntryReference.Key;
+            TrackerAsset.Instance.Completable.Initialized(categoryName, CompletableTracker.Completable.Completable);
+            currentCategory.completableInitialized = true;
+        }
+
+        // TODO: key de mierda
+        var levelName = GameManager.Instance.GetCurrentLevelName();
+        TrackerAsset.Instance.Completable.Initialized(levelName, CompletableTracker.Completable.Level);
     }
 
     public void LevelStarted(Category category, int level)
@@ -267,5 +302,31 @@ public class ProgressManager : MonoBehaviour
         coins = data.coins;
         levelsCreated = data.levelsCreatedData;
         LoadLevelsCreated();
+    }
+
+    public float GetGameProgress()
+    {
+        int levels = 0;
+        int totalLevel = 0;
+
+        foreach (Category c in categories)
+        {
+            levels += GetCategoryCurrentProgress(c);
+            totalLevel += c.levels.Count;
+        }
+
+        return levels / (float) totalLevel;
+    }
+
+    public int GetTotalStars()
+    {
+        int stars = 0;
+
+        for (int i = 0; i < categories.Count; i++)
+        {
+            stars += (int)GetCategoryTotalStars(i);
+        }
+
+        return stars;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using AssetPackage;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -14,6 +15,8 @@ public class MenusManager : MonoBehaviour
 
     void Start()
     {
+        //TrackerAsset.Instance.Accessible.Accessed("menu")
+
         exitConfirmationPanel.SetActive(false);
         blackPanel.SetActive(false);
         settingsMenu.SetActive(false);
@@ -74,5 +77,10 @@ public class MenusManager : MonoBehaviour
 #endif
 
         Application.Quit();
+    }
+
+    public void TraceEditor()
+    {
+        TrackerAsset.Instance.Accessible.Accessed("editor_levels", AccessibleTracker.Accessible.Screen);
     }
 }

@@ -446,7 +446,7 @@ namespace UBlockly.UGUI
                 }
                 else
                 {
-                    TrackerAsset.Instance.setVar("action", "deattach");
+                    TrackerAsset.Instance.setVar("action", "dettach");
                 }
 
                 TrackerAsset.Instance.GameObject.Used(childBlock.ID);

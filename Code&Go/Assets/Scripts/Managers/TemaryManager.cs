@@ -48,6 +48,8 @@ public class TemaryManager : MonoBehaviour
     TutorialType.CATEGORY_CONDITIONS
      };
 
+    private bool initialized = false;
+
     private void Awake()
     {
         shownTutorials = new List<string>();
@@ -89,9 +91,14 @@ public class TemaryManager : MonoBehaviour
             bool enabled = shownTemary.ContainsKey(type);
             categoryButtons[i].interactable = enabled;
 
+            // We call invoke to activate the first button
+            // after the invoke contentRect child count will be greater than 1
             if (enabled && backButton == null && contentRect.childCount <= 1)
                 categoryButtons[i].onClick.Invoke();
+
         }
+
+        initialized = true;
     }
 
     private void CreateCategoryList()
@@ -153,8 +160,9 @@ public class TemaryManager : MonoBehaviour
         localizedCategoryTitle.StringReference = TypeToString(type);
         localizedCategoryTitle.RefreshString();
 
-        TrackerAsset.Instance.setVar("tutorial_category", type.ToString());
-        TrackerAsset.Instance.GameObject.Used("temary_category_selected");
+        if (!initialized) return;
+
+        TraceScreenAccesed();
     }
 
     private void ShowTutorialsCategoryList()
@@ -216,5 +224,19 @@ public class TemaryManager : MonoBehaviour
     private LocalizedString TypeToString(TutorialType type)
     {
         return stringReferences[(int)type];
+    }
+
+    public void TraceScreenAccesed()
+    {
+        string nameID = "none";
+        // TODO: traza de visita de temario
+
+        if (nameID.EndsWith("_name"))
+            nameID.Remove(nameID.Length - 5);
+
+        // Si esta en un nivel poner en la extension
+
+        
+        TrackerAsset.Instance.Accessible.Accessed("tutorials_" + nameID, AccessibleTracker.Accessible.Screen);
     }
 }

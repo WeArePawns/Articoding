@@ -35,7 +35,7 @@ public class ModifiableBoardCell : MonoBehaviour, IMouseListener
             if (cameraInput != null) cameraInput.SetDragging(true);
             TrackerAsset.Instance.setVar("cell_pos", pos.ToString());
             TrackerAsset.Instance.setVar("new_cell_type", cell.GetNextID());
-            TrackerAsset.Instance.GameObject.Used("board_cell_changed");
+            TrackerAsset.Instance.GameObject.Used("board_cell_change");
         }
     }
 

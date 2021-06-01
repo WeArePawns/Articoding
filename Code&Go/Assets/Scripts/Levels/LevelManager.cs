@@ -112,20 +112,24 @@ public class LevelManager : MonoBehaviour
 
         if (boardManager.BoardCompleted() && !endPanel.activeSelf && !endPanelMinimized.activeSelf)
         {
-            TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
-            TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
-            TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
-            TrackerAsset.Instance.setVar("first_execution", starsController.IsFirstRunStarActive());
-            TrackerAsset.Instance.setVar("minimum_steps", starsController.IsMinimumStepsStarActive());
-            TrackerAsset.Instance.setVar("no_hints", starsController.IsNoHintsStarActive());
+            string levelName = GameManager.Instance.GetCurrentLevelName();
+
+            TrackerAsset.Instance.setVar("level", levelName);
             TrackerAsset.Instance.Accessible.Accessed("level_end");
+
 
             streamRoom.FinishLevel();
 
             endPanel.SetActive(true);
             blackRect.SetActive(true);
             if (!GameManager.Instance.InCreatedLevel())
+            {
+                TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
+                TrackerAsset.Instance.setVar("first_execution", starsController.IsFirstRunStarActive());
+                TrackerAsset.Instance.setVar("minimum_steps", starsController.IsMinimumStepsStarActive());
+                TrackerAsset.Instance.setVar("no_hints", starsController.IsNoHintsStarActive());
                 ProgressManager.Instance.LevelCompleted(starsController.GetStars());
+            }
         }
 
 #if UNITY_EDITOR
@@ -185,9 +189,11 @@ public class LevelManager : MonoBehaviour
 
         starsController.DeactivateFirstRunStar();
 
-        TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
-        TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
-        TrackerAsset.Instance.Accessible.Accessed("level_retry");
+        TrackerAsset.Instance.GameObject.Interacted("retry_button");
+
+        // TODO: key de mierda
+        var levelName = GameManager.Instance.GetCurrentLevelName();
+        TrackerAsset.Instance.Completable.Initialized(levelName, CompletableTracker.Completable.Level);
     }
 
     public void MinimizeEndPanel()
@@ -197,7 +203,7 @@ public class LevelManager : MonoBehaviour
         endPanel.SetActive(false);
         blackRect.SetActive(false);
         debugPanel.SetActive(false);
-        TrackerAsset.Instance.GameObject.Used("end_panel_minimized");
+        TrackerAsset.Instance.GameObject.Interacted("end_panel_minimized_button");
     }
 
     public void MinimizeGameOverPanel()
@@ -207,7 +213,7 @@ public class LevelManager : MonoBehaviour
         //endPanel.SetActive(false);
         blackRect.SetActive(false);
         debugPanel.SetActive(false);
-        TrackerAsset.Instance.GameObject.Used("game_over_panel_minimized");
+        TrackerAsset.Instance.GameObject.Interacted("game_over_panel_minimized_button");
     }
 
     public void ResetLevel()

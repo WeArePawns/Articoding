@@ -185,8 +185,7 @@ public class CategoryManager : MonoBehaviour
                 levelCard.DeactivateCard();
         }
 
-        TrackerAsset.Instance.setVar("name", category.name_id.ToLower());
-        TrackerAsset.Instance.Accessible.Accessed("category_enter");
+        TraceScreenAccesed();
 
     }
 
@@ -207,9 +206,7 @@ public class CategoryManager : MonoBehaviour
         while (levelsParent.transform.childCount != 0)
             DestroyImmediate(levelsParent.transform.GetChild(0).gameObject);
 
-
-        TrackerAsset.Instance.setVar("name", categories[currentCategory].name_id.ToLower());
-        TrackerAsset.Instance.Accessible.Accessed("category_exit");
+        TraceScreenAccesed();
     }
 
     public void PlaySelectedLevel()
@@ -220,8 +217,27 @@ public class CategoryManager : MonoBehaviour
     public void PlayLevelCreated()
     {
         if (levelCreatedIndex == -1)
+        {
             GameManager.Instance.LoadLevelCreator();
+        }
         else
+        {
             GameManager.Instance.LoadLevel(levelsCreatedCategory, levelCreatedIndex);
+        }
+    }
+
+    public void TraceScreenAccesed()
+    {
+        string nameID = "main";
+
+        // TODO: la Key no sale bien
+        if (levelsPanel.activeSelf && currentCategory >= 0)
+            nameID = categories[currentCategory].nameIDLocalized.TableEntryReference.Key;
+
+        if (nameID.EndsWith("_name"))
+            nameID.Remove(nameID.Length - 5);
+
+        TrackerAsset.Instance.Accessible.Accessed("categories_" + nameID, AccessibleTracker.Accessible.Screen);
+
     }
 }

@@ -16,6 +16,7 @@ limitations under the License.
 
 ****************************************************************************/
 
+using AssetPackage;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -125,6 +126,9 @@ namespace UBlockly.UGUI
             m_BlockScrollList.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, LayoutUtility.GetPreferredWidth(contentTrans));
 
             m_BlockScrollList.GetComponent<ScrollRect>().content = contentTrans;
+
+
+            TrackerAsset.Instance.GameObject.Interacted(categoryName.ToLower() + "_button");
         }
 
         public void HideBlockCategory()

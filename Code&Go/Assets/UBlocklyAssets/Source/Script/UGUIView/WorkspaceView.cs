@@ -188,7 +188,7 @@ namespace UBlockly.UGUI
             string text = UBlockly.Xml.DomToText(dom);
 
             TrackerAsset.Instance.setVar("code", "\n" + text);
-            TrackerAsset.Instance.GameObject.Used("code_execution");
+            TrackerAsset.Instance.Completable.Progressed(GameManager.Instance.GetCurrentLevelName(), CompletableTracker.Completable.Level, 0f);
 
 //            Lua.Interpreter.Run(mWorkspace);
             CSharp.Interpreter.Run(mWorkspace);

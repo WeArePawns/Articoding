@@ -51,7 +51,6 @@ public class LevelTestManager : MonoBehaviour
 
     private void Start()
     {
-        TrackerAsset.Instance.Accessible.Accessed("creator_scene_start");
 
         Invoke("ChangeMode", 0.01f);
         ActivateLevelBlocks(activeBlocks, false);
@@ -86,6 +85,11 @@ public class LevelTestManager : MonoBehaviour
 
     public void ChangeMode()
     {
+        ChangeMode(false);
+    }
+
+    public void ChangeMode(bool fromButton)
+    {
         inCreator = !inCreator;
 
         levelObjects.SetActive(!inCreator);
@@ -106,8 +110,12 @@ public class LevelTestManager : MonoBehaviour
             changeModeButton.GetComponent<Image>().sprite = changeToEditModeSprite;
             board.SetFocusPointOffset(new Vector3((board.GetColumns() - 2) / 2.0f + 0.5f, 0.0f, (board.GetRows() - 2) / 2.0f + 0.5f));
             cameraFit.FitBoard(board.GetRows(), board.GetColumns());
-            TrackerAsset.Instance.setVar("mode", "Validation");
-            TrackerAsset.Instance.setVar("category_id", board.GetBoardStateAsFormatedString());
+
+            if (fromButton)
+            {
+                TrackerAsset.Instance.setVar("mode", "test");
+                TrackerAsset.Instance.setVar("board", board.GetBoardStateAsFormatedString());
+            }
         }
         else
         {
@@ -116,16 +124,22 @@ public class LevelTestManager : MonoBehaviour
             cameraFit.SetViewPort(creatorViewPort);
             changeModeButton.GetComponent<Image>().sprite = changeToPlayModeSprite;
             boardCreator.FitBoard();
-            TrackerAsset.Instance.setVar("mode", "Creation");
+
+            if (fromButton)
+                TrackerAsset.Instance.setVar("mode", "edition");
         }
 
-        TrackerAsset.Instance.GameObject.Interacted("creator_mode_changed");
+        if(fromButton)
+            TrackerAsset.Instance.GameObject.Interacted("editor_mode_change_button");
+
+        if(inCreator)
+            TrackerAsset.Instance.Accessible.Accessed("editor");
+        else
+            TrackerAsset.Instance.Accessible.Accessed("tester");
     }
 
     public void LoadMainMenu()
     {
-        TrackerAsset.Instance.Accessible.Accessed("main_menu_return");
-
         if(LoadManager.Instance == null)
         {
             SceneManager.LoadScene("MenuScene");
