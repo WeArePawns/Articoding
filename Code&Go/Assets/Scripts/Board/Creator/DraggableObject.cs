@@ -73,7 +73,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
         mouseOffset = transform.position - GetMouseWorldPos();
         dragging = true;
 
-        TrackerAsset.Instance.setVar("element_type", boardObject.GetNameAsLower());
+        TrackerAsset.Instance.setVar("element_type", boardObject.GetNameWithIndex().ToLower());
         TrackerAsset.Instance.GameObject.Used("element_picked");
     }
 
@@ -86,11 +86,8 @@ public class DraggableObject : MonoBehaviour, IMouseListener
 
         boardObject.Rotate(1);
 
-        Vector3 pos = board.GetLocalPosition(transform.position);
-        Vector2Int pos2 = new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
-
-        TrackerAsset.Instance.setVar("element_type", boardObject.GetNameAsLower());
-        TrackerAsset.Instance.setVar("pos", pos2.ToString());
+        TrackerAsset.Instance.setVar("element_type", boardObject.GetNameWithIndex().ToLower());
+        TrackerAsset.Instance.setVar("pos", lastPos.ToString());
         TrackerAsset.Instance.GameObject.Used("element_rotated");
     }
 
@@ -103,16 +100,18 @@ public class DraggableObject : MonoBehaviour, IMouseListener
 
             Vector3 pos = board.GetLocalPosition(transform.position);
             pos = new Vector3(Mathf.Round(pos.x), Mathf.Round(pos.y), Mathf.Round(pos.z));
-            TrackerAsset.Instance.setVar("element_type", boardObject.GetNameAsLower());
+            TrackerAsset.Instance.setVar("element_type", boardObject.GetNameWithIndex().ToLower());
             TrackerAsset.Instance.setVar("last_pos", lastPos.ToString());
             if (boardObject != null && pos.x < board.GetColumns() && pos.x >= 0 && pos.z < board.GetRows() && pos.z >= 0)
             {
+                bool firstTimePlaced = false, moved = false;
                 Vector2Int newPos = new Vector2Int(Mathf.FloorToInt(pos.x), (Mathf.FloorToInt(pos.z)));
                 //Si la posicion en la que se suelta es donde estaba colocado no se hace nada
                 if (lastPos == newPos)
                 {
                     transform.localPosition = new Vector3(lastPos.x, 0, lastPos.y);
                     TrackerAsset.Instance.setVar("moved", false);
+                    TrackerAsset.Instance.setVar("first_time_placed", firstTimePlaced);
                     TrackerAsset.Instance.GameObject.Used("element_moved");
                     return;
                 }
@@ -122,7 +121,6 @@ public class DraggableObject : MonoBehaviour, IMouseListener
                     //Se elimina el objeto en la posicion anterior
                     board.RemoveBoardObject(lastPos.x, lastPos.y);
                     Destroy(gameObject, 0.3f);
-                    TrackerAsset.Instance.setVar("element_type", boardObject.GetNameAsLower());
                     TrackerAsset.Instance.GameObject.Used("element_deleted");
                     return;
                 }
@@ -130,7 +128,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
                 if (lastPos == -Vector2Int.one)
                 {
                     board.AddBoardObject(newPos.x, newPos.y, boardObject);
-                    TrackerAsset.Instance.setVar("first_time_placed", boardObject.GetNameAsLower());
+                    firstTimePlaced = true;
                 }
                 //Se mueve el objeto
                 else if (!board.MoveBoardObject(lastPos, newPos))
@@ -138,9 +136,12 @@ public class DraggableObject : MonoBehaviour, IMouseListener
                     //Si no se ha podido mover se deja donde estaba
                     transform.localPosition = new Vector3(lastPos.x, 0, lastPos.y);
                     TrackerAsset.Instance.setVar("moved", false);
+                    TrackerAsset.Instance.setVar("first_time_placed", firstTimePlaced);
                     TrackerAsset.Instance.GameObject.Used("element_moved");
                     return;
                 }
+                TrackerAsset.Instance.setVar("moved", true);
+                TrackerAsset.Instance.setVar("first_time_placed", firstTimePlaced);
                 TrackerAsset.Instance.setVar("new_pos", newPos.ToString());
                 lastPos = newPos;
                 TrackerAsset.Instance.GameObject.Used("element_moved");

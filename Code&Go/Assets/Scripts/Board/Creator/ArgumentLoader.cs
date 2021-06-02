@@ -34,7 +34,7 @@ public class ArgumentLoader : MonoBehaviour
     {
         if (currentObject == null) return;
 
-        TrackerAsset.Instance.setVar("element_type", currentObject.GetNameAsLower());
+        TrackerAsset.Instance.setVar("element_type", currentObject.GetNameWithIndex().ToLower());
         string[] args = new string[inputs.Length];
         for (int i = 0; i < args.Length; i++)
         {

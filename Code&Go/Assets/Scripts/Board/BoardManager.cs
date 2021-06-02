@@ -924,7 +924,7 @@ public class BoardManager : Listener
             Door door = (Door)board[pos.x, pos.y].GetPlacedObject();
             if (door != null)
             {
-                door.SetActive(!active);
+                door.SetActive(active);
                 currentSteps++;
             }
         }

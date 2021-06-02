@@ -16,7 +16,7 @@ public class BoardObject : MonoBehaviour
 
     [SerializeField] protected Animator anim;
     protected BoardManager boardManager;
-    protected int index = 1;
+    protected int index = 0;
 
     [SerializeField] protected string typeName = "";
     [SerializeField] protected string[] argsNames;

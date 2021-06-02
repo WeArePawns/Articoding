@@ -40,10 +40,7 @@ public class BoardCreator : MonoBehaviour
 
     private void Start()
     {
-        GenerateNewBoard(false);
-
-        TrackerAsset.Instance.setVar("rows", rows);
-        TrackerAsset.Instance.setVar("columns", columns);
+        GenerateNewBoard(false);        
         TrackerAsset.Instance.Accessible.Accessed("level_editor");
 
 
@@ -76,7 +73,7 @@ public class BoardCreator : MonoBehaviour
     {
         if (field.text.Length == 0) return;
 
-            int value = int.Parse(field.text);
+        int value = int.Parse(field.text);
         if (value <= 0)
             field.text = "1";
         else if (value > maxSize)
@@ -257,11 +254,11 @@ public class BoardCreator : MonoBehaviour
 
         FitBoard();
 
-        if (!trace) return;
-
         TrackerAsset.Instance.setVar("rows", rows);
         TrackerAsset.Instance.setVar("columns", columns);
-        TrackerAsset.Instance.GameObject.Used("create_board_button");
+
+        if (trace)
+            TrackerAsset.Instance.GameObject.Used("create_board_button");
     }
 
     public void FitBoard()
