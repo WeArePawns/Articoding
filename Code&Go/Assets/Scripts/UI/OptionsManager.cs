@@ -23,7 +23,7 @@ public class OptionsManager : MonoBehaviour
                 resolutionDropdown.value = i;
             }
         }
-
+        resolutionDropdown.onValueChanged.AddListener((int value) => OnResolutionDropdownUsed());
         fullscreenToggle.isOn = Screen.fullScreen;
         fullscreenToggle.onValueChanged.AddListener((bool active) => OnFullscreenToggleUsed());
     }

@@ -57,6 +57,8 @@ public class LevelManager : MonoBehaviour
 
     public StreamRoom streamRoom;
 
+    private bool completed = false;
+
     private void Awake()
     {
         GameManager gameManager = GameManager.Instance;
@@ -128,10 +130,9 @@ public class LevelManager : MonoBehaviour
                 ProgressManager.Instance.LevelCompleted(starsController.GetStars());
             }
             else
-            {
-                TrackerAsset.Instance.setVar("level", levelName);
-                TrackerAsset.Instance.Accessible.Accessed("created_level_end");
-            }
+                TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, true, -1);
+
+            completed = true;
         }
 
 #if UNITY_EDITOR
@@ -246,8 +247,11 @@ public class LevelManager : MonoBehaviour
         string text = UBlockly.Xml.DomToText(dom);
         text = GameManager.Instance.ChangeCodeIDs(text);
 
-        TrackerAsset.Instance.setVar("code", "\r\n" + text);
-        TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, false, -1f);
+        if (!completed)
+        {
+            TrackerAsset.Instance.setVar("code", "\r\n" + text);
+            TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, false, -1f);
+        }
 
         if(LoadManager.Instance == null)
         {

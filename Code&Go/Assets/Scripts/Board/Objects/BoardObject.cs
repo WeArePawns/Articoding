@@ -32,8 +32,8 @@ public class BoardObject : MonoBehaviour
 
     private void Awake()
     {
-        if(string.IsNullOrEmpty(id))
-            id = GetNameAsLower() + "_" + SimvaPlugin.SimvaApi<IStudentsApi>.GenerateRandomBase58Key(4); ;
+        if (string.IsNullOrEmpty(id))
+            id = GetNameAsLower() + "_" + SimvaPlugin.SimvaApi<IStudentsApi>.GenerateRandomBase58Key(4);
     }
 
     public virtual void SetBoard(BoardManager board)
@@ -81,13 +81,13 @@ public class BoardObject : MonoBehaviour
             return typeName + index.ToString();
 
         string res = typeNameLocalized.GetLocalizedString().Result;
-        return res + index.ToString();
+        return res + "_" + index.ToString();
         //return typeName + index.ToString();
     }
 
     public string[] GetArgsNames()
     {
- 
+
         string[] argsArr = new string[argsNamesLocalized.Length];
 
         for (int i = 0; i < argsNamesLocalized.Length; i++)
@@ -97,7 +97,7 @@ public class BoardObject : MonoBehaviour
             argsArr[i] = argsNamesLocalized[i].GetLocalizedString().Result;
         }
         return argsArr;
-    
+
         //return argsNames;
     }
 

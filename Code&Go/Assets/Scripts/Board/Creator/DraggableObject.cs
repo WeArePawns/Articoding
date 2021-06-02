@@ -74,7 +74,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
         dragging = true;
 
         string name = boardObject.GetName();
-        TrackerAsset.Instance.setVar("element_type", name.Remove(name.Length - 1).ToLower());
+        TrackerAsset.Instance.setVar("element_type", name.ToLower());
         TrackerAsset.Instance.setVar("element_name", boardObject.GetNameWithIndex().ToLower());
         TrackerAsset.Instance.setVar("position", lastPos.ToString());
         TrackerAsset.Instance.setVar("rotation", boardObject.GetDirection().ToString().ToLower());
@@ -92,7 +92,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
         boardObject.Rotate(1);
 
         string name = boardObject.GetName();
-        TrackerAsset.Instance.setVar("element_type", name.Remove(name.Length - 1).ToLower());
+        TrackerAsset.Instance.setVar("element_type", name.ToLower());
         TrackerAsset.Instance.setVar("element_name", boardObject.GetNameWithIndex().ToLower());
         TrackerAsset.Instance.setVar("position", lastPos.ToString());
         TrackerAsset.Instance.setVar("rotation", boardObject.GetDirection().ToString().ToLower());
@@ -111,7 +111,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
             pos = new Vector3(Mathf.Round(pos.x), Mathf.Round(pos.y), Mathf.Round(pos.z));
 
             string name = boardObject.GetName();
-            TrackerAsset.Instance.setVar("element_type", name.Remove(name.Length - 1).ToLower());
+            TrackerAsset.Instance.setVar("element_type", name.ToLower());
             TrackerAsset.Instance.setVar("element_name", boardObject.GetNameWithIndex().ToLower());
             TrackerAsset.Instance.setVar("old_position", lastPos.ToString());
             TrackerAsset.Instance.setVar("rotation", boardObject.GetDirection().ToString().ToLower());
@@ -146,7 +146,7 @@ public class DraggableObject : MonoBehaviour, IMouseListener
                 {
                     board.AddBoardObject(newPos.x, newPos.y, boardObject);
                     TrackerAsset.Instance.setVar("first_time_placed", true);
-
+                    if (argumentLoader != null) argumentLoader.SetBoardObject(boardObject);
                 }
                 //Se mueve el objeto
                 else if (!board.MoveBoardObject(lastPos, newPos))

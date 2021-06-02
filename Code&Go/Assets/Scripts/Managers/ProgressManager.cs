@@ -19,7 +19,7 @@ public class ProgressManager : MonoBehaviour
     private int hintsRemaining = 5;
     private int coins = 10;
 
-    private CategorySaveData currentCategory = null;
+    private CategorySaveData currentCategoryData = null;
     private int currentLevel = 0, lastCategoryUnlocked = 0;
 
     private LevelsCreatedSaveData levelsCreated;
@@ -58,7 +58,7 @@ public class ProgressManager : MonoBehaviour
             categoriesData[i] = data;
         }
 
-        currentCategory = categoriesData[0];
+        currentCategoryData = categoriesData[0];
         currentLevel = 0;
         levelsCreated = new LevelsCreatedSaveData();
         levelsCreated.levelsCreated = new string[0];
@@ -75,20 +75,20 @@ public class ProgressManager : MonoBehaviour
     //---------
     public void LevelCompleted(uint starsAchieved)
     {
-        uint newStarsAchieved = (uint)Mathf.Clamp((float)starsAchieved - (float)currentCategory.levelsData[currentLevel].stars, 0.0f, 3.0f);
-        currentCategory.levelsData[currentLevel].stars = currentCategory.levelsData[currentLevel].stars + newStarsAchieved;
-        currentCategory.totalStars += newStarsAchieved;
+        uint newStarsAchieved = (uint)Mathf.Clamp((float)starsAchieved - (float)currentCategoryData.levelsData[currentLevel].stars, 0.0f, 3.0f);
+        currentCategoryData.levelsData[currentLevel].stars = currentCategoryData.levelsData[currentLevel].stars + newStarsAchieved;
+        currentCategoryData.totalStars += newStarsAchieved;
 
-        int categoryIndex = Array.IndexOf(categoriesData, currentCategory);
+        int categoryIndex = Array.IndexOf(categoriesData, currentCategoryData);
 
-        if (currentLevel >= currentCategory.lastLevelUnlocked)
+        if (currentLevel >= currentCategoryData.lastLevelUnlocked)
         {
-            if (currentLevel + 1 >= currentCategory.levelsData.Length && lastCategoryUnlocked == categoryIndex && lastCategoryUnlocked + 1 < categories.Count)
+            if (currentLevel + 1 >= currentCategoryData.levelsData.Length && lastCategoryUnlocked == categoryIndex && lastCategoryUnlocked + 1 < categories.Count)
             {
                 lastCategoryUnlocked++;
                 categoriesData[lastCategoryUnlocked].lastLevelUnlocked = 0;
             }
-            currentCategory.lastLevelUnlocked = currentLevel + 1;
+            currentCategoryData.lastLevelUnlocked = currentLevel + 1;
         }
 
         var levelName = GameManager.Instance.GetCurrentLevelName();
@@ -97,7 +97,7 @@ public class ProgressManager : MonoBehaviour
         var categoryName = categories[categoryIndex].name_id;
         if(lastCategoryUnlocked == categoryIndex)
         {
-            TrackerAsset.Instance.Completable.Progressed(categoryName, CompletableTracker.Completable.Completable, (float)currentCategory.lastLevelUnlocked / categories[categoryIndex].levels.Count);
+            TrackerAsset.Instance.Completable.Progressed(categoryName, CompletableTracker.Completable.Completable, (float)currentCategoryData.lastLevelUnlocked / categories[categoryIndex].levels.Count);
         }
         else
         {
@@ -112,16 +112,16 @@ public class ProgressManager : MonoBehaviour
 
     public void LevelStarted(int categoryIndex, int level)
     {
-        if (currentCategory == null || (categoryIndex >= 0 && categoryIndex < categoriesData.Length && categoriesData[categoryIndex] != currentCategory))
-            currentCategory = categoriesData[categoryIndex];
+        if (currentCategoryData == null || (categoryIndex >= 0 && categoryIndex < categoriesData.Length && categoriesData[categoryIndex] != currentCategoryData))
+            currentCategoryData = categoriesData[categoryIndex];
         currentLevel = level;
 
 
-        if(currentLevel == 0 && !currentCategory.completableInitialized)
+        if(currentLevel == 0 && !currentCategoryData.completableInitialized)
         {
             var categoryName = categories[categoryIndex].name_id;
             TrackerAsset.Instance.Completable.Initialized(categoryName, CompletableTracker.Completable.Completable);
-            currentCategory.completableInitialized = true;
+            currentCategoryData.completableInitialized = true;
         }
 
         var levelName = GameManager.Instance.GetCurrentLevelName();
@@ -131,10 +131,8 @@ public class ProgressManager : MonoBehaviour
     public void LevelStarted(Category category, int level)
     {
         int index = categories.IndexOf(category);
-        if (index < 0)
-        {
-            LevelStarted(categoriesData.Length - 1, level);
-        }
+        if (index < 0)        
+            TrackerAsset.Instance.Accessible.Accessed(levelsCreatedCategory.levels[level].levelName);        
         else
         {
             LevelStarted(categories.IndexOf(category), level);
@@ -275,7 +273,7 @@ public class ProgressManager : MonoBehaviour
         LevelData data = ScriptableObject.CreateInstance<LevelData>();
         //TODO//data.description = "Nivel creado por el usuario";
         data.activeBlocks = activeBlocks;
-        data.levelName = "Nivel Creado " + index.ToString();
+        data.levelName = "level_created_" + index.ToString();        
         data.auxLevelBoard = board;
         data.minimosPasos = 10;
 

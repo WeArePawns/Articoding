@@ -31,7 +31,6 @@ public class BoardManager : Listener
     // Hidden atributtes
     private BoardCell[,] board;
     private ArgumentLoader argLoader = null;
-    public enum CellColors { NORMAL, GREEN, }
 
     private Dictionary<string, List<Vector2Int>> elementPositions;
     private List<List<BoardCell>> cells;
@@ -45,7 +44,7 @@ public class BoardManager : Listener
 
     public Color deactivatedColor;
 
-    private string laserName = "laser_";
+    private string laserName =  "laser";
 
     [SerializeField] private CameraMouseInput cameraInput;
     [SerializeField] private OrbitCamera orbitCamera;
@@ -827,7 +826,7 @@ public class BoardManager : Listener
                     StartCoroutine(MoveObject(laserName, 0, dir, amount, time));
                     break;
                 case MSG_TYPE.MOVE:
-                    name = args[0].Split('_')[0] + "_";
+                    name = args[0].Split('_')[0];
                     index = int.Parse(args[0].Split('_')[1]);
                     amount = int.Parse(args[1]);
                     dir = GetDirectionFromString(args[2]);
@@ -841,7 +840,7 @@ public class BoardManager : Listener
                     StartCoroutine(RotateObject(laserName, 0, rot, amount, time));
                     break;
                 case MSG_TYPE.ROTATE:
-                    name = args[0].Split('_')[0] + "_";
+                    name = args[0].Split('_')[0];
                     index = int.Parse(args[0].Split('_')[1]);
                     amount = int.Parse(args[1]) * 2;
                     rot = GetRotationFromString(args[2]);
@@ -854,7 +853,7 @@ public class BoardManager : Listener
                     ChangeLaserIntensity(index - 1, intensity);
                     break;
                 case MSG_TYPE.ACTIVATE_DOOR:
-                    name = args[0].Split('_')[0] + "_";
+                    name = args[0].Split('_')[0];
                     index = int.Parse(args[0].Split('_')[1]);
                     active = bool.Parse(args[1]);
                     ActivateDoor(name, index - 1, active);

@@ -41,7 +41,7 @@ public class Selectable : MonoBehaviour, IMouseListener
         draggable.SetOrbitCamera(board.GetOrbitCamera());
 
         string name = boardObject.GetName();
-        TrackerAsset.Instance.setVar("element_type", name.Remove(name.Length - 1).ToLower());
+        TrackerAsset.Instance.setVar("element_type", name.ToLower());
         TrackerAsset.Instance.setVar("element_name", boardObject.GetNameWithIndex().ToLower());
         TrackerAsset.Instance.setVar("action", "create");
         TrackerAsset.Instance.GameObject.Interacted(boardObject.GetID());

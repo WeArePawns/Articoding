@@ -119,7 +119,7 @@ public class LevelTestManager : MonoBehaviour
             if (fromButton)
             {
                 TrackerAsset.Instance.setVar("mode", "test");
-                TrackerAsset.Instance.setVar("board", boardState != boardString ?  boardState : "unchanged");
+                TrackerAsset.Instance.setVar("board", boardState != boardString ? boardState : "unchanged");
             }
             boardString = boardState;
         }
@@ -135,10 +135,10 @@ public class LevelTestManager : MonoBehaviour
                 TrackerAsset.Instance.setVar("mode", "edition");
         }
 
-        if(fromButton)
+        if (fromButton)
             TrackerAsset.Instance.GameObject.Interacted("editor_mode_change_button");
 
-        if(inCreator)
+        if (inCreator)
             TrackerAsset.Instance.Accessible.Accessed("editor");
         else
             TrackerAsset.Instance.Accessible.Accessed("tester");
@@ -150,9 +150,12 @@ public class LevelTestManager : MonoBehaviour
         string text = UBlockly.Xml.DomToText(dom);
         text = GameManager.Instance.ChangeCodeIDs(text);
 
-        TrackerAsset.Instance.setVar("code", "\r\n" + text);
-        var levelName = GameManager.Instance.GetCurrentLevelName();
-        TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, false, -1f);
+        if (!completed)
+        {
+            TrackerAsset.Instance.setVar("code", "\r\n" + text);
+            var levelName = GameManager.Instance.GetCurrentLevelName();
+            TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, false, -1f);
+        }
 
         if (LoadManager.Instance == null)
         {
