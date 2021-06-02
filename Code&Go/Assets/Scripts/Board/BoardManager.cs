@@ -887,8 +887,6 @@ public class BoardManager : Listener
 
         streamRoom.GameOver();
 
-
-        // TODO: key de mierda
         var levelName = GameManager.Instance.GetCurrentLevelName();
         TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, false);
     }

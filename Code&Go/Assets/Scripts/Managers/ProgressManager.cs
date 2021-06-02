@@ -91,11 +91,9 @@ public class ProgressManager : MonoBehaviour
             currentCategory.lastLevelUnlocked = currentLevel + 1;
         }
 
-        // TODO: key de mierda
         var levelName = GameManager.Instance.GetCurrentLevelName();
         TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, true, starsAchieved);
 
-        // TODO: key de mierda
         var categoryName = categories[categoryIndex].name_id;
         if(lastCategoryUnlocked == categoryIndex)
         {
@@ -121,13 +119,11 @@ public class ProgressManager : MonoBehaviour
 
         if(currentLevel == 0 && !currentCategory.completableInitialized)
         {
-            // TODO: key de mierda
-            var categoryName = categories[categoryIndex].nameIDLocalized.TableEntryReference.Key;
+            var categoryName = categories[categoryIndex].name_id;
             TrackerAsset.Instance.Completable.Initialized(categoryName, CompletableTracker.Completable.Completable);
             currentCategory.completableInitialized = true;
         }
 
-        // TODO: key de mierda
         var levelName = GameManager.Instance.GetCurrentLevelName();
         TrackerAsset.Instance.Completable.Initialized(levelName, CompletableTracker.Completable.Level);
     }
@@ -311,7 +307,8 @@ public class ProgressManager : MonoBehaviour
 
         foreach (Category c in categories)
         {
-            levels += GetCategoryCurrentProgress(c);
+            int tmp = GetCategoryCurrentProgress(c);
+            levels += tmp < 0 ? 0 : tmp;
             totalLevel += c.levels.Count;
         }
 

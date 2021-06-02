@@ -230,12 +230,8 @@ public class CategoryManager : MonoBehaviour
     {
         string nameID = "main";
 
-        // TODO: la Key no sale bien
         if (levelsPanel.activeSelf && currentCategory >= 0)
-            nameID = categories[currentCategory].nameIDLocalized.TableEntryReference.Key;
-
-        if (nameID.EndsWith("_name"))
-            nameID.Remove(nameID.Length - 5);
+            nameID = categories[currentCategory].name_id;
 
         TrackerAsset.Instance.Accessible.Accessed("categories_" + nameID, AccessibleTracker.Accessible.Screen);
 

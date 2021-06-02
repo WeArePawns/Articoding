@@ -75,11 +75,12 @@ public class GameManager : MonoBehaviour
     // Esto habra que moverlo al MenuManager o algo asi
     public void LoadLevel(Category category, int levelIndex)
     {
+        this.category = category;
+        this.levelIndex = levelIndex;
+
         ProgressManager.Instance.LevelStarted(category, levelIndex);
         if (loadSave)
             SaveManager.Save();
-        this.category = category;
-        this.levelIndex = levelIndex;
 
         if (LoadManager.Instance == null)
         {

@@ -191,7 +191,6 @@ public class LevelManager : MonoBehaviour
 
         TrackerAsset.Instance.GameObject.Interacted("retry_button");
 
-        // TODO: key de mierda
         var levelName = GameManager.Instance.GetCurrentLevelName();
         TrackerAsset.Instance.Completable.Initialized(levelName, CompletableTracker.Completable.Level);
     }
@@ -233,10 +232,10 @@ public class LevelManager : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        //TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
-        TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
-        TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
-        TrackerAsset.Instance.Accessible.Accessed("level_exit");
+        // TODO: revisar
+        TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
+        TrackerAsset.Instance.setVar("level", currentCategory.levels[currentLevelIndex].levelName);
+        TrackerAsset.Instance.GameObject.Interacted("level_exit_button");
 
         if(LoadManager.Instance == null)
         {

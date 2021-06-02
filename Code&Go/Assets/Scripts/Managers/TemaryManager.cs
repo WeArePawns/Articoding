@@ -49,6 +49,7 @@ public class TemaryManager : MonoBehaviour
      };
 
     private bool initialized = false;
+    private TutorialType currentType = TutorialType.NONE;
 
     private void Awake()
     {
@@ -159,6 +160,7 @@ public class TemaryManager : MonoBehaviour
         //categoryTitle.text = TypeToString(type);
         localizedCategoryTitle.StringReference = TypeToString(type);
         localizedCategoryTitle.RefreshString();
+        currentType = type;
 
         if (!initialized) return;
 
@@ -180,6 +182,8 @@ public class TemaryManager : MonoBehaviour
 
         if (bodyContent != null)
             bodyContent.SetActive(false);
+
+        currentType = TutorialType.NONE;
     }
 
     public void AddTemary(PopUpData data)
@@ -228,14 +232,22 @@ public class TemaryManager : MonoBehaviour
 
     public void TraceScreenAccesed()
     {
-        string nameID = "none";
-        // TODO: traza de visita de temario
+        string nameID = currentType.ToString().ToLower();
 
-        if (nameID.EndsWith("_name"))
-            nameID.Remove(nameID.Length - 5);
+        if (nameID.StartsWith("category_"))
+        {
+            nameID = nameID.Remove(0, 9);
+        }
 
-        // Si esta en un nivel poner en la extension
-
+        // Si esta en el MainMenu
+        if(backButton == null)
+        {
+            TrackerAsset.Instance.setVar("scene", "menu");
+        }
+        else
+        {
+            TrackerAsset.Instance.setVar("scene", "level");
+        }
         
         TrackerAsset.Instance.Accessible.Accessed("tutorials_" + nameID, AccessibleTracker.Accessible.Screen);
     }

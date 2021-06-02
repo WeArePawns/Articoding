@@ -42,16 +42,16 @@ public class StarsController : MonoBehaviour
 
     public bool IsFirstRunStarActive()
     {
-        return firstRunStar.enabled;
+        return firstRunStar.color != deactivatedColor;
     }
 
     public bool IsMinimumStepsStarActive()
     {
-        return minimumStepsStar.enabled;
+        return minimumStepsStar.color != deactivatedColor;
     }
 
     public bool IsNoHintsStarActive()
     {
-        return noHintsStar.enabled;
+        return noHintsStar.color != deactivatedColor;
     }
 }
