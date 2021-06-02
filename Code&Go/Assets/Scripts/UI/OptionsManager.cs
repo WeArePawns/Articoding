@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
+using AssetPackage;
 
 public class OptionsManager : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class OptionsManager : MonoBehaviour
         }
 
         fullscreenToggle.isOn = Screen.fullScreen;
+        fullscreenToggle.onValueChanged.AddListener((bool active) => OnFullscreenToggleUsed());
     }
 
     IEnumerator Start()
@@ -50,17 +52,26 @@ public class OptionsManager : MonoBehaviour
     public void OnLanguageDropdownUsed(int index)
     {
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
+
+        TrackerAsset.Instance.setVar("language", LocalizationSettings.SelectedLocale.Identifier.Code);
+        TrackerAsset.Instance.GameObject.Interacted("language_dropdown");
     }
 
     public void OnResolutionDropdownUsed()
     {
         Resolution res = Screen.resolutions[Screen.resolutions.Length - resolutionDropdown.value - 1];
         Screen.SetResolution(res.width, res.height, Screen.fullScreen);
+
+        TrackerAsset.Instance.setVar("resolution", res.ToString());
+        TrackerAsset.Instance.GameObject.Interacted("resolution_dropdown");
     }
 
     public void OnFullscreenToggleUsed()
     {
         Screen.fullScreen = fullscreenToggle.isOn;
+
+        TrackerAsset.Instance.setVar("is_fullscreen", fullscreenToggle.isOn);
+        TrackerAsset.Instance.GameObject.Interacted("fullscreen_toggle");
     }
 
 

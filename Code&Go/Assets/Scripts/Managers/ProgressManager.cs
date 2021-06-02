@@ -125,12 +125,20 @@ public class ProgressManager : MonoBehaviour
         }
 
         var levelName = GameManager.Instance.GetCurrentLevelName();
-        TrackerAsset.Instance.Completable.Initialized(levelName, CompletableTracker.Completable.Level);
+        TrackerAsset.Instance.Accessible.Accessed(levelName);
     }
 
     public void LevelStarted(Category category, int level)
     {
-        LevelStarted(categories.IndexOf(category), level);
+        int index = categories.IndexOf(category);
+        if (index < 0)
+        {
+            LevelStarted(categoriesData.Length - 1, level);
+        }
+        else
+        {
+            LevelStarted(categories.IndexOf(category), level);
+        }
     }
 
     public void AddHints(int amount)

@@ -32,7 +32,7 @@ public class LevelUIController : MonoBehaviour
         });
         TweenManager.Instance.AddTween(slideTween);
 
-        TrackerAsset.Instance.Accessible.Accessed("temary_panel_open");
+        TrackerAsset.Instance.Accessible.Accessed("tutorials_panel_open");
     }
 
     public void Close(RectTransform panel)
@@ -59,6 +59,6 @@ public class LevelUIController : MonoBehaviour
 
         TweenManager.Instance.AddTween(slideTween);
 
-        TrackerAsset.Instance.Accessible.Accessed("temary_panel_close");
+        TrackerAsset.Instance.Accessible.Accessed("tutorials_panel_close");
     }
 }

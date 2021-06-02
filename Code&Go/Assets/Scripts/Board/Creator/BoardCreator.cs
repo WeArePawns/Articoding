@@ -41,7 +41,9 @@ public class BoardCreator : MonoBehaviour
     private void Start()
     {
         GenerateNewBoard(false);        
-        TrackerAsset.Instance.Accessible.Accessed("level_editor");
+        TrackerAsset.Instance.Accessible.Accessed("editor_mode");
+
+        TrackerAsset.Instance.Completable.Initialized("editor_level", CompletableTracker.Completable.Level);
 
 
         filePath = Application.dataPath + "/LevelsCreated/";

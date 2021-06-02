@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using AssetPackage;
+using Simva.Api;
+
 public class Selectable : MonoBehaviour, IMouseListener
 {
     private BoardManager board;
@@ -38,8 +40,11 @@ public class Selectable : MonoBehaviour, IMouseListener
         draggable.SetCameraInput(board.GetMouseInput());
         draggable.SetOrbitCamera(board.GetOrbitCamera());
 
-        TrackerAsset.Instance.setVar("element_type", myBoardObject.GetNameAsLower());
-        TrackerAsset.Instance.GameObject.Used("selectable_element_created");
+        string name = boardObject.GetName();
+        TrackerAsset.Instance.setVar("element_type", name.Remove(name.Length - 1).ToLower());
+        TrackerAsset.Instance.setVar("element_name", boardObject.GetNameWithIndex().ToLower());
+        TrackerAsset.Instance.setVar("action", "create");
+        TrackerAsset.Instance.GameObject.Interacted(boardObject.GetID());
 
         draggable.OnMouseButtonDown(index);
     }

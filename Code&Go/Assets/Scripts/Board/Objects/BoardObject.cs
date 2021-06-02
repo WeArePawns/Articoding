@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Simva.Api;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,6 +28,14 @@ public class BoardObject : MonoBehaviour
     [SerializeField] protected bool isMovable;
     [SerializeField] protected bool isRotatable;
 
+    private string id;
+
+    private void Awake()
+    {
+        if(string.IsNullOrEmpty(id))
+            id = GetNameAsLower() + "_" + SimvaPlugin.SimvaApi<IStudentsApi>.GenerateRandomBase58Key(4); ;
+    }
+
     public virtual void SetBoard(BoardManager board)
     {
         boardManager = board;
@@ -47,6 +56,13 @@ public class BoardObject : MonoBehaviour
         string res = typeNameLocalized.GetLocalizedString().Result;
         return res;
         //return typeName;
+    }
+
+    public string GetID()
+    {
+        if (string.IsNullOrEmpty(id))
+            Awake();
+        return id;
     }
 
     public string GetNameAsLower()

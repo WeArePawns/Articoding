@@ -3,6 +3,7 @@ using Simva.Api;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -31,6 +32,10 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         LoadGame();
+        TrackerAsset.Instance.setVar("language", LocalizationSettings.SelectedLocale.Identifier.Code);
+        TrackerAsset.Instance.setVar("resolution", Screen.currentResolution.ToString());
+        TrackerAsset.Instance.setVar("fullscreen", Screen.fullScreen);
+
         TrackerAsset.Instance.Completable.Initialized("articoding", CompletableTracker.Completable.Game);
         TrackerAsset.Instance.Completable.Progressed("articoding", CompletableTracker.Completable.Game, ProgressManager.Instance.GetGameProgress());
     }
@@ -97,6 +102,7 @@ public class GameManager : MonoBehaviour
     public void LoadLevelCreator()
     {
         blockIDs = new Dictionary<UBlockly.Block, string>();
+        levelIndex = -1;
         if (LoadManager.Instance == null)
         {
             SceneManager.LoadScene("BoardCreation");
@@ -129,7 +135,8 @@ public class GameManager : MonoBehaviour
 
     public string GetCurrentLevelName()
     {
-        // TODO: nombre distinto si estas en el creador
+        if (this.levelIndex == -1)
+            return "editor_level";
 
         Category category = GetCurrentCategory();
         int levelIndex = GetCurrentLevelIndex();

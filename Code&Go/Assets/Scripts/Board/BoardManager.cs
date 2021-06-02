@@ -888,7 +888,7 @@ public class BoardManager : Listener
         streamRoom.GameOver();
 
         var levelName = GameManager.Instance.GetCurrentLevelName();
-        TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, false);
+        TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, false, 0f);
     }
 
     public CameraMouseInput GetMouseInput()

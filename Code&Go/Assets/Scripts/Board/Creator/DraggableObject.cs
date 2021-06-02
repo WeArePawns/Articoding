@@ -73,8 +73,13 @@ public class DraggableObject : MonoBehaviour, IMouseListener
         mouseOffset = transform.position - GetMouseWorldPos();
         dragging = true;
 
-        TrackerAsset.Instance.setVar("element_type", boardObject.GetNameWithIndex().ToLower());
-        TrackerAsset.Instance.GameObject.Used("element_picked");
+        string name = boardObject.GetName();
+        TrackerAsset.Instance.setVar("element_type", name.Remove(name.Length - 1).ToLower());
+        TrackerAsset.Instance.setVar("element_name", boardObject.GetNameWithIndex().ToLower());
+        TrackerAsset.Instance.setVar("position", lastPos.ToString());
+        TrackerAsset.Instance.setVar("rotation", boardObject.GetDirection().ToString().ToLower());
+        TrackerAsset.Instance.setVar("action", "pick");
+        TrackerAsset.Instance.GameObject.Interacted(boardObject.GetID());
     }
 
     private void OnRightDown()
@@ -86,9 +91,13 @@ public class DraggableObject : MonoBehaviour, IMouseListener
 
         boardObject.Rotate(1);
 
-        TrackerAsset.Instance.setVar("element_type", boardObject.GetNameWithIndex().ToLower());
-        TrackerAsset.Instance.setVar("pos", lastPos.ToString());
-        TrackerAsset.Instance.GameObject.Used("element_rotated");
+        string name = boardObject.GetName();
+        TrackerAsset.Instance.setVar("element_type", name.Remove(name.Length - 1).ToLower());
+        TrackerAsset.Instance.setVar("element_name", boardObject.GetNameWithIndex().ToLower());
+        TrackerAsset.Instance.setVar("position", lastPos.ToString());
+        TrackerAsset.Instance.setVar("rotation", boardObject.GetDirection().ToString().ToLower());
+        TrackerAsset.Instance.setVar("action", "rotate");
+        TrackerAsset.Instance.GameObject.Interacted(boardObject.GetID());
     }
 
     private void OnLeftUp()
@@ -100,19 +109,25 @@ public class DraggableObject : MonoBehaviour, IMouseListener
 
             Vector3 pos = board.GetLocalPosition(transform.position);
             pos = new Vector3(Mathf.Round(pos.x), Mathf.Round(pos.y), Mathf.Round(pos.z));
-            TrackerAsset.Instance.setVar("element_type", boardObject.GetNameWithIndex().ToLower());
-            TrackerAsset.Instance.setVar("last_pos", lastPos.ToString());
+
+            string name = boardObject.GetName();
+            TrackerAsset.Instance.setVar("element_type", name.Remove(name.Length - 1).ToLower());
+            TrackerAsset.Instance.setVar("element_name", boardObject.GetNameWithIndex().ToLower());
+            TrackerAsset.Instance.setVar("old_position", lastPos.ToString());
+            TrackerAsset.Instance.setVar("rotation", boardObject.GetDirection().ToString().ToLower());
+
             if (boardObject != null && pos.x < board.GetColumns() && pos.x >= 0 && pos.z < board.GetRows() && pos.z >= 0)
             {
-                bool firstTimePlaced = false, moved = false;
                 Vector2Int newPos = new Vector2Int(Mathf.FloorToInt(pos.x), (Mathf.FloorToInt(pos.z)));
+                TrackerAsset.Instance.setVar("new_position", newPos.ToString());
+
                 //Si la posicion en la que se suelta es donde estaba colocado no se hace nada
                 if (lastPos == newPos)
                 {
                     transform.localPosition = new Vector3(lastPos.x, 0, lastPos.y);
-                    TrackerAsset.Instance.setVar("moved", false);
-                    TrackerAsset.Instance.setVar("first_time_placed", firstTimePlaced);
-                    TrackerAsset.Instance.GameObject.Used("element_moved");
+                    TrackerAsset.Instance.setVar("action", "move");
+                    TrackerAsset.Instance.setVar("exception", "placed_in_the_same_cell");
+                    TrackerAsset.Instance.GameObject.Interacted(boardObject.GetID());
                     return;
                 }
                 //Si se suelta en una celda ocupada o en un agujero se elimina
@@ -121,37 +136,41 @@ public class DraggableObject : MonoBehaviour, IMouseListener
                     //Se elimina el objeto en la posicion anterior
                     board.RemoveBoardObject(lastPos.x, lastPos.y);
                     Destroy(gameObject, 0.3f);
-                    TrackerAsset.Instance.GameObject.Used("element_deleted");
+                    TrackerAsset.Instance.setVar("action", "remove");
+                    TrackerAsset.Instance.setVar("exception", "placed_on_non_valid_cell");
+                    TrackerAsset.Instance.GameObject.Interacted(boardObject.GetID());
                     return;
                 }
                 //Si el objeto no se ha añadido al tablero
                 if (lastPos == -Vector2Int.one)
                 {
                     board.AddBoardObject(newPos.x, newPos.y, boardObject);
-                    firstTimePlaced = true;
+                    TrackerAsset.Instance.setVar("first_time_placed", true);
+
                 }
                 //Se mueve el objeto
                 else if (!board.MoveBoardObject(lastPos, newPos))
                 {
                     //Si no se ha podido mover se deja donde estaba
                     transform.localPosition = new Vector3(lastPos.x, 0, lastPos.y);
-                    TrackerAsset.Instance.setVar("moved", false);
-                    TrackerAsset.Instance.setVar("first_time_placed", firstTimePlaced);
-                    TrackerAsset.Instance.GameObject.Used("element_moved");
+
+                    TrackerAsset.Instance.setVar("action", "move");
+                    TrackerAsset.Instance.setVar("exception", "denied_by_board");
+                    TrackerAsset.Instance.GameObject.Interacted(boardObject.GetID());
                     return;
                 }
-                TrackerAsset.Instance.setVar("moved", true);
-                TrackerAsset.Instance.setVar("first_time_placed", firstTimePlaced);
-                TrackerAsset.Instance.setVar("new_pos", newPos.ToString());
                 lastPos = newPos;
-                TrackerAsset.Instance.GameObject.Used("element_moved");
+
+                TrackerAsset.Instance.setVar("action", "move");
+                TrackerAsset.Instance.GameObject.Interacted(boardObject.GetID());
             }
             else
             {
                 board.RemoveBoardObject(lastPos.x, lastPos.y);
                 Destroy(gameObject, 0.3f);
 
-                TrackerAsset.Instance.GameObject.Used("element_deleted");
+                TrackerAsset.Instance.setVar("action", "remove");
+                TrackerAsset.Instance.GameObject.Interacted(boardObject.GetID());
             }
         }
     }

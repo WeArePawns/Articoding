@@ -228,10 +228,10 @@ namespace UBlockly.UGUI
 
             OnPickBlockView();
 
-            TrackerAsset.Instance.setVar("block_type", blockView.Block.Type);
+            TrackerAsset.Instance.setVar("block_type", mPickedBlockView.Block.Type);
             TrackerAsset.Instance.setVar("action", "create");
             TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName().ToLower());
-            TrackerAsset.Instance.GameObject.Interacted(GameManager.Instance.GetBlockId(blockView.Block));
+            TrackerAsset.Instance.GameObject.Interacted(GameManager.Instance.GetBlockId(mPickedBlockView.Block));
             
         }
 

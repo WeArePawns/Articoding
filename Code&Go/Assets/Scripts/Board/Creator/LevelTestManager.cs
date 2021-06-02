@@ -47,6 +47,8 @@ public class LevelTestManager : MonoBehaviour
     private BoardState initialState;
     private bool completed = false;
 
+    private string boardString = "";
+
     [SerializeField] Button resetViewButton;
 
     private void Start()
@@ -78,8 +80,9 @@ public class LevelTestManager : MonoBehaviour
             streamRoom.FinishLevel();
             ProgressManager.Instance.UserCreatedLevel(initialState.ToJson());
 
+            string levelName = GameManager.Instance.GetCurrentLevelName();
             TrackerAsset.Instance.setVar("steps", board.GetCurrentSteps());
-            TrackerAsset.Instance.GameObject.Used("level_validated");
+            TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, true, -1f);
         }
     }
 
@@ -111,11 +114,14 @@ public class LevelTestManager : MonoBehaviour
             board.SetFocusPointOffset(new Vector3((board.GetColumns() - 2) / 2.0f + 0.5f, 0.0f, (board.GetRows() - 2) / 2.0f + 0.5f));
             cameraFit.FitBoard(board.GetRows(), board.GetColumns());
 
+            string boardState = board.GetBoardStateAsFormatedString();
+
             if (fromButton)
             {
                 TrackerAsset.Instance.setVar("mode", "test");
-                TrackerAsset.Instance.setVar("board", board.GetBoardStateAsFormatedString());
+                TrackerAsset.Instance.setVar("board", boardState != boardString ?  boardState : "unchanged");
             }
+            boardString = boardState;
         }
         else
         {
@@ -140,7 +146,15 @@ public class LevelTestManager : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        if(LoadManager.Instance == null)
+        var dom = UBlockly.Xml.WorkspaceToDom(BlocklyUI.WorkspaceView.Workspace);
+        string text = UBlockly.Xml.DomToText(dom);
+        text = GameManager.Instance.ChangeCodeIDs(text);
+
+        TrackerAsset.Instance.setVar("code", "\r\n" + text);
+        var levelName = GameManager.Instance.GetCurrentLevelName();
+        TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, false, -1f);
+
+        if (LoadManager.Instance == null)
         {
             SceneManager.LoadScene("MenuScene");
             return;
@@ -155,7 +169,10 @@ public class LevelTestManager : MonoBehaviour
         board.GenerateBoardElements(initialState);
         debugPanel.SetActive(true);
         cameraFit.FitBoard(board.GetRows(), board.GetColumns());
-        TrackerAsset.Instance.Accessible.Accessed("level_created_retry");
+        TrackerAsset.Instance.GameObject.Interacted("editor_retry_button");
+
+        var levelName = GameManager.Instance.GetCurrentLevelName();
+        TrackerAsset.Instance.Completable.Initialized(levelName, CompletableTracker.Completable.Level);
     }
 
     public void RetryLevel()

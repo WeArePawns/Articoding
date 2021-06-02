@@ -93,7 +93,8 @@ public class LevelManager : MonoBehaviour
         text = GameManager.Instance.ChangeCodeIDs(text);
         
         TrackerAsset.Instance.setVar("code", "\r\n" + text);
-        TrackerAsset.Instance.Accessible.Accessed(GameManager.Instance.GetCurrentLevelName().ToLower());
+        TrackerAsset.Instance.Completable.Initialized(GameManager.Instance.GetCurrentLevelName().ToLower(), CompletableTracker.Completable.Level);
+
 
         //levelName.text = currentLevel.levelName;
         levelNameLocalized.StringReference = currentLevel.levelNameLocalized;
@@ -235,10 +236,18 @@ public class LevelManager : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        // TODO: revisar
+        string levelName = GameManager.Instance.GetCurrentLevelName().ToLower();
         TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
-        TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName().ToLower());
+        TrackerAsset.Instance.setVar("level", levelName);
         TrackerAsset.Instance.GameObject.Interacted("level_exit_button");
+
+
+        var dom = UBlockly.Xml.WorkspaceToDom(BlocklyUI.WorkspaceView.Workspace);
+        string text = UBlockly.Xml.DomToText(dom);
+        text = GameManager.Instance.ChangeCodeIDs(text);
+
+        TrackerAsset.Instance.setVar("code", "\r\n" + text);
+        TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, false, -1f);
 
         if(LoadManager.Instance == null)
         {
