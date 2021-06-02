@@ -184,10 +184,12 @@ namespace UBlockly.UGUI
             if (mRunCodeEvent != null)
                 mRunCodeEvent.Invoke();
 
+            InitIDs();
             XmlNode dom = UBlockly.Xml.WorkspaceToDom(BlocklyUI.WorkspaceView.Workspace);
             string text = UBlockly.Xml.DomToText(dom);
+            text = GameManager.Instance.ChangeCodeIDs(text);
 
-            TrackerAsset.Instance.setVar("code", "\n" + text);
+            TrackerAsset.Instance.setVar("code", "\r\n" + text);
             TrackerAsset.Instance.Completable.Progressed(GameManager.Instance.GetCurrentLevelName(), CompletableTracker.Completable.Level, 0f);
 
 //            Lua.Interpreter.Run(mWorkspace);
@@ -214,6 +216,14 @@ namespace UBlockly.UGUI
             
             BlockViewSettings.Dispose();
             Resources.UnloadUnusedAssets();
+        }
+
+        public void InitIDs()
+        {
+            foreach (var item in mBlockViews)
+            {
+                item.Value.InitIDs();
+            }
         }
     }
 }

@@ -21,6 +21,7 @@ using AssetPackage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -409,9 +410,11 @@ namespace UBlockly.UGUI
                 input = parentBlock == null ? null : parentBlock.GetInputWithBlock(childBlock);
             }
 
+            TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName().ToLower());
+
             if (parentBlock != null)
             {
-                TrackerAsset.Instance.setVar("other_block", parentBlock.ID);
+                TrackerAsset.Instance.setVar("other_block", GameManager.Instance.GetBlockId(parentBlock));
                 TrackerAsset.Instance.setVar("other_block_type", parentBlock.Type);
             }
 
@@ -420,14 +423,14 @@ namespace UBlockly.UGUI
                 TrackerAsset.Instance.setVar("block_type", childBlock.Type);
                 TrackerAsset.Instance.setVar("coords", childBlock.XY.ToString());
                 TrackerAsset.Instance.setVar("action", "move");
-                TrackerAsset.Instance.GameObject.Used(childBlock.ID);
+                TrackerAsset.Instance.GameObject.Interacted(GameManager.Instance.GetBlockId(childBlock));
                 Debug.Log("Moving block " + childBlock.ToDevString() + " to " + childBlock.XY.ToString());
             }
             else if (mClosestConnection != null && mClosestConnection.Type == Define.EConnection.PrevStatement)
             {
                 TrackerAsset.Instance.setVar("block_type", childBlock.Type);
-                TrackerAsset.Instance.setVar("action", "attach_on_top");
-                TrackerAsset.Instance.GameObject.Used(childBlock.ID);
+                TrackerAsset.Instance.setVar("action", "attach_to_top");
+                TrackerAsset.Instance.GameObject.Interacted(GameManager.Instance.GetBlockId(childBlock));
                 //Debug.Log("Setting block " + childBlock.ToDevString() + " child to " + (parentBlock == null ? "empty at coords. " + childBlock.XY.ToString() : parentBlock.ToDevString()) + (input != null ? " at input " + input.Name : ""));
             }
             else
@@ -436,20 +439,20 @@ namespace UBlockly.UGUI
 
                 if (input != null)
                 {
-                    TrackerAsset.Instance.setVar("action", "attach_on_input");
+                    TrackerAsset.Instance.setVar("action", "attach_to_input");
                     TrackerAsset.Instance.setVar("input_name", input.Name);
 
                 }
                 else if (parentBlock != null)
                 {
-                    TrackerAsset.Instance.setVar("action", "attach_on_bottom");
+                    TrackerAsset.Instance.setVar("action", "attach_to_bottom");
                 }
                 else
                 {
                     TrackerAsset.Instance.setVar("action", "dettach");
                 }
 
-                TrackerAsset.Instance.GameObject.Used(childBlock.ID);
+                TrackerAsset.Instance.GameObject.Interacted(GameManager.Instance.GetBlockId(childBlock));
                 //Debug.Log("Setting block " + childBlock.ToDevString() + " parent to " + (parentBlock == null ? "empty at coords. " + childBlock.XY.ToString() : parentBlock.ToDevString()) + (input != null ? " at input " + input.Name : ""));
             }
 
@@ -457,7 +460,7 @@ namespace UBlockly.UGUI
             {
                 TrackerAsset.Instance.setVar("block_type", Block.Type);
                 TrackerAsset.Instance.setVar("action", "remove");
-                TrackerAsset.Instance.GameObject.Used(Block.ID);
+                TrackerAsset.Instance.GameObject.Interacted(GameManager.Instance.GetBlockId(Block));
                 //TrackerAsset.Instance.Accessible.Accessed("", AccessibleTracker.Accessible.Screen);
             }
 
@@ -469,7 +472,24 @@ namespace UBlockly.UGUI
         {
             //todo: background outline
             if (eventData.button == PointerEventData.InputButton.Right && !eventData.dragging && !InToolbox && CanBeCloned(null))
-                BlocklyUI.WorkspaceView.CloneBlockView(this, XY + BlockViewSettings.Get().BumpAwayOffset);
+            {
+                BlockView newBlock = BlocklyUI.WorkspaceView.CloneBlockView(this, XY + BlockViewSettings.Get().BumpAwayOffset);
+                newBlock.InitIDs();
+                TrackerAsset.Instance.setVar("block_type", Block.Type);
+                TrackerAsset.Instance.setVar("action", "duplicate");
+                TrackerAsset.Instance.setVar("new_block_id", GameManager.Instance.GetBlockId(newBlock.Block));
+                TrackerAsset.Instance.GameObject.Interacted(GameManager.Instance.GetBlockId(Block));
+
+                TrackerAsset.Instance.setVar("block_type", Block.Type);
+                TrackerAsset.Instance.setVar("action", "create_clone");
+
+                XmlNode dom = Xml.BlockToDomWithXY(newBlock.Block, false);
+                string text = UBlockly.Xml.DomToText(dom);
+                text = GameManager.Instance.ChangeCodeIDs(text);
+
+                TrackerAsset.Instance.setVar("code", "\r\n" + text);
+                TrackerAsset.Instance.GameObject.Interacted(GameManager.Instance.GetBlockId(newBlock.Block));
+            }
         }
 
         #endregion
@@ -652,5 +672,11 @@ namespace UBlockly.UGUI
         }
 
         #endregion
+
+        public override void InitIDs()
+        {
+            GameManager.Instance.GetBlockId(Block);
+            base.InitIDs();
+        }
     }
 }

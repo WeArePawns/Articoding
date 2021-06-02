@@ -17,8 +17,10 @@ limitations under the License.
 ****************************************************************************/
 
 using AssetPackage;
+using Simva;
 using System;
 using System.Collections.Generic;
+using uAdventure.Simva;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -228,7 +230,9 @@ namespace UBlockly.UGUI
 
             TrackerAsset.Instance.setVar("block_type", blockView.Block.Type);
             TrackerAsset.Instance.setVar("action", "create");
-            TrackerAsset.Instance.GameObject.Used(blockView.Block.ID);
+            TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName().ToLower());
+            TrackerAsset.Instance.GameObject.Interacted(GameManager.Instance.GetBlockId(blockView.Block));
+            
         }
 
         protected void UpdatePickedBlockView()

@@ -1,4 +1,5 @@
 ﻿using AssetPackage;
+using Simva.Api;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,12 +15,13 @@ public class GameManager : MonoBehaviour
     public int levelIndex;
     private bool gameLoaded = false;
 
+    private Dictionary<UBlockly.Block, string> blockIDs;
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject);            
             SaveManager.Init();
         }
         else
@@ -75,6 +77,7 @@ public class GameManager : MonoBehaviour
     // Esto habra que moverlo al MenuManager o algo asi
     public void LoadLevel(Category category, int levelIndex)
     {
+        blockIDs = new Dictionary<UBlockly.Block, string>();
         this.category = category;
         this.levelIndex = levelIndex;
 
@@ -93,6 +96,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadLevelCreator()
     {
+        blockIDs = new Dictionary<UBlockly.Block, string>();
         if (LoadManager.Instance == null)
         {
             SceneManager.LoadScene("BoardCreation");
@@ -137,5 +141,23 @@ public class GameManager : MonoBehaviour
     public Category[] GetCategories()
     {
         return categories;
+    }
+
+    public string GetBlockId(UBlockly.Block block)
+    {
+        while (!blockIDs.ContainsKey(block))
+        {
+            var blockId = block.Type + "_" + SimvaPlugin.SimvaApi<IStudentsApi>.GenerateRandomBase58Key(4);
+            if (!blockIDs.ContainsValue(blockId))
+                blockIDs.Add(block, blockId);
+        }
+        return blockIDs[block];
+    }
+    
+    public string ChangeCodeIDs(string code)
+    {
+        foreach(var kv in blockIDs)       
+            code = code.Replace(kv.Key.ID, kv.Value);
+        return code;
     }
 }

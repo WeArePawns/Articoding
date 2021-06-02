@@ -396,7 +396,7 @@ namespace SimvaPlugin
         }
 
 
-        private string GenerateRandomBase58Key(int length)
+        public static string GenerateRandomBase58Key(int length)
         {
             var alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
             return new string(Enumerable.Range(0, length).Select(_ => alphabet[UnityEngine.Random.Range(0, alphabet.Length)]).ToArray()).ToLower();

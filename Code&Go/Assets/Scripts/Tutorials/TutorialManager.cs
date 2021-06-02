@@ -145,7 +145,7 @@ public class TutorialManager : MonoBehaviour
         if (t.highlightObject)
             popUpManager.Show(info, t.GetRect());
         else
-            popUpManager.Show(info.localizedTitle, info.localizedContent);
+            popUpManager.Show(info);
         if (TemaryManager.Instance != null)
             TemaryManager.Instance.AddTemary(t.info);
 
@@ -232,6 +232,6 @@ public class TutorialManager : MonoBehaviour
         if (lastTutorialTrigger.highlightObject)
             popUpManager.Show(lastTutorialTrigger.info, lastTutorialTrigger.GetRect());
         else
-            popUpManager.Show(lastTutorialTrigger.info.localizedTitle, lastTutorialTrigger.info.localizedContent);
+            popUpManager.Show(lastTutorialTrigger.info);
     }
 }

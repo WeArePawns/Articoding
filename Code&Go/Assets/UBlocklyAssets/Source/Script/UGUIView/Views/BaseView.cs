@@ -503,5 +503,10 @@ namespace UBlockly.UGUI
         }
 
         public abstract bool CanBeCloned(BlockView block = null);
+        public virtual void InitIDs()
+        {            
+            foreach (var child in Childs)
+                child.InitIDs();
+        }
     }
 }

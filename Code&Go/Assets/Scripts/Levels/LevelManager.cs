@@ -90,11 +90,10 @@ public class LevelManager : MonoBehaviour
 
         var dom = UBlockly.Xml.WorkspaceToDom(BlocklyUI.WorkspaceView.Workspace);
         string text = UBlockly.Xml.DomToText(dom);
-
-        TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
-        TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
-        TrackerAsset.Instance.setVar("code", "\n" + text);
-        TrackerAsset.Instance.Accessible.Accessed("level_start");
+        text = GameManager.Instance.ChangeCodeIDs(text);
+        
+        TrackerAsset.Instance.setVar("code", "\r\n" + text);
+        TrackerAsset.Instance.Accessible.Accessed(GameManager.Instance.GetCurrentLevelName().ToLower());
 
         //levelName.text = currentLevel.levelName;
         levelNameLocalized.StringReference = currentLevel.levelNameLocalized;
@@ -114,9 +113,6 @@ public class LevelManager : MonoBehaviour
         {
             string levelName = GameManager.Instance.GetCurrentLevelName();
 
-            TrackerAsset.Instance.setVar("level", levelName);
-            TrackerAsset.Instance.Accessible.Accessed("level_end");
-
 
             streamRoom.FinishLevel();
 
@@ -129,6 +125,11 @@ public class LevelManager : MonoBehaviour
                 TrackerAsset.Instance.setVar("minimum_steps", starsController.IsMinimumStepsStarActive());
                 TrackerAsset.Instance.setVar("no_hints", starsController.IsNoHintsStarActive());
                 ProgressManager.Instance.LevelCompleted(starsController.GetStars());
+            }
+            else
+            {
+                TrackerAsset.Instance.setVar("level", levelName);
+                TrackerAsset.Instance.Accessible.Accessed("created_level_end");
             }
         }
 
@@ -154,6 +155,8 @@ public class LevelManager : MonoBehaviour
         BoardState state = BoardState.FromJson(boardJson);
         boardManager.LoadBoard(state, buildLimits);
         cameraFit.FitBoard(boardManager.GetRows(), boardManager.GetColumns());
+
+        BlocklyUI.WorkspaceView.InitIDs();
     }
 
     public void LoadLevel(Category category, int levelIndex)
@@ -234,7 +237,7 @@ public class LevelManager : MonoBehaviour
     {
         // TODO: revisar
         TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
-        TrackerAsset.Instance.setVar("level", currentCategory.levels[currentLevelIndex].levelName);
+        TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName().ToLower());
         TrackerAsset.Instance.GameObject.Interacted("level_exit_button");
 
         if(LoadManager.Instance == null)
