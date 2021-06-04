@@ -164,5 +164,8 @@ namespace AssetPackage
         /// <param name="requestSettings">  Options for controlling the operation. </param>
         /// <param name="requestResponse"> The request response. </param>
         void WebServiceRequest(RequestSetttings requestSettings, out RequestResponse requestResponse);
+
+
+        void WebServiceRequestAsync(RequestSetttings requestSettings, Action<RequestResponse> callback);
     }
 }

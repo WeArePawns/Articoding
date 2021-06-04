@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.Localization.Components;
+using UnityEngine.Localization;
+using AssetPackage;
 
 public class CategoryManager : MonoBehaviour
 {
@@ -19,11 +22,16 @@ public class CategoryManager : MonoBehaviour
 
     public Text categoryName;
     public Text categoryDescription;
+    public LocalizeStringEvent localizedCategoryName;
+    public LocalizeStringEvent localizedCategoryDescription;
 
     public Text levelName;
+    public LocalizeStringEvent localizedLevelName;
     public Image levelPreview;
 
     public Text levelCreatedName;
+    public LocalizeStringEvent localizedLevelCreatedName;
+    public LocalizedString createLevelLocalizeString;
 
     public GameObject categoriesPanel;
     public GameObject levelsPanel;
@@ -34,6 +42,9 @@ public class CategoryManager : MonoBehaviour
     public GameObject currentLevelCreatedPanel;
 
     public Text currentCategoryLevelsText;
+    public LocalizeStringEvent currentCategoryLevelsTextLocalized;
+    public LocalizedString categoryNameLocaliced;
+    public LocalizedString[] selectedCategoryNameLocaliced;
 
     public int currentCategory;
     private int currentLevel;
@@ -88,13 +99,21 @@ public class CategoryManager : MonoBehaviour
             {
                 //currentLevelCreatedPanel.SetActive(true);
                 levelCreatedIndex = index;
-                levelCreatedName.text = levelData.levelName;
+                //levelCreatedName.text = levelData.levelName;
+
+                localizedLevelCreatedName.StringReference = levelData.levelNameLocalized;
+                localizedLevelCreatedName.StringReference.Arguments = new object[] { index + 1 };
+                localizedLevelCreatedName.RefreshString();
             });
         }
         createLevelButton.gameObject.SetActive(true);
         createLevelButton.onClick.AddListener(() =>
         {
-            levelCreatedName.text = "Crear nivel";
+            //levelCreatedName.text = "Crear nivel";
+
+            localizedLevelCreatedName.StringReference = createLevelLocalizeString;
+            localizedLevelCreatedName.RefreshString();
+
             levelCreatedIndex = -1; // Reserved for creator mode
         });
         createLevelButton.transform.SetParent(levelsCreatedParent.transform);
@@ -110,8 +129,14 @@ public class CategoryManager : MonoBehaviour
         {
             currentCategory = index;
 
-            categoryName.text = categories[currentCategory].name_id;
-            categoryDescription.text = categories[currentCategory].description;
+            localizedCategoryName.StringReference = categories[currentCategory].nameIDLocalized;
+            localizedCategoryName.RefreshString();
+
+            localizedCategoryDescription.StringReference = categories[currentCategory].descriptionLocalized;
+            localizedCategoryDescription.RefreshString();
+
+            //categoryName.text = categories[currentCategory].name_id;
+            //categoryDescription.text = categories[currentCategory].description;
         }
     }
 
@@ -120,13 +145,20 @@ public class CategoryManager : MonoBehaviour
         if (!ProgressManager.Instance.IsCategoryUnlocked(currentCategory)) return;
 
         Category category = categories[currentCategory];
-        currentCategoryLevelsText.text = "Niveles - " + category.name_id;
+        //currentCategoryLevelsText.text = "Niveles - " + category.name_id;
+
+        //selectedCategoryNameLocaliced.Arguments = new object[] { selectedLevelName };
+        currentCategoryLevelsTextLocalized.StringReference = selectedCategoryNameLocaliced[currentCategory];
+        currentCategoryLevelsTextLocalized.RefreshString();
 
         categoriesPanel.SetActive(false);
         levelsPanel.SetActive(true);
 
         currentCategoryPanel.SetActive(false);
         currentLevelPanel.SetActive(true);
+
+        while (levelsParent.transform.childCount != 0)
+            DestroyImmediate(levelsParent.transform.GetChild(0).gameObject);
 
         for (int i = 0; i < category.levels.Count; i++)
         {
@@ -139,7 +171,11 @@ public class CategoryManager : MonoBehaviour
                 levelCard.button.onClick.AddListener(() =>
                 {
                     currentLevel = index;
-                    levelName.text = levelData.levelName;
+
+                    localizedLevelName.StringReference = levelData.levelNameLocalized;
+                    localizedLevelName.RefreshString();
+
+                    //levelName.text = levelData.levelName;
                     levelPreview.sprite = levelData.levelPreview;
                     levelCard.button.Select();
                 });
@@ -148,11 +184,18 @@ public class CategoryManager : MonoBehaviour
             else
                 levelCard.DeactivateCard();
         }
+
+        TraceScreenAccesed();
+
     }
 
     public void HideLevels()
     {
-        currentCategoryLevelsText.text = "Categories";
+        if (!levelsPanel.activeSelf) return;
+
+        //currentCategoryLevelsText.text = "Categories";
+        currentCategoryLevelsTextLocalized.StringReference = categoryNameLocaliced;
+        currentCategoryLevelsTextLocalized.RefreshString();
 
         categoriesPanel.SetActive(true);
         levelsPanel.SetActive(false);
@@ -162,6 +205,8 @@ public class CategoryManager : MonoBehaviour
 
         while (levelsParent.transform.childCount != 0)
             DestroyImmediate(levelsParent.transform.GetChild(0).gameObject);
+
+        TraceScreenAccesed();
     }
 
     public void PlaySelectedLevel()
@@ -172,8 +217,23 @@ public class CategoryManager : MonoBehaviour
     public void PlayLevelCreated()
     {
         if (levelCreatedIndex == -1)
+        {
             GameManager.Instance.LoadLevelCreator();
+        }
         else
+        {
             GameManager.Instance.LoadLevel(levelsCreatedCategory, levelCreatedIndex);
+        }
+    }
+
+    public void TraceScreenAccesed()
+    {
+        string nameID = "main";
+
+        if (levelsPanel.activeSelf && currentCategory >= 0)
+            nameID = categories[currentCategory].name_id;
+
+        TrackerAsset.Instance.Accessible.Accessed("categories_" + nameID, AccessibleTracker.Accessible.Screen);
+
     }
 }

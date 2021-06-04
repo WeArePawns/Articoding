@@ -1,0 +1,54 @@
+<xml>
+    <variables>
+        <variable type="" id="n:WsN1pJ9hJ.ue!#m#{U">Objeto</variable>
+        <variable type="" id="vgkh-jz?~Ssak^)z{kt]">Rotacion</variable>
+    </variables>
+    <block type="variables_set" id="q7*vM`_bKyO/@ED6M%Pz" x="104" y="-136">
+        <field name="VAR" id="n:WsN1pJ9hJ.ue!#m#{U" variableType="">Objeto</field>
+        <value name="VALUE">
+            <block type="text" id="Kgf)VE~u~}-+:C5+)WJi">
+                <field name="TEXT">Laser_1</field>
+            </block>
+        </value>
+        <next>
+            <block type="variables_set" id="cDu$#Hg*%~q-bx|.H$(`">
+                <field name="VAR" id="vgkh-jz?~Ssak^)z{kt]" variableType="">Rotacion</field>
+                <value name="VALUE">
+                    <block type="math_number" id="gy6Zv}mXv(ro1e!#^[Yf">
+                        <field name="NUM">1</field>
+                    </block>
+                </value>
+                <next>
+                    <block type="controls_repeat" id="Sw|U]3]sm/N+$TQ:o=CD">
+                        <field name="TIMES">2</field>
+                        <statement name="DO">
+                            <block type="movement_rotate" id="%V)(/3Rgs}9l6B:lQa%?">
+                                <field name="ROTATION">ANTI_CLOCKWISE</field>
+                                <value name="NAME">
+                                    <block type="variables_get" id="$e)2N4d|3g.sty7N8[R:">
+                                        <field name="VAR" id="n:WsN1pJ9hJ.ue!#m#{U" variableType="">Objeto</field>
+                                    </block>
+                                </value>
+                                <value name="AMOUNT">
+                                    <block type="variables_get" id="YN!o[1IX1exnPtoK^wR4">
+                                        <field name="VAR" id="vgkh-jz?~Ssak^)z{kt]" variableType="">Rotacion</field>
+                                    </block>
+                                </value>
+                                <next>
+                                    <block type="variables_set" id="k7K[-gAEaxy0J68cVHnw">
+                                        <field name="VAR" id="n:WsN1pJ9hJ.ue!#m#{U" variableType="">Objeto</field>
+                                        <value name="VALUE">
+                                            <block type="text" id="SQEV:XB7.=twhpVYg]w]">
+                                                <field name="TEXT">Espejo_1</field>
+                                            </block>
+                                        </value>
+                                    </block>
+                                </next>
+                            </block>
+                        </statement>
+                    </block>
+                </next>
+            </block>
+        </next>
+    </block>
+</xml>

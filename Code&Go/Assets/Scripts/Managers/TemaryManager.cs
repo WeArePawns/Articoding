@@ -2,7 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Components;
 using UnityEngine.UI;
+using AssetPackage;
+
 
 public class TemaryManager : MonoBehaviour
 {
@@ -17,18 +21,35 @@ public class TemaryManager : MonoBehaviour
     [SerializeField] private RectTransform categoryList;
     [SerializeField] private Button categoryButton;
     [Space]
-    [SerializeField] private Text titlePrefab;
-    [SerializeField] private Text paragraphPrefab;
-    [SerializeField] private Image imagePrefab;
+    [SerializeField] private LocalizeStringEvent titlePrefab;
+    [SerializeField] private LocalizeStringEvent paragraphPrefab;
+    [SerializeField] private LocalizeSpriteEvent imagePrefab;
     [SerializeField] private RectTransform contentRect;
     [SerializeField] private Button backButton;
-    [SerializeField] private Text categoryTitle;
+    [SerializeField] private LocalizeStringEvent categoryTitle;
     [SerializeField] private GameObject bodyContent;
+    [Space]
+    [SerializeField] private LocalizeStringEvent localizedCategoryTitle;
+    [SerializeField] private LocalizedString[] stringReferences;
     [Space]
     [SerializeField] private PopUpData[] allTutorials;
     private List<string> shownTutorials;
 
     private Button[] categoryButtons;
+
+    private TutorialType[] categoriesOrder = new TutorialType[] { TutorialType.NONE,
+    TutorialType.GENERAL,
+    TutorialType.BOARD,
+    TutorialType.CATEGORY_VARIABLES,
+    TutorialType.ACTION,
+    TutorialType.CATEGORY_TYPES,
+    TutorialType.CATEGORY_OPERATORS,
+    TutorialType.CATEGORY_LOOPS,
+    TutorialType.CATEGORY_CONDITIONS
+     };
+
+    private bool initialized = false;
+    private TutorialType currentType = TutorialType.NONE;
 
     private void Awake()
     {
@@ -38,11 +59,13 @@ public class TemaryManager : MonoBehaviour
 
         CreateCategoryList();
 
-        if(backButton != null)
+        if (backButton != null)
             backButton.onClick.AddListener(() => ShowTutorialsCategoryList());
     }
     private void Start()
     {
+        if (!GameManager.Instance.IsGameLoaded())
+            GameManager.Instance.LoadGame();
         shownTutorials.AddRange(TutorialManager.Instance.GetTriggeredTutorials());
         Configure();
     }
@@ -65,13 +88,18 @@ public class TemaryManager : MonoBehaviour
 
         for (int i = 0; i < categoryButtons.Length; i++)
         {
-            TutorialType type = (TutorialType)(i + 1);
+            TutorialType type = categoriesOrder[i + 1];
             bool enabled = shownTemary.ContainsKey(type);
             categoryButtons[i].interactable = enabled;
 
-            if (enabled && backButton == null && contentRect.childCount == 0)
+            // We call invoke to activate the first button
+            // after the invoke contentRect child count will be greater than 1
+            if (enabled && backButton == null && contentRect.childCount <= 1)
                 categoryButtons[i].onClick.Invoke();
+
         }
+
+        initialized = true;
     }
 
     private void CreateCategoryList()
@@ -80,13 +108,17 @@ public class TemaryManager : MonoBehaviour
         categoryButtons = new Button[count - 1];
         for (int i = 0; i < count; i++)
         {
-            TutorialType type = (TutorialType)i;
+            TutorialType type = categoriesOrder[i];
             if (type == TutorialType.NONE) continue;
 
             Button button = Instantiate(categoryButton, categoryList);
             button.onClick.AddListener(() => ShowCategory(type));
 
-            button.transform.GetChild(0).GetComponent<Text>().text = TypeToString(type);
+            //button.transform.GetChild(0).GetComponent<Text>().text = TypeToString(type);
+            LocalizeStringEvent localized = button.GetComponent<LocalizeStringEvent>();
+            localized.StringReference = TypeToString(type);
+            localized.RefreshString();
+
             categoryButtons[i - 1] = button;
         }
         categoryButton.gameObject.SetActive(false);
@@ -107,13 +139,13 @@ public class TemaryManager : MonoBehaviour
         // Show all tutorials
         List<PopUpData> tutorials = shownTemary[type];
         PopUpData lastData = null;
-        foreach(PopUpData data in tutorials)
+        foreach (PopUpData data in tutorials)
         {
-            if(lastData == null || data.title != lastData.title)
-                AddTitle(data.title);
-            if(data.image != null)
-                AddImage(data.image);
-            AddParagraph(data.content);
+            if (lastData == null || data.localizedTitle.ToString() != lastData.localizedTitle.ToString())
+                AddTitle(data.localizedTitle);
+            if (!data.localizedImage.IsEmpty)
+                AddImage(data.localizedImage);
+            AddParagraph(data.localizedContent);
             lastData = data;
         }
 
@@ -125,7 +157,14 @@ public class TemaryManager : MonoBehaviour
         if (bodyContent != null)
             bodyContent.SetActive(true);
 
-        categoryTitle.text = TypeToString(type);
+        //categoryTitle.text = TypeToString(type);
+        localizedCategoryTitle.StringReference = TypeToString(type);
+        localizedCategoryTitle.RefreshString();
+        currentType = type;
+
+        if (!initialized) return;
+
+        TraceScreenAccesed();
     }
 
     private void ShowTutorialsCategoryList()
@@ -143,6 +182,8 @@ public class TemaryManager : MonoBehaviour
 
         if (bodyContent != null)
             bodyContent.SetActive(false);
+
+        currentType = TutorialType.NONE;
     }
 
     public void AddTemary(PopUpData data)
@@ -154,25 +195,28 @@ public class TemaryManager : MonoBehaviour
         Configure();
     }
 
-    private void AddTitle(string s)
+    private void AddTitle(LocalizedString s)
     {
-        Text title = Instantiate(titlePrefab, contentRect);
+        LocalizeStringEvent title = Instantiate(titlePrefab, contentRect);
         title.gameObject.SetActive(true);
-        title.text = s;
+        title.StringReference = s;
+        title.RefreshString();
     }
 
-    private void AddImage(Sprite s)
+    private void AddImage(LocalizedSprite s)
     {
-        Image image = Instantiate(imagePrefab, contentRect);
+        LocalizeSpriteEvent image = Instantiate(imagePrefab, contentRect);
         image.gameObject.SetActive(true);
-        image.sprite = s;
+        image.AssetReference.SetReference(s.TableReference, s.TableEntryReference);
+
     }
 
-    private void AddParagraph(string s)
+    private void AddParagraph(LocalizedString s)
     {
-        Text paragraph = Instantiate(paragraphPrefab, contentRect);
+        LocalizeStringEvent paragraph = Instantiate(paragraphPrefab, contentRect);
         paragraph.gameObject.SetActive(true);
-        paragraph.text = s;
+        paragraph.StringReference = s;
+        paragraph.RefreshString();
     }
 
     public void Load(TutorialSaveData data)
@@ -181,10 +225,30 @@ public class TemaryManager : MonoBehaviour
         Configure();
     }
 
-    private string TypeToString(TutorialType type)
+    private LocalizedString TypeToString(TutorialType type)
     {
-        string[] arr = { "Ninguna", "General", "Tablero", "Variables", "Tipos", "Operadores", "Bucles", "Condiciones", "Acciones" };
+        return stringReferences[(int)type];
+    }
 
-        return arr[(int)type];
+    public void TraceScreenAccesed()
+    {
+        string nameID = currentType.ToString().ToLower();
+
+        if (nameID.StartsWith("category_"))
+        {
+            nameID = nameID.Remove(0, 9);
+        }
+
+        // Si esta en el MainMenu
+        if(backButton == null)
+        {
+            TrackerAsset.Instance.setVar("scene", "menu");
+        }
+        else
+        {
+            TrackerAsset.Instance.setVar("scene", "level");
+        }
+        
+        TrackerAsset.Instance.Accessible.Accessed("tutorials_" + nameID, AccessibleTracker.Accessible.Screen);
     }
 }

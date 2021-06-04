@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Localization;
 
 public enum TutorialType
 {
@@ -25,6 +26,10 @@ public class PopUpData : ScriptableObject
     public PopUpData next = null;
     public Sprite image;
 
+    public LocalizedString localizedTitle;
+    public LocalizedString localizedContent;
+    public LocalizedSprite localizedImage;
+
     public PopUpData()
     {
     }
@@ -34,5 +39,8 @@ public class PopUpData : ScriptableObject
         title = data.title;
         content = data.content;
         image = data.image;
+        localizedTitle = data.localizedTitle;
+        localizedContent = data.localizedContent;
+        localizedImage = data.localizedImage;
     }
 }

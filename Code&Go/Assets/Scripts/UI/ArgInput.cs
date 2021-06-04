@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ArgInput : MonoBehaviour
 {
     [SerializeField] Text argName;
-    [SerializeField] InputField argField;
+    [SerializeField] Toggle argField;
+
+    public void Init(UnityAction<bool> valueChangedEvent)
+    {
+        argField.onValueChanged.RemoveAllListeners();
+        argField.onValueChanged.AddListener(valueChangedEvent);
+    }
 
     public void FillArg(string name)
     {
@@ -16,6 +23,6 @@ public class ArgInput : MonoBehaviour
 
     public string GetInput()
     {
-        return argField.text;
+        return argField.isOn ? "1" : "0";
     }
 }

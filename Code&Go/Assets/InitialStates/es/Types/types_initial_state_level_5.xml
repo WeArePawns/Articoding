@@ -1,0 +1,33 @@
+<xml>
+    <variables>
+        <variable type="" id="8`RGY%B7rb0z(,t.#)^0">Objeto</variable>
+        <variable type="" id="#Ej-#]/Qez.e{H7F]8x9">Cantidad</variable>
+    </variables>
+    <block type="variables_set" id="J!!kscBG{]e-?/bJvES*" x="191" y="-135">
+        <field name="VAR" id="8`RGY%B7rb0z(,t.#)^0" variableType="">Objeto</field>
+        <value name="VALUE">
+            <block type="text" id="c8V~3|rgQ-6(;CK*IRgt">
+                <field name="TEXT" />
+            </block>
+        </value>
+        <next>
+            <block type="variables_set" id="nc]F2]i{oq{tM9j::Gd;">
+                <field name="VAR" id="#Ej-#]/Qez.e{H7F]8x9" variableType="">Cantidad</field>
+                <value name="VALUE">
+                    <block type="math_number" id="2+R+toCQuM*VsEfAMQ|h">
+                        <field name="NUM">0</field>
+                    </block>
+                </value>
+                <next>
+                    <block type="movement_activate_door" id="G~oI=CSG0$WMu9JXV#Dx">
+                        <value name="ACTIVE">
+                            <block type="logic_boolean" id="d-^F_#ARJLO6?hv!b2/I">
+                                <field name="BOOL">FALSE</field>
+                            </block>
+                        </value>
+                    </block>
+                </next>
+            </block>
+        </next>
+    </block>
+</xml>

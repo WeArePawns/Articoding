@@ -18,14 +18,17 @@ public class OrbitCamera : MonoBehaviour
     private float _damping = 2;
 
     // These will store our currently desired angles
-    private Quaternion _pitch;
-    private Quaternion _yaw;
+    private float _pitch;
+    private float _yaw;
 
-    private Quaternion _iniPitch;
-    private Quaternion _iniYaw;
+    private float _iniPitch;
+    private float _iniYaw;
 
     // this is where we want to go.
-    private Quaternion _targetRotation;
+    private float _currentRotationPitch;
+    private float _currentRotationYaw;
+    private float _targetRotationPitch;
+    private float _targetRotationYaw;
 
     public FocusPoint Target
     {
@@ -35,20 +38,21 @@ public class OrbitCamera : MonoBehaviour
 
     public float Yaw
     {
-        get { return _yaw.eulerAngles.y; }
-        private set { _yaw = Quaternion.Euler(0, value, 0); }
+        get { return _yaw; }
+        private set { _yaw = value; }
     }
 
     public float Pitch
     {
-        get { return _pitch.eulerAngles.x; }
-        private set { _pitch = Quaternion.Euler(value, 0, 0); }
+        get { return _pitch; }
+        private set { _pitch = value; }
     }
 
     public void Move(float yawDelta, float pitchDelta)
     {
-        _yaw *= Quaternion.Euler(0, yawDelta, 0);
-        _pitch *= Quaternion.Euler(pitchDelta, 0, 0);
+        _yaw += yawDelta;
+        _pitch += pitchDelta;
+
         ApplyConstraints();
     }
 
@@ -56,41 +60,50 @@ public class OrbitCamera : MonoBehaviour
     {
         _yaw = _iniYaw;
         _pitch = _iniPitch;
+        _currentRotationPitch %= 360.0f;
+        _currentRotationYaw %= 360.0f;
     }
 
     private void ApplyConstraints()
     {
-        Quaternion targetYaw = Quaternion.Euler(0, _target.transform.rotation.eulerAngles.y, 0);
-        Quaternion targetPitch = Quaternion.Euler(_target.transform.rotation.eulerAngles.x, 0, 0);
+        float targetYaw = _target.transform.rotation.eulerAngles.y;
+        float targetPitch = _target.transform.rotation.eulerAngles.x;
 
-        float yawDifference = Quaternion.Angle(_yaw, targetYaw);
-        float pitchDifference = Quaternion.Angle(_pitch, targetPitch);
+        float yawDifference = _yaw - targetYaw;
+        float pitchDifference = _pitch - targetPitch;
 
         float yawOverflow = yawDifference - _target.YawLimit;
         float pitchOverflow = pitchDifference - _target.PitchLimit;
 
         // We'll simply use lerp to move a bit towards the focus target's orientation. Just enough to get back within the constraints.
         // This way we don't need to worry about wether we need to move left or right, up or down.
-        if (yawOverflow > 0) { _yaw = Quaternion.Slerp(_yaw, targetYaw, yawOverflow / yawDifference); }
-        if (pitchOverflow > 0) { _pitch = Quaternion.Slerp(_pitch, targetPitch, pitchOverflow / pitchDifference); }
+        //if (yawOverflow > 0) { _yaw = Mathf.Lerp(_yaw, targetYaw, yawOverflow / yawDifference); }
+        //if (pitchOverflow > 0) { _pitch = Mathf.Lerp(_pitch, targetPitch, pitchOverflow / pitchDifference); }
     }
 
     void Awake()
     {
         // initialise our pitch and yaw settings to our current orientation.
-        _pitch = Quaternion.Euler(transform.rotation.eulerAngles.x, 0, 0);
-        _yaw = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
+        _pitch = transform.rotation.eulerAngles.x;
+        _yaw = transform.rotation.eulerAngles.y;
 
         _iniYaw = _yaw;
         _iniPitch = _pitch;
+
+        _currentRotationYaw = _yaw;
+        _currentRotationPitch = _pitch;
     }
 
     void Update()
     {
         // calculate target positions
-        _targetRotation = _yaw * _pitch;
+        _targetRotationPitch = _pitch;
+        _targetRotationYaw = _yaw;
 
-        transform.rotation = Quaternion.Lerp(transform.rotation, _targetRotation, Mathf.Clamp01(Time.smoothDeltaTime * _damping));
+        //transform.rotation = Quaternion.Euler(_targetRotationPitch, _targetRotationYaw, 0);
+        _currentRotationPitch = Mathf.Lerp(_currentRotationPitch, _targetRotationPitch, Mathf.Clamp01(Time.smoothDeltaTime * _damping));
+        _currentRotationYaw = Mathf.Lerp(_currentRotationYaw, _targetRotationYaw, Mathf.Clamp01(Time.smoothDeltaTime * _damping));
+        transform.rotation = Quaternion.Euler(_currentRotationPitch, _currentRotationYaw, 0);
 
         // offset the camera at distance from the target position.
         Vector3 offset = transform.rotation * (-Vector3.forward * _distance);
@@ -100,12 +113,21 @@ public class OrbitCamera : MonoBehaviour
     public void ResetInmediate()
     {
         Reset();
-        _targetRotation = _yaw * _pitch;
+        _targetRotationPitch = _pitch;
+        _targetRotationYaw = _yaw;
 
-        transform.rotation = _targetRotation;
+        _currentRotationYaw = _yaw;
+        _currentRotationPitch = _pitch;
+
+        transform.rotation = Quaternion.Euler(_targetRotationPitch, _targetRotationYaw, 0);
 
         // offset the camera at distance from the target position.
         Vector3 offset = transform.rotation * (-Vector3.forward * _distance);
         transform.position = _target.transform.position + offset + _target.offset;
+    }
+
+    public bool IsReset()
+    {
+        return Mathf.Approximately(_yaw,_iniYaw) && Mathf.Approximately(_pitch, _iniPitch);
     }
 }

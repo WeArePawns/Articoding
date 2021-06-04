@@ -31,7 +31,6 @@ public class BoardManager : Listener
     // Hidden atributtes
     private BoardCell[,] board;
     private ArgumentLoader argLoader = null;
-    public enum CellColors { NORMAL, GREEN, }
 
     private Dictionary<string, List<Vector2Int>> elementPositions;
     private List<List<BoardCell>> cells;
@@ -45,11 +44,15 @@ public class BoardManager : Listener
 
     public Color deactivatedColor;
 
+    private string laserName =  "laser";
+
+    [SerializeField] private CameraMouseInput cameraInput;
+    [SerializeField] private OrbitCamera orbitCamera;
+
     private void Awake()
     {
         cells = new List<List<BoardCell>>();
         InitIDs();
-        //currentPasos = 0;
     }
 
     public int GetCurrentSteps()
@@ -84,9 +87,8 @@ public class BoardManager : Listener
         SetFocusPointOffset(new Vector3(columns / 2.0f + 0.5f, 0.0f, rows / 2.0f + 0.5f));
     }
 
-
     public void SetFocusPointOffset(Vector3 offset)
-    {        
+    {
         //Set focus point of the camera
         FocusPoint fPoint = GetComponent<FocusPoint>();
         if (fPoint != null)
@@ -278,11 +280,10 @@ public class BoardManager : Listener
 
     public void Reset()
     {
-        nReceiversActive = 0;
         DeleteBoardElements();
         elementPositions.Clear();
         completed = false;
-        //currentSteps = 0;
+        currentSteps = 0;
     }
 
     public bool HasHint(Vector2Int pos)
@@ -304,7 +305,8 @@ public class BoardManager : Listener
     {
         return completed;
     }
-    public bool AllReceiving() {
+    public bool AllReceiving()
+    {
         return nReceivers > 0 && nReceiversActive >= nReceivers;
     }
 
@@ -315,8 +317,8 @@ public class BoardManager : Listener
 
     public int GetNEmitters()
     {
-        if (!elementPositions.ContainsKey("laser")) return 0;
-        return elementPositions["laser"].Count;
+        if (!elementPositions.ContainsKey(laserName)) return 0;
+        return elementPositions[laserName].Count;
     }
 
     public void SetRows(int rows)
@@ -380,6 +382,11 @@ public class BoardManager : Listener
     public string GetBoardStateAsString()
     {
         return GetBoardState().ToJson();
+    }
+
+    public string GetBoardStateAsFormatedString()
+    {
+        return GetBoardState().ToJson(true);
     }
 
     public void AddBoardHint(Vector2Int pos, int amount, int id)
@@ -487,6 +494,8 @@ public class BoardManager : Listener
                     drag = boardObject.gameObject.AddComponent<DraggableObject>();
                     drag.SetBoard(this);
                     drag.SetArgumentLoader(argLoader);
+                    drag.SetCameraInput(cameraInput);
+                    drag.SetOrbitCamera(orbitCamera);
                     drag.SetLastPos(new Vector2Int(x, y));
                 }
                 drag.SetModifiable(objectsModifiable);
@@ -516,7 +525,7 @@ public class BoardManager : Listener
         int i = 1;
         foreach (Vector2Int pos in elementPositions[name])
         {
-            BoardObject boardObject = board[pos.x, pos.y].GetPlacedObject();            
+            BoardObject boardObject = board[pos.x, pos.y].GetPlacedObject();
             boardObject.SetIndex(i++);
             FollowingText text = boardObject.GetComponent<FollowingText>();
             if (text != null)
@@ -589,13 +598,20 @@ public class BoardManager : Listener
     public IEnumerator MoveObject(string name, int index, Vector2Int direction, int amount, float time)
     {
         name = name.ToLower();
+
         if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
+            Vector2Int position = elementPositions[name][index];
+            if (!board[position.x, position.y].GetPlacedObject().IsMovable()) yield break;
+
+            currentSteps += amount;
+
             int i = 0;
-            while (i++ < amount && MoveObject(elementPositions[name][index], direction, time))
+            Coroutine coroutine;
+            while (i++ < amount && MoveObject(elementPositions[name][index], direction, time, out coroutine))
             {
                 elementPositions[name][index] += direction;
-                yield return new WaitForSeconds(time + 0.05f);
+                yield return coroutine;
             }
         }
         yield return null;
@@ -606,20 +622,26 @@ public class BoardManager : Listener
         name = name.ToLower();
         if (elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
+
+            Vector2Int position = elementPositions[name][index];
+            if (!board[position.x, position.y].GetPlacedObject().IsRotatable()) yield break;
+
             currentSteps += amount / 2;
 
+            Coroutine coroutine;
             for (int i = 0; i < amount % 8; i++)
             {
-                RotateObject(elementPositions[name][index], direction, time);
-                yield return new WaitForSeconds(time + 0.05f);
+                RotateObject(elementPositions[name][index], direction, time, out coroutine);
+                yield return coroutine;
             }
         }
         yield return null;
     }
 
     // Smooth interpolation, this code must be called by blocks
-    public bool MoveObject(Vector2Int origin, Vector2Int direction, float time)
+    public bool MoveObject(Vector2Int origin, Vector2Int direction, float time, out Coroutine coroutine)
     {
+        coroutine = null;
         // Check valid direction
         if (!(direction.magnitude == 1.0f && (Mathf.Abs(direction.x) == 1 || Mathf.Abs(direction.y) == 1)))
             return false;
@@ -640,13 +662,29 @@ public class BoardManager : Listener
             if (toCell.GetPlacedObject() != null)
             {
                 if (bObject.GetAnimator() != null)
-                    bObject.GetAnimator().Play("Collision");
+                {
+                    if (bObject.GetDirection() == BoardObject.Direction.LEFT ||
+                        bObject.GetDirection() == BoardObject.Direction.RIGHT ||
+                        bObject.GetDirection() == BoardObject.Direction.DOWN_RIGHT ||
+                        bObject.GetDirection() == BoardObject.Direction.UP_LEFT)
+                    {
+                        if (direction.y != 0)
+                            bObject.GetAnimator().Play("Collision");
+                        else
+                            bObject.GetAnimator().Play("Collision2");
+                    }
+                    else
+                    {
+                        if (direction.y != 0)
+                            bObject.GetAnimator().Play("Collision2");
+                        else
+                            bObject.GetAnimator().Play("Collision");
+                    }
+                }
                 return false;
             }
 
-            currentSteps++;
-
-            StartCoroutine(InternalMoveObject(fromCell, toCell, time));
+            coroutine = StartCoroutine(InternalMoveObject(fromCell, toCell, time));
             return true;
         }
         else
@@ -656,9 +694,10 @@ public class BoardManager : Listener
         }
     }
 
-    public void RotateObject(Vector2Int origin, int direction, float time)
+    public void RotateObject(Vector2Int origin, int direction, float time, out Coroutine coroutine)
     {
         // Check direction
+        coroutine = null;
         if (direction == 0) return;
         direction = direction < 0 ? -1 : 1;
 
@@ -671,7 +710,7 @@ public class BoardManager : Listener
         // You cannot rotate an object that is already rotating
         if (bObject.GetDirection() == BoardObject.Direction.PARTIAL) return;
 
-        StartCoroutine(InternalRotateObject(bObject, direction, time));
+        coroutine = StartCoroutine(InternalRotateObject(bObject, direction, time));
     }
 
     public Vector3 GetLocalPosition(Vector3 position)
@@ -772,6 +811,7 @@ public class BoardManager : Listener
         try
         {
             string[] args = msg.Split(' ');
+            string name;
             int amount = 0, index = -1, rot = 0;
             float intensity = 0.0f, time = 0.5f;
             bool active;
@@ -782,28 +822,30 @@ public class BoardManager : Listener
                 case MSG_TYPE.MOVE_LASER:
                     amount = int.Parse(args[0]);
                     dir = GetDirectionFromString(args[1]);
-                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                    StartCoroutine(MoveObject("Laser", 0, dir, amount, time));
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f) - 0.05f;
+                    StartCoroutine(MoveObject(laserName, 0, dir, amount, time));
                     break;
                 case MSG_TYPE.MOVE:
-                    index = int.Parse(args[1]);
-                    amount = int.Parse(args[2]);
-                    dir = GetDirectionFromString(args[3]);
-                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                    StartCoroutine(MoveObject(args[0], index - 1, dir, amount, time));
+                    name = args[0].Split('_')[0];
+                    index = int.Parse(args[0].Split('_')[1]);
+                    amount = int.Parse(args[1]);
+                    dir = GetDirectionFromString(args[2]);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f) - 0.05f;
+                    StartCoroutine(MoveObject(name, index - 1, dir, amount, time));
                     break;
                 case MSG_TYPE.ROTATE_LASER:
                     amount = int.Parse(args[0]) * 2;
                     rot = GetRotationFromString(args[1]);
-                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                    StartCoroutine(RotateObject("Laser", 0, rot, amount, time));
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / ((amount % 8) + 1), 0.5f) - 0.05f;
+                    StartCoroutine(RotateObject(laserName, 0, rot, amount, time));
                     break;
                 case MSG_TYPE.ROTATE:
-                    index = int.Parse(args[1]);
-                    amount = int.Parse(args[2]) * 2;
-                    rot = GetRotationFromString(args[3]);
-                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / (amount + 1), 0.5f);
-                    StartCoroutine(RotateObject(args[0], index - 1, rot, amount, time));
+                    name = args[0].Split('_')[0];
+                    index = int.Parse(args[0].Split('_')[1]);
+                    amount = int.Parse(args[1]) * 2;
+                    rot = GetRotationFromString(args[2]);
+                    time = Mathf.Min(UBlockly.Times.instructionWaitTime / ((amount % 8) + 1), 0.5f) - 0.05f;
+                    StartCoroutine(RotateObject(name, index - 1, rot, amount, time));
                     break;
                 case MSG_TYPE.CHANGE_INTENSITY:
                     index = int.Parse(args[0]);
@@ -811,9 +853,10 @@ public class BoardManager : Listener
                     ChangeLaserIntensity(index - 1, intensity);
                     break;
                 case MSG_TYPE.ACTIVATE_DOOR:
-                    active = bool.Parse(args[2]);
-                    index = int.Parse(args[1]);
-                    ActivateDoor(args[0], index - 1, active);
+                    name = args[0].Split('_')[0];
+                    index = int.Parse(args[0].Split('_')[1]);
+                    active = bool.Parse(args[1]);
+                    ActivateDoor(name, index - 1, active);
                     break;
                 case MSG_TYPE.CODE_END:
                     if (AllReceiving())
@@ -832,7 +875,7 @@ public class BoardManager : Listener
     public void InvokeLevelFailed()
     {
         UBlockly.CSharp.Interpreter.Stop();
-        Invoke("LevelFailed", 0.3f);
+        Invoke("LevelFailed", 1.0f);
     }
 
     private void LevelFailed()
@@ -842,13 +885,26 @@ public class BoardManager : Listener
         blackRect.SetActive(true);
 
         streamRoom.GameOver();
+
+        var levelName = GameManager.Instance.GetCurrentLevelName();
+        TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, false, 0f);
+    }
+
+    public CameraMouseInput GetMouseInput()
+    {
+        return cameraInput;
+    }
+
+    public OrbitCamera GetOrbitCamera()
+    {
+        return orbitCamera;
     }
 
     private void ChangeLaserIntensity(int index, float newIntensity)
     {
-        if (elementPositions.ContainsKey("laser") && index < elementPositions["laser"].Count)
+        if (elementPositions.ContainsKey(laserName) && index < elementPositions[laserName].Count)
         {
-            Vector2Int pos = elementPositions["laser"][index];
+            Vector2Int pos = elementPositions[laserName][index];
             LaserEmitter laser = (LaserEmitter)board[pos.x, pos.y].GetPlacedObject();
             if (laser != null)
             {
@@ -861,7 +917,7 @@ public class BoardManager : Listener
     private void ActivateDoor(string name, int index, bool active)
     {
         name = name.ToLower();
-        if (name == "puerta" && elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
+        if (name == boardObjectPrefabs[4].GetNameAsLower() && elementPositions.ContainsKey(name) && index < elementPositions[name].Count)
         {
             Vector2Int pos = elementPositions[name][index];
             Door door = (Door)board[pos.x, pos.y].GetPlacedObject();
@@ -923,7 +979,16 @@ public class BoardManager : Listener
         if (hintsShown >= hintsParent.childCount /*|| ProgressManager.Instance.GetHintsRemaining() == 0*/)
             DeactivateHintButton();
 
+
         TrackerAsset.Instance.setVar("remaining_hints", ProgressManager.Instance.GetHintsRemaining());
-        TrackerAsset.Instance.GameObject.Used("hint_used");
+        TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName());
+        TrackerAsset.Instance.GameObject.Interacted("hint_button");
     }
+
+    public void TraceResetView(string buttonName)
+    {
+        TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName());
+        TrackerAsset.Instance.GameObject.Interacted(buttonName);
+    }
+
 }

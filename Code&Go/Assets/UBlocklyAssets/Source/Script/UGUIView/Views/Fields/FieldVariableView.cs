@@ -17,6 +17,7 @@ limitations under the License.
 ****************************************************************************/
 
 
+using AssetPackage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,8 +112,18 @@ namespace UBlockly.UGUI
 
         protected override void OnValueChanged(string newValue)
         {
+            string oldValue = m_Label.text;
             m_Label.text = newValue;
             UpdateLayout(XY);
+
+            TrackerAsset.Instance.setVar("new_value", newValue);
+            TrackerAsset.Instance.setVar("old_value", oldValue);
+            TrackerAsset.Instance.setVar("action", "change_value");
+            TrackerAsset.Instance.setVar("field_name", mField.Name.ToLower());
+            TrackerAsset.Instance.setVar("field_type", mField.Type.ToLower());
+            TrackerAsset.Instance.setVar("block_type", mSourceBlockView.Block.Type.ToLower());
+            TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName().ToLower());
+            TrackerAsset.Instance.GameObject.Interacted(GameManager.Instance.GetBlockId(mSourceBlockView.Block));
         }
         
         protected override Vector2 CalculateSize()

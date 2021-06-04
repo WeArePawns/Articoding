@@ -250,4 +250,11 @@ public class BinaryHeap<T> : ICollection<T> where T : IComparable<T>
         _count--;
         return true;
     }
+
+    public List<T> ToList()
+    {
+        T[] arr = new T[_count];
+        Array.Copy(_data, arr, _count);
+        return new List<T>(arr);
+    }
 }

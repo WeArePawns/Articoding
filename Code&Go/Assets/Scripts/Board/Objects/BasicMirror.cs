@@ -6,11 +6,11 @@ public class BasicMirror : BoardObject, ILaserReflector
 {
     [SerializeField] private Collider reflectCollider;
 
-    private void Awake()
+    /*private void Awake()
     {
-        typeName = "Espejo";
+        typeName = "Espejo_";
         argsNames = new string[0];
-    }
+    }*/
 
     public void Reflect(Vector3 inFrom, Vector3 inDirection, Vector3 inNormal, out Vector3[] outFrom, out Vector3[] outDirection)
     {

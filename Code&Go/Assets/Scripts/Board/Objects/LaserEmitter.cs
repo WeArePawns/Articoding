@@ -14,11 +14,11 @@ public class LaserEmitter : BoardObject, ILaserEmitter
     [SerializeField] private ParticleSystem moveParticles;
     [SerializeField] private GameObject pointLight;
 
-    private void Awake()
+    /*private void Awake()
     {
-        typeName = "Laser";
-        argsNames = new string[1] { "Intensidad" };
-    }
+        typeName = "Laser_";
+        argsNames = new string[1] { "Activado" };
+    }*/
 
     public void Start()
     {
@@ -42,9 +42,10 @@ public class LaserEmitter : BoardObject, ILaserEmitter
             pointLight.SetActive(false);
             if (laserRay != null)
             {
-                foreach (Transform child in laserRay.transform)
-                    Destroy(child.gameObject);
+                /*foreach (Transform child in laserRay.transform)
+                    Destroy(child.gameObject);*/
                 Destroy(laserRay.gameObject);
+                laserRay = null;
             }
             return;
         }
@@ -68,7 +69,7 @@ public class LaserEmitter : BoardObject, ILaserEmitter
 
     public void ChangeIntensity(float newIntensity)
     {
-        if (newIntensity > 0.0f)
+        //if (newIntensity > 0.0f)
             intensity = newIntensity;
     }
 

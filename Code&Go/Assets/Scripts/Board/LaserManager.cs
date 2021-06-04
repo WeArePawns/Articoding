@@ -36,7 +36,6 @@ public class LaserManager : MonoBehaviour
             // TODO: expandir si es necesario
         }
 
-
         // En este punto, los laseres han enlistado los receptores que han alcanzado
         foreach (ILaserReceiver receiver in receivers)
         {
@@ -65,7 +64,7 @@ public class LaserManager : MonoBehaviour
         if (parent == null) parent = laserParent;
 
         LaserRay laser = Instantiate(laserRayPrefab, parent);
-        laser.Cast(from, direction, parent);
+        laser.Cast(from, direction, laser.transform);
         return laser;
     }
 

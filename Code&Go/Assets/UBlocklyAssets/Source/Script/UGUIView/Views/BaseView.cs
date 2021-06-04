@@ -423,6 +423,16 @@ namespace UBlockly.UGUI
                             m_Next.UpdateLayout(startPos);
                         }
                     }
+                    // update connection location in ConnectionDB
+                    if (Type == ViewType.ConnectionInput)
+                    {
+                        ConnectionView connectionView = (ConnectionView)this;
+                        if (connectionView != null)
+                        {
+                            connectionView.OnXYUpdated();
+                        }
+                    }
+
                     break;
                 }
                 case ViewType.Connection:
@@ -434,7 +444,24 @@ namespace UBlockly.UGUI
                     {
                         m_Parent.UpdateLayout(m_Parent.SiblingIndex == 0 ? m_Parent.HeaderXY : m_Parent.XY);
                     }
-                    break;
+
+                    // update connection location in ConnectionDB
+                    if(Type == ViewType.Block)
+                    {
+                        BlockView blockView = (BlockView)this;
+                        if (blockView != null)
+                        {
+                            foreach (var view in blockView.Childs)
+                            {
+                                if (view.Type == ViewType.Connection)
+                                {
+                                    view.OnXYUpdated();
+                                }
+                            }
+                        }
+                    }
+
+                        break;
                 }
             }
         }
@@ -473,6 +500,13 @@ namespace UBlockly.UGUI
         {
             if (m_Parent != null)
                 m_Parent.RemoveChild(this);
+        }
+
+        public abstract bool CanBeCloned(BlockView block = null);
+        public virtual void InitIDs()
+        {            
+            foreach (var child in Childs)
+                child.InitIDs();
         }
     }
 }

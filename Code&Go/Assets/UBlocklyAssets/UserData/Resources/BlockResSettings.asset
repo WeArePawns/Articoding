@@ -13,13 +13,25 @@ MonoBehaviour:
   m_Name: BlockResSettings
   m_EditorClassIdentifier: 
   m_LoadType: 1
+  m_I18nFileLocalized:
+    IndexName: 
+    ResName: 
+    LocalizedTextFile:
+      m_TableReference:
+        m_TableCollectionName: GUID:f98810d240582ac40be247acd22d922c
+      m_TableEntryReference:
+        m_KeyId: 17667588096
+        m_Key: 
+      m_FallbackState: 0
   m_I18nFiles:
   - IndexName: en
     ResName: en
     TextFile: {fileID: 4900000, guid: fb2b240724f9d41aabcf2ca6e37be0b1, type: 3}
+    Selected: 0
   - IndexName: es
     ResName: es
     TextFile: {fileID: 4900000, guid: 6d954885a514f9043bf1f1ce655e8afc, type: 3}
+    Selected: 1
   m_BlockJsonFiles:
   - IndexName: color
     ResName: color
@@ -63,6 +75,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 1
+    active: 1
   - BlockType: movement_move_laser
     Tutorial:
       Tutorial: {fileID: 11400000, guid: ffc1630a3feb0b6438b215bcd99d04b1, type: 2}
@@ -70,6 +83,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 1
+    active: 1
   - BlockType: movement_rotate_laser
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 6a0845fe6a0ca6743b86d42542884c13, type: 2}
@@ -77,6 +91,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 1
+    active: 1
   - BlockType: variables_get
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 0060832cdf1639243bfdaaf4b0da217d, type: 2}
@@ -84,6 +99,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 1
+    active: 1
   - BlockType: variables_set
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 409bbf2b102802544b2ad0873046bd0e, type: 2}
@@ -91,6 +107,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 0
+    active: 1
   - BlockType: math_number
     Tutorial:
       Tutorial: {fileID: 11400000, guid: e399b40bd57775b41a5f5a6fa004c9e1, type: 2}
@@ -98,6 +115,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 0
+    active: 1
   - BlockType: text
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 6ee64b0635057c74aa4e112ecce2ba87, type: 2}
@@ -105,6 +123,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 0
+    active: 1
   - BlockType: movement_move
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 4c565e490065e204aa127ea920d036b6, type: 2}
@@ -112,6 +131,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 1
+    active: 0
   - BlockType: movement_rotate
     Tutorial:
       Tutorial: {fileID: 11400000, guid: f86f9eb39f4786c488620dace4daad00, type: 2}
@@ -119,6 +139,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 0
+    active: 0
   - BlockType: logic_boolean
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 9e504f43d665a734eb0a610eaaf1068d, type: 2}
@@ -126,6 +147,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 0
+    active: 1
   - BlockType: movement_activate_door
     Tutorial:
       Tutorial: {fileID: 11400000, guid: e84cb5ed2c8a5f344925a6e00b6150d3, type: 2}
@@ -133,6 +155,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 1
+    active: 1
   - BlockType: controls_for
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 08b5f47b1048e1e42b2b541b52064bbc, type: 2}
@@ -140,20 +163,23 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 0
-  - BlockType: controls_if
+    active: 1
+  - BlockType: logic_if
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 0e2be3b523edebe4c8d5fa163bda7489, type: 2}
       Priority: 210
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 0
-  - BlockType: controls_ifelse
+    active: 0
+  - BlockType: logic_ifelse
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 3960e1f34c100b14eb5728ead9d4595f, type: 2}
       Priority: 210
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 0
+    active: 1
   - BlockType: controls_whileUntil
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 7c1172ceee543bc408e1986f59a6bea7, type: 2}
@@ -161,6 +187,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 0
+    active: 1
   - BlockType: logic_compare
     Tutorial:
       Tutorial: {fileID: 11400000, guid: afab5220ecbaaa44d846d12f3c32b852, type: 2}
@@ -168,6 +195,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 1
+    active: 1
   - BlockType: logic_negate
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 741bdcbc9f9d88348bc058b1ad25c5e0, type: 2}
@@ -175,6 +203,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 0
+    active: 1
   - BlockType: math_arithmetic
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 495658a834d78844dac01e28a20965f5, type: 2}
@@ -182,6 +211,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 1
+    active: 1
   - BlockType: lists_getIndex
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 15fa7f6c4f5ea7246b509970623e7d7a, type: 2}
@@ -189,6 +219,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 0
+    active: 1
   - BlockType: lists_create_with
     Tutorial:
       Tutorial: {fileID: 11400000, guid: e3871ca57f81e744fb5dc9e25b360f23, type: 2}
@@ -196,6 +227,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 0
+    active: 1
   - BlockType: movement_cells_occupied
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 5631543e91f77bf409e5d9a103c0aae1, type: 2}
@@ -203,6 +235,7 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 1
+    active: 1
   - BlockType: controls_repeat
     Tutorial:
       Tutorial: {fileID: 11400000, guid: 08b5f47b1048e1e42b2b541b52064bbc, type: 2}
@@ -210,6 +243,15 @@ MonoBehaviour:
       Highlight: 1
       DestroyOnShow: 1
       IsSaveCheckpoint: 1
+    active: 1
+  - BlockType: logic_operation
+    Tutorial:
+      Tutorial: {fileID: 11400000, guid: 5d77a102564a98846bfbe7fe150feec3, type: 2}
+      Priority: 210
+      Highlight: 1
+      DestroyOnShow: 1
+      IsSaveCheckpoint: 1
+    active: 1
   m_BlockViewPrefabPath: Assets/UBlocklyData/BlockGenPrefabs/
   m_BlockViewPrefabs:
   - IndexName: colour_picker
@@ -275,12 +317,12 @@ MonoBehaviour:
   - IndexName: logic_boolean
     ResName: Block_logic_boolean
     Prefab: {fileID: 4694542922125876789, guid: 9f55ee5cec2457e4d920ea7a3af2a146, type: 3}
-  - IndexName: controls_if
-    ResName: Block_controls_if
-    Prefab: {fileID: 5023353830049994535, guid: df959a48b898e6e418dac0024cc6bb20, type: 3}
-  - IndexName: controls_ifelse
-    ResName: Block_controls_ifelse
-    Prefab: {fileID: 3913748259071508151, guid: 5d853e9c6e029a24eaa0bcdd74ccdf3c, type: 3}
+  - IndexName: logic_if
+    ResName: Block_logic_if
+    Prefab: {fileID: 901622362963434516, guid: 5ccd379fb26d23c469049aab1f9b90ef, type: 3}
+  - IndexName: logic_ifelse
+    ResName: Block_logic_ifelse
+    Prefab: {fileID: 3472462910947544474, guid: 770fd1141e3e1b9488f75c9910878c0a, type: 3}
   - IndexName: logic_compare
     ResName: Block_logic_compare
     Prefab: {fileID: 9127168010095457442, guid: e3f06385b2876d94eaf44a2ac2d79185, type: 3}
@@ -428,6 +470,9 @@ MonoBehaviour:
   - IndexName: movement_activate_door
     ResName: Block_movement_activate_door
     Prefab: {fileID: 2855086744765720491, guid: f5aee89a49633724d953e580af0993f8, type: 3}
+  - IndexName: movement_cells_occupied
+    ResName: Block_movement_cells_occupied
+    Prefab: {fileID: 8622980188831786632, guid: 17dc68d6a7e99f14c80678f9c703acf5, type: 3}
   m_DialogPrefabs:
   - IndexName: variable_name
     ResName: Dialog_variable_name

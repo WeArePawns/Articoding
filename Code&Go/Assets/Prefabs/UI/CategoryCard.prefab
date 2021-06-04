@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 3421534876852304024}
   - component: {fileID: 6960635942120863352}
   - component: {fileID: 8962747144381021739}
+  - component: {fileID: 5636541052573677615}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -164,6 +165,41 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: ExampleTitle
+--- !u!114 &5636541052573677615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3104508659017765750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8962747144381021739}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Text, UnityEngine.UI
+        m_MethodName: set_text
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6085823976171686223
 GameObject:
   m_ObjectHideFlags: 0
@@ -177,6 +213,7 @@ GameObject:
   - component: {fileID: 7569387792998684776}
   - component: {fileID: 4497312642027457297}
   - component: {fileID: 1422479842212752651}
+  - component: {fileID: 3532596445826904020}
   m_Layer: 5
   m_Name: CategoryCard
   m_TagString: Untagged
@@ -255,7 +292,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0ab2145052e9914f95126314ba7fc35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  category: {fileID: 11400000, guid: 5bbac08c427744c4dbeb2fcb0835977b, type: 2}
+  category: {fileID: 0}
+  localizeString: {fileID: 5636541052573677615}
   title: {fileID: 8962747144381021739}
   stars: {fileID: 4024123381342826675}
   progressBar: {fileID: 650010675646912430}
@@ -304,6 +342,26 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3532596445826904020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6085823976171686223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 400
+  info: {fileID: 11400000, guid: 6b6a26a12c9a9be4a8bbc7997b06f3bd, type: 2}
+  highlightObject: 1
+  destroyOnShowed: 1
+  isSaveCheckpoint: 0
+  OnShowed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6594708582818587066
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,6 +373,7 @@ GameObject:
   - component: {fileID: 6498094176799554687}
   - component: {fileID: 3709088108761107484}
   - component: {fileID: 3041354216682284206}
+  - component: {fileID: 2204129908289172452}
   m_Layer: 5
   m_Name: StarsInfo
   m_TagString: Untagged
@@ -389,6 +448,26 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
+--- !u!114 &2204129908289172452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6594708582818587066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 410
+  info: {fileID: 11400000, guid: 8da9ce2e3d30e364f82bc5c34cff2020, type: 2}
+  highlightObject: 1
+  destroyOnShowed: 1
+  isSaveCheckpoint: 1
+  OnShowed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &7102426546902857195
 GameObject:
   m_ObjectHideFlags: 0
@@ -584,7 +663,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.41960788, g: 0.7137255, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.82983035, b: 0.41960788, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -975,11 +1054,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ac19a1c446bde54b8a26f8ad977cd07, type: 3}
---- !u!224 &6885977891463989664 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5692467604195146612, guid: 2ac19a1c446bde54b8a26f8ad977cd07, type: 3}
-  m_PrefabInstance: {fileID: 1256606863691084500}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &650010675646912430 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1762332469064541562, guid: 2ac19a1c446bde54b8a26f8ad977cd07, type: 3}
@@ -991,6 +1065,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c15c647e4f48e044dad0cdd1b8f591f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &6885977891463989664 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5692467604195146612, guid: 2ac19a1c446bde54b8a26f8ad977cd07, type: 3}
+  m_PrefabInstance: {fileID: 1256606863691084500}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2925237789862324999 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4172819308999940563, guid: 2ac19a1c446bde54b8a26f8ad977cd07, type: 3}

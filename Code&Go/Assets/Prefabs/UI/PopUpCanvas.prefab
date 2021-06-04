@@ -1,5 +1,40 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &640064006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1935694176509558495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:a894dd1023aa1204dbc04675aada18ae
+    m_TableEntryReference:
+      m_KeyId: 1422047907061760
+      m_Key: 
+    m_FallbackState: 0
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1935694176509558481}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Text, UnityEngine.UI
+        m_MethodName: set_text
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1935694178192948159
 GameObject:
   m_ObjectHideFlags: 0
@@ -112,7 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71ceed343cb58f54fa27e360e91b3628, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvasScaler: {fileID: 1935694178192948146}
+  bodyRect: {fileID: 1935694178383496599}
   graphicRaycaster: {fileID: 1935694178192948145}
   mainContent: {fileID: 1935694178383496598}
   popupPanel: {fileID: 1935694176691547357}
@@ -275,6 +310,10 @@ PrefabInstance:
       propertyPath: canvasScaler
       value: 
       objectReference: {fileID: 1935694178192948146}
+    - target: {fileID: 3128335064326112078, guid: 0382925cac9bd304dba79a55646be1e8, type: 3}
+      propertyPath: contentRect
+      value: 
+      objectReference: {fileID: 1935694178383496599}
     - target: {fileID: 3128335064326112084, guid: 0382925cac9bd304dba79a55646be1e8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -423,5 +462,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb29bc7aea49d2e40b6f8aebfa712661, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &1935694176509558495 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3128335064137961804, guid: 0382925cac9bd304dba79a55646be1e8, type: 3}
+  m_PrefabInstance: {fileID: 3582300913789005715}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1935694176509558481 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3128335064137961794, guid: 0382925cac9bd304dba79a55646be1e8, type: 3}
+  m_PrefabInstance: {fileID: 3582300913789005715}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1935694176509558495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using AssetPackage;
 
 public class BoardCreator : MonoBehaviour
 {
@@ -39,7 +40,12 @@ public class BoardCreator : MonoBehaviour
 
     private void Start()
     {
-        GenerateNewBoard();
+        GenerateNewBoard(false);        
+        TrackerAsset.Instance.Accessible.Accessed("editor_mode");
+
+        TrackerAsset.Instance.Completable.Initialized("editor_level", CompletableTracker.Completable.Level);
+
+
         filePath = Application.dataPath + "/LevelsCreated/";
         rows = board.GetRows();
         columns = board.GetColumns();
@@ -69,7 +75,7 @@ public class BoardCreator : MonoBehaviour
     {
         if (field.text.Length == 0) return;
 
-            int value = int.Parse(field.text);
+        int value = int.Parse(field.text);
         if (value <= 0)
             field.text = "1";
         else if (value > maxSize)
@@ -230,7 +236,7 @@ public class BoardCreator : MonoBehaviour
         this.columns = board.GetColumns();
     }
 
-    public void GenerateNewBoard()
+    public void GenerateNewBoard(bool trace)
     {
         int columns = int.Parse(columnsField.text), rows = int.Parse(rowsField.text);
         if (columns <= 0 || rows <= 0) return;
@@ -249,6 +255,12 @@ public class BoardCreator : MonoBehaviour
         ResetCursor();
 
         FitBoard();
+
+        TrackerAsset.Instance.setVar("rows", rows);
+        TrackerAsset.Instance.setVar("columns", columns);
+
+        if (trace)
+            TrackerAsset.Instance.GameObject.Used("create_board_button");
     }
 
     public void FitBoard()

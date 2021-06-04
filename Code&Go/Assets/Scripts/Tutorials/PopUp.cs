@@ -1,17 +1,18 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-
+using UnityEngine.Localization;
+using UnityEngine.Localization.Components;
 
 // Class that controls inner functionality
 public class PopUp : MonoBehaviour
 {
-    [SerializeField] private CanvasScaler canvasScaler;
+    [SerializeField] private RectTransform contentRect;
     [SerializeField] private RectTransform panelRect;
     [SerializeField] private GameObject titleContent;
     [SerializeField] private GameObject contentContent;
-    [SerializeField] private Text titleText;
-    [SerializeField] private Text contentText;
+    [SerializeField] private LocalizeStringEvent titleText;
+    [SerializeField] private LocalizeStringEvent contentText;
     [SerializeField] private Text buttonText;
     [SerializeField] private Button nextButton;
     [Space]
@@ -26,21 +27,26 @@ public class PopUp : MonoBehaviour
     {
         if (!Application.isPlaying) return;
         gameObject.SetActive(false);
-        panelRect.anchoredPosition = new Vector2(canvasScaler.referenceResolution.x / 2.0f, canvasScaler.referenceResolution.y / 2.0f);
+        panelRect.anchoredPosition = new Vector2(contentRect.rect.width / 2.0f, contentRect.rect.height / 2.0f);
     }
 
     // Warning: this method empties button listeners
     public void Show(PopUpData data)
     {
-        // Set texts
-        titleContent.SetActive(!string.IsNullOrEmpty(data.title));
-        titleText.gameObject.SetActive(!string.IsNullOrEmpty(data.title));
-     
-        titleText.text = data.title;
+        data.localizedTitle.RefreshString();
+        data.localizedContent.RefreshString();
 
-        contentContent.SetActive(!string.IsNullOrEmpty(data.content));
-        contentText.gameObject.SetActive(!string.IsNullOrEmpty(data.content));
-        contentText.text = data.content;
+        // Set texts
+        titleContent.SetActive(!string.IsNullOrEmpty(data.localizedTitle.GetLocalizedString().ToString()));
+        titleText.gameObject.SetActive(!string.IsNullOrEmpty(data.localizedTitle.GetLocalizedString().ToString()));
+     
+        titleText.StringReference = data.localizedTitle;
+        titleText.RefreshString();
+
+        contentContent.SetActive(!string.IsNullOrEmpty(data.localizedContent.GetLocalizedString().ToString()));
+        contentText.gameObject.SetActive(!string.IsNullOrEmpty(data.localizedContent.GetLocalizedString().ToString()));
+        contentText.StringReference = data.localizedContent;
+        contentText.RefreshString();
 
         // Set action
         nextButton.onClick.RemoveAllListeners();
@@ -71,19 +77,19 @@ public class PopUp : MonoBehaviour
     {
         if (position == null) return;
 
-        float width = canvasScaler.referenceResolution.x;
-        float height = canvasScaler.referenceResolution.y;
+        float width = contentRect.rect.width;
+        float height = contentRect.rect.height;
 
         // Scale position
         position.x *= width / Screen.width;
         position.y *= height / Screen.height;
-
+/*
         // Offset position
         float mAspectRatio = (float)Screen.width / Screen.height;
         float xDiff = (canvasScaler.referenceResolution.x - canvasScaler.referenceResolution.y * mAspectRatio) * canvasScaler.matchWidthOrHeight;
         float yDiff = (canvasScaler.referenceResolution.y - canvasScaler.referenceResolution.x / mAspectRatio) * (1.0f - canvasScaler.matchWidthOrHeight);
         position.x -= xDiff;
-        position.y -= yDiff;
+        position.y -= yDiff;*/
 
         // Scale offset
         offset.x *= width / Screen.width;
@@ -123,15 +129,15 @@ public class PopUp : MonoBehaviour
 
     public void CenterPosition()
     {
-        Vector2 position = new Vector2(canvasScaler.referenceResolution.x / 2.0f, canvasScaler.referenceResolution.y / 2.0f);
+        Vector2 position = new Vector2(contentRect.rect.width / 2.0f, contentRect.rect.height / 2.0f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
-
+        /*
         // Offset position
         float mAspectRatio = (float)Screen.width / Screen.height;
         float xDiff = (canvasScaler.referenceResolution.x - canvasScaler.referenceResolution.y * mAspectRatio) * canvasScaler.matchWidthOrHeight;
         float yDiff = (canvasScaler.referenceResolution.y - canvasScaler.referenceResolution.x / mAspectRatio) * (1.0f - canvasScaler.matchWidthOrHeight);
         position.x -= xDiff / 2.0f;
-        position.y -= yDiff / 2.0f;
+        position.y -= yDiff / 2.0f;*/
 
         panelRect.anchoredPosition = position;
     }
@@ -143,7 +149,7 @@ public class PopUp : MonoBehaviour
 
     private void UpdateCapLimit()
     {
-        bool capPassed = contentText.text.Length >= contentCharacterCap || titleText.text.Length >= titleCharacterCap;
+        bool capPassed = contentText.StringReference.ToString().Length >= contentCharacterCap || titleText.StringReference.ToString().Length >= titleCharacterCap;
         capLayoutElement.enabled = capPassed;
     }
 }

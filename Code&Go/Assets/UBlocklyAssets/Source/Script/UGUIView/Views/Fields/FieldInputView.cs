@@ -17,6 +17,7 @@ limitations under the License.
 ****************************************************************************/
 
 
+using AssetPackage;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,6 +26,9 @@ namespace UBlockly.UGUI
     public class FieldInputView : FieldView
     {
         [SerializeField] protected InputField m_InputField;
+
+        private float controllingChanges = -1.0f;
+        private TrackerAsset.TrackerEvent trace;
 
         private FieldTextInput mFieldInput
         {
@@ -57,18 +61,56 @@ namespace UBlockly.UGUI
                 mField.SetValue(newText);
             });
         }
-        
+
+        private void Update()
+        {
+            float threshold = 2.5f;
+            if(controllingChanges != -1.0f && Time.time - controllingChanges > threshold)
+            {
+                TrackerAsset.Instance.setVar("new_value", m_InputField.text);
+                TrackerAsset.Instance.AddExtensionsToTrace(trace);
+                trace.Completed();
+                controllingChanges = -1.0f;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (controllingChanges != -1.0f)
+            {
+                TrackerAsset.Instance.setVar("new_value", m_InputField.text);
+                TrackerAsset.Instance.AddExtensionsToTrace(trace);
+                trace.Completed();
+                controllingChanges = -1.0f;
+            }
+        }
+
         protected override void OnValueChanged(string newValue)
         {
+            string oldValue = m_InputField.text;
             if (!string.Equals(m_InputField.text, newValue))
                 m_InputField.text = newValue;
-            UpdateLayout(XY);    
+            UpdateLayout(XY);
+
+            if (controllingChanges == -1.0f)
+            {
+                TrackerAsset.Instance.setVar("old_value", oldValue);
+                TrackerAsset.Instance.setVar("action", "change_value");
+                TrackerAsset.Instance.setVar("field_name", mField.Name.ToLower());
+                TrackerAsset.Instance.setVar("field_type", mField.Type.ToLower());
+                TrackerAsset.Instance.setVar("block_type", mSourceBlockView.Block.Type.ToLower());
+                TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName().ToLower());
+                trace = TrackerAsset.Instance.GameObject.Interacted(GameManager.Instance.GetBlockId(mSourceBlockView.Block));
+                trace.IsPartial();
+            }
+            controllingChanges = Time.time;
         }
 
         protected override Vector2 CalculateSize()
         {
             float width = m_InputField.textComponent.CalculateTextWidth(m_InputField.text);
-            width += mHorizontalMargin;
+
+            width += mHorizontalMargin + 2.0f; // extra offset
 
             Debug.LogFormat(">>>>> CalculateSize-TextInput: text: {0}, width: {1}", m_InputField.text, width);
             return new Vector2(width, BlockViewSettings.Get().ContentHeight);

@@ -4,9 +4,19 @@ using System.Collections.Generic;
 using UBlockly.UGUI;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Localization;
+using UnityEngine.SceneManagement;
+using UnityEngine.Localization.Components;
 
 public class LevelManager : MonoBehaviour
 {
+    [System.Serializable]
+    public struct CategoryTutorialsData
+    {
+        public PopUpData data;
+        public string categoryName;
+    }
+
     private Category currentCategory;
     [SerializeField] private LevelData currentLevel;
     private int currentLevelIndex = 0;
@@ -24,8 +34,13 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private int defaultLevelIndex;
 
     [SerializeField] private Text levelName;
+    [SerializeField] private LocalizeStringEvent levelNameLocalized;
 
     [SerializeField] private GameObject saveButton;
+
+    [SerializeField] private CategoryTutorialsData[] categoriesTutorials;
+
+    [SerializeField] private int pasosOffset = 0;
 
     public GameObject endPanel;
     public GameObject blackRect;
@@ -41,6 +56,8 @@ public class LevelManager : MonoBehaviour
     private int minimosPasos = 0;
 
     public StreamRoom streamRoom;
+
+    private bool completed = false;
 
     private void Awake()
     {
@@ -73,10 +90,17 @@ public class LevelManager : MonoBehaviour
     {
         Initialize();
 
-        TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
-        TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
-        TrackerAsset.Instance.GameObject.Used("level_start");
-        levelName.text = currentLevel.levelName;
+        var dom = UBlockly.Xml.WorkspaceToDom(BlocklyUI.WorkspaceView.Workspace);
+        string text = UBlockly.Xml.DomToText(dom);
+        text = GameManager.Instance.ChangeCodeIDs(text);
+        
+        TrackerAsset.Instance.setVar("code", "\r\n" + text);
+        TrackerAsset.Instance.Completable.Initialized(GameManager.Instance.GetCurrentLevelName().ToLower(), CompletableTracker.Completable.Level);
+
+
+        //levelName.text = currentLevel.levelName;
+        levelNameLocalized.StringReference = currentLevel.levelNameLocalized;
+        levelNameLocalized.RefreshString();
     }
 
     private void Update()
@@ -84,26 +108,31 @@ public class LevelManager : MonoBehaviour
         if (boardManager == null)
             return;
 
-        if (boardManager.GetCurrentSteps() > minimosPasos)
-            starsController.DeactivateMinimumStepsStar();
+        if (boardManager.GetCurrentSteps() > minimosPasos + pasosOffset)
+            starsController.DeactivateMinimumStepsStar(boardManager.GetCurrentSteps() - (minimosPasos + pasosOffset));
 
 
         if (boardManager.BoardCompleted() && !endPanel.activeSelf && !endPanelMinimized.activeSelf)
         {
-            TrackerAsset.Instance.setVar("category_id", currentCategory.name_id);
-            TrackerAsset.Instance.setVar("level_id", currentLevelIndex);
-            TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
-            TrackerAsset.Instance.setVar("first_execution", starsController.IsFirstRunStarActive());
-            TrackerAsset.Instance.setVar("minimum_steps", starsController.IsMinimumStepsStarActive());
-            TrackerAsset.Instance.setVar("no_hints", starsController.IsNoHintsStarActive());
-            TrackerAsset.Instance.GameObject.Used("level_end");
+            string levelName = GameManager.Instance.GetCurrentLevelName();
+
 
             streamRoom.FinishLevel();
 
             endPanel.SetActive(true);
             blackRect.SetActive(true);
             if (!GameManager.Instance.InCreatedLevel())
+            {
+                TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
+                TrackerAsset.Instance.setVar("first_execution", starsController.IsFirstRunStarActive());
+                TrackerAsset.Instance.setVar("minimum_steps", starsController.IsMinimumStepsStarActive());
+                TrackerAsset.Instance.setVar("no_hints", starsController.IsNoHintsStarActive());
                 ProgressManager.Instance.LevelCompleted(starsController.GetStars());
+            }
+            else
+                TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, true, -1);
+
+            completed = true;
         }
 
 #if UNITY_EDITOR
@@ -128,6 +157,8 @@ public class LevelManager : MonoBehaviour
         BoardState state = BoardState.FromJson(boardJson);
         boardManager.LoadBoard(state, buildLimits);
         cameraFit.FitBoard(boardManager.GetRows(), boardManager.GetColumns());
+
+        BlocklyUI.WorkspaceView.InitIDs();
     }
 
     public void LoadLevel(Category category, int levelIndex)
@@ -162,6 +193,11 @@ public class LevelManager : MonoBehaviour
         streamRoom.Retry();
 
         starsController.DeactivateFirstRunStar();
+
+        TrackerAsset.Instance.GameObject.Interacted("retry_button");
+
+        var levelName = GameManager.Instance.GetCurrentLevelName();
+        TrackerAsset.Instance.Completable.Initialized(levelName, CompletableTracker.Completable.Level);
     }
 
     public void MinimizeEndPanel()
@@ -171,6 +207,7 @@ public class LevelManager : MonoBehaviour
         endPanel.SetActive(false);
         blackRect.SetActive(false);
         debugPanel.SetActive(false);
+        TrackerAsset.Instance.GameObject.Interacted("end_panel_minimized_button");
     }
 
     public void MinimizeGameOverPanel()
@@ -180,6 +217,7 @@ public class LevelManager : MonoBehaviour
         //endPanel.SetActive(false);
         blackRect.SetActive(false);
         debugPanel.SetActive(false);
+        TrackerAsset.Instance.GameObject.Interacted("game_over_panel_minimized_button");
     }
 
     public void ResetLevel()
@@ -199,25 +237,50 @@ public class LevelManager : MonoBehaviour
 
     public void LoadMainMenu()
     {
+        string levelName = GameManager.Instance.GetCurrentLevelName().ToLower();
         TrackerAsset.Instance.setVar("steps", boardManager.GetCurrentSteps());
-        TrackerAsset.Instance.GameObject.Used("main_menu_return");
+        TrackerAsset.Instance.setVar("level", levelName);
+        TrackerAsset.Instance.GameObject.Interacted("level_exit_button");
 
-        GameManager.Instance.LoadScene("MenuScene");
+
+        var dom = UBlockly.Xml.WorkspaceToDom(BlocklyUI.WorkspaceView.Workspace);
+        string text = UBlockly.Xml.DomToText(dom);
+        text = GameManager.Instance.ChangeCodeIDs(text);
+
+        if (!completed)
+        {
+            TrackerAsset.Instance.setVar("code", "\r\n" + text);
+            TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, false, -1f);
+        }
+
+        if(LoadManager.Instance == null)
+        {
+            SceneManager.LoadScene("MenuScene");
+            return;
+        }
+
+        LoadManager.Instance.LoadScene("MenuScene");
     }
 
-    // Copiado y modificado (TODO: cambiar de lugar si eso)
-    public void LoadInitialBlocks(TextAsset textAsset)
+    public void LoadInitialBlocks(LocalizedAsset<TextAsset> textAsset)
     {
         if (textAsset == null) return;
 
         StartCoroutine(AsyncLoadInitialBlocks(textAsset));
     }
 
-    IEnumerator AsyncLoadInitialBlocks(TextAsset textAsset)
+    IEnumerator AsyncLoadInitialBlocks(LocalizedAsset<TextAsset> textAsset)
     {
+        var loadingOp = textAsset.LoadAssetAsync();
+        if (!loadingOp.IsDone)
+            yield return loadingOp;
+
+        TextAsset localizedTextAsset = loadingOp.Result;
+        if (localizedTextAsset == null) yield break;
+
         BlocklyUI.WorkspaceView.CleanViews();
 
-        var dom = UBlockly.Xml.TextToDom(textAsset.text);
+        var dom = UBlockly.Xml.TextToDom(localizedTextAsset.text);
 
         UBlockly.Xml.DomToWorkspace(dom, BlocklyUI.WorkspaceView.Workspace);
         BlocklyUI.WorkspaceView.BuildViews();
@@ -238,9 +301,17 @@ public class LevelManager : MonoBehaviour
         else if (textAsset != null)
         {
             ActiveBlocks blocks = ActiveBlocks.FromJson(textAsset.text);
-            BlocklyUI.WorkspaceView.Toolbox.SetActiveBlocks(blocks.AsMap());
+            BlocklyUI.WorkspaceView.Toolbox.SetActiveBlocks(blocks.AsMap(), CategoriesTutorialsAsMap());
         }
 
         yield return null;
+    }
+
+    public Dictionary<string, PopUpData> CategoriesTutorialsAsMap()
+    {
+        Dictionary<string, PopUpData> map = new Dictionary<string, PopUpData>();
+        foreach (CategoryTutorialsData c in categoriesTutorials)//For each category       
+            map[c.categoryName.ToUpper()] = c.data;
+        return map;
     }
 }

@@ -38,7 +38,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 490577500768018479}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
@@ -9746,6 +9746,71 @@ Transform:
   m_Father: {fileID: 6745913655574259915}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6684672536339079903
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6398632660304574010}
+  - component: {fileID: 4588501569291993320}
+  - component: {fileID: 7707630662625228568}
+  m_Layer: 2
+  m_Name: TutorialCube
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6398632660304574010
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6684672536339079903}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6745913655574259915}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4588501569291993320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6684672536339079903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 160
+  info: {fileID: 11400000, guid: 64653e9ac5a02da49a26207b5743e35d, type: 2}
+  highlightObject: 1
+  destroyOnShowed: 1
+  isSaveCheckpoint: 0
+  OnShowed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!65 &7707630662625228568
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6684672536339079903}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6745913654240987033
 GameObject:
   m_ObjectHideFlags: 0
@@ -9839,7 +9904,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 0.5}
+  m_Size: {x: 0.8, y: 1, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6745913655574259957
 GameObject:
@@ -9851,7 +9916,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6745913655574259915}
   - component: {fileID: 3282710200332546109}
-  - component: {fileID: -8262248528175507582}
   - component: {fileID: 5028265636973379375}
   - component: {fileID: 6615801872557713174}
   - component: {fileID: -3287878730967057127}
@@ -9879,6 +9943,7 @@ Transform:
   - {fileID: 5194139033424209996}
   - {fileID: 7225671305730244178}
   - {fileID: 6491111326720752950}
+  - {fileID: 6398632660304574010}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9895,31 +9960,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: -3287878730967057127}
+  typeName: laser_
+  argsNames:
+  - Activado
+  typeNameLocalized:
+    m_TableReference:
+      m_TableCollectionName: GUID:0adb858ab7533944cb93d5d83be2fec2
+    m_TableEntryReference:
+      m_KeyId: 832789893120
+      m_Key: 
+    m_FallbackState: 0
+  argsNamesLocalized:
+  - m_TableReference:
+      m_TableCollectionName: GUID:0adb858ab7533944cb93d5d83be2fec2
+    m_TableEntryReference:
+      m_KeyId: 951933292544
+      m_Key: 
+    m_FallbackState: 0
+  isMovable: 1
+  isRotatable: 1
   intensity: 0
   laserRayPrefab: {fileID: -6798905577125967761, guid: 8dc4eeecfdbd1884dbd7a3bfcd21ff14, type: 3}
   onParticles: {fileID: 843139509730862598}
   moveParticles: {fileID: 295343302353364800}
   pointLight: {fileID: 490577500768018479}
---- !u!114 &-8262248528175507582
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6745913655574259957}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe02e80f7fd665441bf8e2b0eddbcd35, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  priority: 160
-  info: {fileID: 11400000, guid: 64653e9ac5a02da49a26207b5743e35d, type: 2}
-  highlightObject: 1
-  destroyOnShowed: 1
-  isSaveCheckpoint: 0
-  OnShowed:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!65 &5028265636973379375
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9931,7 +9995,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.8, y: 1, z: 0.8}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6615801872557713174
 MonoBehaviour:

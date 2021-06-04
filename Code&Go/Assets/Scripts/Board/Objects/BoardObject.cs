@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using Simva.Api;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization;
 
 // Base class of all board objects
 public class BoardObject : MonoBehaviour
@@ -14,9 +17,24 @@ public class BoardObject : MonoBehaviour
 
     [SerializeField] protected Animator anim;
     protected BoardManager boardManager;
-    protected string typeName = "";
-    protected int index = 1;
-    protected string[] argsNames;
+    protected int index = 0;
+
+    [SerializeField] protected string typeName = "";
+    [SerializeField] protected string[] argsNames;
+
+    [SerializeField] protected LocalizedString typeNameLocalized;
+    [SerializeField] protected LocalizedString[] argsNamesLocalized;
+
+    [SerializeField] protected bool isMovable;
+    [SerializeField] protected bool isRotatable;
+
+    private string id;
+
+    private void Awake()
+    {
+        if (string.IsNullOrEmpty(id))
+            id = GetNameAsLower() + "_" + SimvaPlugin.SimvaApi<IStudentsApi>.GenerateRandomBase58Key(4);
+    }
 
     public virtual void SetBoard(BoardManager board)
     {
@@ -32,22 +50,55 @@ public class BoardObject : MonoBehaviour
 
     public string GetName()
     {
-        return typeName;
+        if (typeNameLocalized.IsEmpty || !typeNameLocalized.GetLocalizedString().IsDone)
+            return typeName;
+
+        string res = typeNameLocalized.GetLocalizedString().Result;
+        return res;
+        //return typeName;
+    }
+
+    public string GetID()
+    {
+        if (string.IsNullOrEmpty(id))
+            Awake();
+        return id;
     }
 
     public string GetNameAsLower()
     {
-        return typeName.ToLower();
+        if (typeNameLocalized.IsEmpty || !typeNameLocalized.GetLocalizedString().IsDone)
+            return typeName.ToLower();
+
+        string res = typeNameLocalized.GetLocalizedString().Result;
+        return res.ToLower();
+        //return typeName.ToLower();
     }
 
     public string GetNameWithIndex()
     {
-        return typeName + " " + index.ToString();
+        if (typeNameLocalized.IsEmpty || !typeNameLocalized.GetLocalizedString().IsDone)
+            return typeName + index.ToString();
+
+        string res = typeNameLocalized.GetLocalizedString().Result;
+        return res + "_" + index.ToString();
+        //return typeName + index.ToString();
     }
 
     public string[] GetArgsNames()
     {
-        return argsNames;
+
+        string[] argsArr = new string[argsNamesLocalized.Length];
+
+        for (int i = 0; i < argsNamesLocalized.Length; i++)
+        {
+            if (!argsNamesLocalized[i].GetLocalizedString().IsDone)
+                return argsNames;
+            argsArr[i] = argsNamesLocalized[i].GetLocalizedString().Result;
+        }
+        return argsArr;
+
+        //return argsNames;
     }
 
     public void SetDirection(Direction direction, bool rotate = true)
@@ -89,6 +140,26 @@ public class BoardObject : MonoBehaviour
     {
         return index;
     }
+
+    public bool IsMovable()
+    {
+        return isMovable;
+    }
+
+    public bool IsRotatable()
+    {
+        return isRotatable;
+    }
+
+    public void SetMovable(bool movable)
+    {
+        isMovable = movable;
+    }
+    public void SetRotatable(bool rotatable)
+    {
+        isRotatable = rotatable;
+    }
+
 
     //Virtual method for seralization of additional arguments in child classes
     public virtual string[] GetArgs() { return new string[] { }; }

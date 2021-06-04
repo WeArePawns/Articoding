@@ -1,0 +1,32 @@
+<xml>
+    <variables>
+        <variable type="" id="Tz@@pswS,d6/W%fW{7H3">Amount</variable>
+        <variable type="" id="RpIbn}p]Rtf-_1(qs5p/">Object</variable>
+    </variables>
+    <block type="variables_set" id="rii{xqWtp+Jfc-VCZO0@" x="82" y="-142">
+        <field name="VAR" id="RpIbn}p]Rtf-_1(qs5p/" variableType="">Object</field>
+        <value name="VALUE">
+            <block type="text" id="W@l]A)sqSPV`5jk38%L~">
+                <field name="TEXT" />
+            </block>
+        </value>
+        <next>
+            <block type="variables_set" id="hVz6%Ny(0Tin:f;iRTi#">
+                <field name="VAR" id="Tz@@pswS,d6/W%fW{7H3" variableType="">Amount</field>
+                <value name="VALUE">
+                    <block type="math_number" id="(,|/KPVfG@Sc33NWJL,W">
+                        <field name="NUM">0</field>
+                    </block>
+                </value>
+                <next>
+                    <block type="controls_repeat" id="-$r:Kd$IF/Xj*Y:#~:)!">
+                        <field name="TIMES">3</field>
+                        <statement name="DO">
+                            <block type="logic_ifelse" id="av.UcWzEaDda-|0[X35K" />
+                        </statement>
+                    </block>
+                </next>
+            </block>
+        </next>
+    </block>
+</xml>

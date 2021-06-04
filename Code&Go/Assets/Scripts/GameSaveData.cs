@@ -14,6 +14,7 @@ public class CategorySaveData
     public LevelSaveData[] levelsData;
     public int lastLevelUnlocked;
     public uint totalStars;
+    public bool completableInitialized;
 }
 
 [System.Serializable]

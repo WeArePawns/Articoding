@@ -28,7 +28,7 @@ namespace UBlockly.UGUI
         ValueSlot,    //value slot on anywhere of the line group. Can't exist the same time with "Value" on one linegroup
         Statement,    //Statement input on the end of one line group
     }
-    
+
     public class ConnectionInputView : ConnectionView
     {
         [SerializeField] private ConnectionInputViewType m_ConnectionInputViewType;
@@ -71,7 +71,7 @@ namespace UBlockly.UGUI
                     throw new Exception("the background image of ConnectionInputView must be a \"CustomMeshImage\"");
             }
         }
-       
+
         public override Vector2 ChildStartXY
         {
             get
@@ -88,51 +88,51 @@ namespace UBlockly.UGUI
             switch (m_ConnectionInputViewType)
             {
                 case ConnectionInputViewType.Value:
-                {
-                    //width is not concerned
-                    Vector2 size = new Vector2(BlockViewSettings.Get().ValueConnectPointRect.width, 0);
-                    if (mTargetBlockView == null)
-                        size.y = BlockViewSettings.Get().ContentHeight;
-                    else
-                        size.y = mTargetBlockView.Height;
-                    return size;
-                }
-                case ConnectionInputViewType.ValueSlot:
-                {
-                    if (mTargetBlockView == null)
-                        return new Vector2(BlockViewSettings.Get().MinUnitWidth, BlockViewSettings.Get().ContentHeight);
-                    Vector2 size = new Vector2(BlockViewSettings.Get().ValueConnectPointRect.width + mTargetBlockView.Width, mTargetBlockView.Height);
-                    return size;
-                }
-                case ConnectionInputViewType.Statement:
-                {
-                    if (mTargetBlockView == null)
-                        return new Vector2(70, BlockViewSettings.Get().ContentHeight + BlockViewSettings.Get().ContentMargin.bottom);
-                    
-                    // calculate the height by adding all child statement blocks' height
-                    Vector2 size = new Vector2(70, 0);
-                    
-                    bool addConnectPointSpace = true;
-                    BlockView nextView = mTargetBlockView;
-                    while (nextView != null)
                     {
-                        size.y += nextView.Height;
-                        
-                        ConnectionView nextCon = nextView.GetConnectionView(Define.EConnection.NextStatement);
-                        if (nextCon == null)
-                        {
-                            addConnectPointSpace = false;
-                            break;
-                        }
-                        
-                        nextView = nextCon.TargetBlockView;
+                        //width is not concerned
+                        Vector2 size = new Vector2(BlockViewSettings.Get().ValueConnectPointRect.width, 0);
+                        if (mTargetBlockView == null)
+                            size.y = BlockViewSettings.Get().ContentHeight;
+                        else
+                            size.y = mTargetBlockView.Height;
+                        return size;
                     }
-                    if (addConnectPointSpace)
-                        size.y += BlockViewSettings.Get().StatementConnectPointRect.height;
+                case ConnectionInputViewType.ValueSlot:
+                    {
+                        if (mTargetBlockView == null)
+                            return new Vector2(BlockViewSettings.Get().MinUnitWidth, BlockViewSettings.Get().ContentHeight);
+                        Vector2 size = new Vector2(BlockViewSettings.Get().ValueConnectPointRect.width + mTargetBlockView.Width, mTargetBlockView.Height);
+                        return size;
+                    }
+                case ConnectionInputViewType.Statement:
+                    {
+                        if (mTargetBlockView == null)
+                            return new Vector2(70, BlockViewSettings.Get().ContentHeight + BlockViewSettings.Get().ContentMargin.bottom);
 
-                    size.y += BlockViewSettings.Get().ContentMargin.bottom;
-                    return size;
-                }
+                        // calculate the height by adding all child statement blocks' height
+                        Vector2 size = new Vector2(70, 0);
+
+                        bool addConnectPointSpace = true;
+                        BlockView nextView = mTargetBlockView;
+                        while (nextView != null)
+                        {
+                            size.y += nextView.Height;
+
+                            ConnectionView nextCon = nextView.GetConnectionView(Define.EConnection.NextStatement);
+                            if (nextCon == null)
+                            {
+                                addConnectPointSpace = false;
+                                break;
+                            }
+
+                            nextView = nextCon.TargetBlockView;
+                        }
+                        if (addConnectPointSpace)
+                            size.y += BlockViewSettings.Get().StatementConnectPointRect.height;
+
+                        size.y += BlockViewSettings.Get().ContentMargin.bottom;
+                        return size;
+                    }
             }
             return Vector2.zero;
         }
@@ -142,7 +142,7 @@ namespace UBlockly.UGUI
             if (m_BgImage is CustomMeshImage)
             {
                 Vector4 drawDimension = new Vector4(m_ImageMeshOffset.x, -Height, Width, m_ImageMeshOffset.y);
-                ((CustomMeshImage)m_BgImage).SetDrawDimensions(new[] {drawDimension});    
+                ((CustomMeshImage)m_BgImage).SetDrawDimensions(new[] { drawDimension });
             }
         }
 
@@ -154,7 +154,7 @@ namespace UBlockly.UGUI
         {
             if (ConnectionType == Define.EConnection.InputValue)
                 return mTargetBlockView;
-            
+
             BlockView nextView = mTargetBlockView;
             while (nextView != null)
             {
@@ -163,6 +163,13 @@ namespace UBlockly.UGUI
                 nextView = nextCon.TargetBlockView;
             }
             return nextView;
+        }
+
+        public override bool CanBeCloned(BlockView block = null)
+        {
+            if (mTargetBlockView != null)
+                return mTargetBlockView.CanBeCloned(block);
+            return mSourceBlockView.CanBeCloned(block);
         }
     }
 }

@@ -17,8 +17,10 @@ limitations under the License.
 ****************************************************************************/
 
 using AssetPackage;
+using Simva;
 using System;
 using System.Collections.Generic;
+using uAdventure.Simva;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -49,7 +51,7 @@ namespace UBlockly.UGUI
         protected Dictionary<string, CategoryBlocks> activeCategories;
         protected int nActiveCategories = 0;
 
-        public void SetActiveBlocks(Dictionary<string, CategoryBlocks> activeCategories)
+        public void SetActiveBlocks(Dictionary<string, CategoryBlocks> activeCategories, Dictionary<string, PopUpData> categoriesTutorials = null)
         {
             this.activeCategories = activeCategories;
             nActiveCategories = activeCategories.Keys.Count;
@@ -57,14 +59,43 @@ namespace UBlockly.UGUI
             if (trigger != null) trigger.enabled = nActiveCategories > 0;
 
             Block.blocksAvailable = new Dictionary<string, int>();
+            int priority = 400;
             //Activate the category if it's not in the active list
             foreach (var category in mConfig.BlockCategoryList)
-                mMenuList[category.CategoryName].gameObject.SetActive(activeCategories.ContainsKey(category.CategoryName.ToLower()));
+            {
+                bool active = activeCategories.ContainsKey(category.CategoryName.ToLower());
+                mMenuList[category.CategoryName].gameObject.SetActive(active);
+                if (categoriesTutorials != null && categoriesTutorials.ContainsKey(category.CategoryName))
+                {
+                    TutorialTrigger categoryTrigger = mMenuList[category.CategoryName].gameObject.AddComponent<TutorialTrigger>();
+                    categoryTrigger.isSaveCheckpoint = true;
+                    categoryTrigger.priority = priority++;
+                    categoryTrigger.highlightObject = true;
+                    categoryTrigger.info = categoriesTutorials[category.CategoryName];
+                }
+
+                //Set Block Count
+                if (active)
+                {
+                    mMenuList[category.CategoryName].gameObject.SetActive(true);
+                    List<string> blockTypes = mConfig.GetBlockCategory(category.CategoryName).BlockList;
+                    foreach (string blockType in blockTypes)
+                    {
+                        CategoryBlocks info = activeCategories[category.CategoryName.ToLower()];
+                        if (info.activate == (info.activeBlocks.ContainsKey(blockType)))
+                        {
+                            int value = (info.activeBlocks.ContainsKey(blockType) ? info.activeBlocks[blockType] : Int16.MaxValue);
+                            Block.blocksAvailable[blockType] = value;
+                        }
+                    }
+                }
+            }
         }
 
         public void SetActiveAllBlocks()
         {
             allActive = true;
+            nActiveCategories = mConfig.BlockCategoryList.Count;
             foreach (ToolboxBlockCategory category in mConfig.BlockCategoryList)
             {
                 mMenuList[category.CategoryName].gameObject.SetActive(true);
@@ -83,9 +114,7 @@ namespace UBlockly.UGUI
             {
                 CategoryBlocks info = activeCategories[mActiveCategory.ToLower()];
                 active = info.activate == (info.activeBlocks.ContainsKey(blockType));
-                int prevValue = (Block.blocksAvailable.ContainsKey(blockType)) ? Block.blocksAvailable[blockType] : 0;
-                int value = prevValue + (info.activeBlocks.ContainsKey(blockType) ? info.activeBlocks[blockType] : Int16.MaxValue);
-                Block.blocksAvailable[blockType] = value;
+                int value = (Block.blocksAvailable.ContainsKey(blockType) ? Block.blocksAvailable[blockType] : Int16.MaxValue);
                 if (value <= 0)
                 {
                     block.enabled = false;
@@ -199,8 +228,11 @@ namespace UBlockly.UGUI
 
             OnPickBlockView();
 
-            TrackerAsset.Instance.setVar("block_id", blockView.Block.ToDevString());
-            TrackerAsset.Instance.GameObject.Used("block_used");
+            TrackerAsset.Instance.setVar("block_type", mPickedBlockView.Block.Type);
+            TrackerAsset.Instance.setVar("action", "create");
+            TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName().ToLower());
+            TrackerAsset.Instance.GameObject.Interacted(GameManager.Instance.GetBlockId(mPickedBlockView.Block));
+            
         }
 
         protected void UpdatePickedBlockView()

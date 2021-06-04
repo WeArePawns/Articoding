@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using AssetPackage;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenusManager : MonoBehaviour
 {
@@ -12,6 +15,8 @@ public class MenusManager : MonoBehaviour
 
     void Start()
     {
+        //TrackerAsset.Instance.Accessible.Accessed("menu")
+
         exitConfirmationPanel.SetActive(false);
         blackPanel.SetActive(false);
         settingsMenu.SetActive(false);
@@ -38,23 +43,62 @@ public class MenusManager : MonoBehaviour
     public void ToggleSettingsMenu()
     {
         settingsMenu.SetActive(!settingsMenu.activeSelf);
+
+        TrackerAsset.Instance.setVar("state", settingsMenu.activeSelf ? "opened" : "closed");
+        TrackerAsset.Instance.GameObject.Interacted("settings_button");
     }
 
     public void SetActiveOptionsPanel(bool active)
     {
         optionsMenu.SetActive(active);
         blackPanel.SetActive(active);
+
+        if (active)
+            TrackerAsset.Instance.Accessible.Accessed("options_panel", AccessibleTracker.Accessible.Screen);
+        else
+            TrackerAsset.Instance.GameObject.Interacted("options_panel_close_button");
     }
 
     public void SetActiveExitConfirmationPanel(bool active)
     {
         exitConfirmationPanel.SetActive(active);
         blackPanel.SetActive(active);
+
+
+        if (active)
+            TrackerAsset.Instance.Accessible.Accessed("exit_game_panel", AccessibleTracker.Accessible.Screen);
+        else
+            TrackerAsset.Instance.GameObject.Interacted("exit_game_panel_close_button");
+    }
+
+    public void LoadCreditsScene()
+    {
+        TrackerAsset.Instance.Accessible.Accessed("credits", AccessibleTracker.Accessible.Screen);
+
+        if (LoadManager.Instance == null)
+        {
+            SceneManager.LoadScene("EndScene");
+            return;
+        }
+
+        LoadManager.Instance.LoadScene("EndScene");
     }
 
     public void ExitGame()
     {
         //GameManager.instance.Quit(); //TODO: GameManager
+        bool gameCompleted = ProgressManager.Instance.GetGameProgress() == 1f;
+        TrackerAsset.Instance.Completable.Completed("articoding", CompletableTracker.Completable.Game, gameCompleted, ProgressManager.Instance.GetTotalStars());
+
+#if UNITY_EDITOR
+        EditorApplication.ExitPlaymode(); ;
+#endif
+
         Application.Quit();
+    }
+
+    public void TraceEditor()
+    {
+        TrackerAsset.Instance.Accessible.Accessed("editor_levels", AccessibleTracker.Accessible.Screen);
     }
 }

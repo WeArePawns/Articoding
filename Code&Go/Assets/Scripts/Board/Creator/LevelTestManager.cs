@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using AssetPackage;
 using UBlockly.UGUI;
+using UnityEngine.SceneManagement;
 
 public class LevelTestManager : MonoBehaviour
 {
@@ -46,8 +47,13 @@ public class LevelTestManager : MonoBehaviour
     private BoardState initialState;
     private bool completed = false;
 
+    private string boardString = "";
+
+    [SerializeField] Button resetViewButton;
+
     private void Start()
     {
+
         Invoke("ChangeMode", 0.01f);
         ActivateLevelBlocks(activeBlocks, false);
 #if UNITY_EDITOR
@@ -58,6 +64,8 @@ public class LevelTestManager : MonoBehaviour
 
     private void Update()
     {
+        resetViewButton.interactable = !cameraOrbit.IsReset();
+
         if (inCreator)
         {
             bool enabled = board.GetNEmitters() == board.GetNReceivers() && board.GetNEmitters() > 0 && !board.AllReceiving();
@@ -71,10 +79,19 @@ public class LevelTestManager : MonoBehaviour
             blackRect.SetActive(true);
             streamRoom.FinishLevel();
             ProgressManager.Instance.UserCreatedLevel(initialState.ToJson());
+
+            string levelName = GameManager.Instance.GetCurrentLevelName();
+            TrackerAsset.Instance.setVar("steps", board.GetCurrentSteps());
+            TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, true, -1f);
         }
     }
 
     public void ChangeMode()
+    {
+        ChangeMode(false);
+    }
+
+    public void ChangeMode(bool fromButton)
     {
         inCreator = !inCreator;
 
@@ -96,6 +113,15 @@ public class LevelTestManager : MonoBehaviour
             changeModeButton.GetComponent<Image>().sprite = changeToEditModeSprite;
             board.SetFocusPointOffset(new Vector3((board.GetColumns() - 2) / 2.0f + 0.5f, 0.0f, (board.GetRows() - 2) / 2.0f + 0.5f));
             cameraFit.FitBoard(board.GetRows(), board.GetColumns());
+
+            string boardState = board.GetBoardStateAsFormatedString();
+
+            if (fromButton)
+            {
+                TrackerAsset.Instance.setVar("mode", "test");
+                TrackerAsset.Instance.setVar("board", boardState != boardString ? boardState : "unchanged");
+            }
+            boardString = boardState;
         }
         else
         {
@@ -104,14 +130,40 @@ public class LevelTestManager : MonoBehaviour
             cameraFit.SetViewPort(creatorViewPort);
             changeModeButton.GetComponent<Image>().sprite = changeToPlayModeSprite;
             boardCreator.FitBoard();
+
+            if (fromButton)
+                TrackerAsset.Instance.setVar("mode", "edition");
         }
+
+        if (fromButton)
+            TrackerAsset.Instance.GameObject.Interacted("editor_mode_change_button");
+
+        if (inCreator)
+            TrackerAsset.Instance.Accessible.Accessed("editor");
+        else
+            TrackerAsset.Instance.Accessible.Accessed("tester");
     }
 
     public void LoadMainMenu()
     {
-        //TrackerAsset.Instance.setVar("steps", board.GetCurrentSteps());
-        TrackerAsset.Instance.GameObject.Used("main_menu_return");
-        GameManager.Instance.LoadScene("MenuScene");
+        var dom = UBlockly.Xml.WorkspaceToDom(BlocklyUI.WorkspaceView.Workspace);
+        string text = UBlockly.Xml.DomToText(dom);
+        text = GameManager.Instance.ChangeCodeIDs(text);
+
+        if (!completed)
+        {
+            TrackerAsset.Instance.setVar("code", "\r\n" + text);
+            var levelName = GameManager.Instance.GetCurrentLevelName();
+            TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, false, -1f);
+        }
+
+        if (LoadManager.Instance == null)
+        {
+            SceneManager.LoadScene("MenuScene");
+            return;
+        }
+
+        LoadManager.Instance.LoadScene("MenuScene");
     }
 
     public void ResetLevel()
@@ -120,6 +172,10 @@ public class LevelTestManager : MonoBehaviour
         board.GenerateBoardElements(initialState);
         debugPanel.SetActive(true);
         cameraFit.FitBoard(board.GetRows(), board.GetColumns());
+        TrackerAsset.Instance.GameObject.Interacted("editor_retry_button");
+
+        var levelName = GameManager.Instance.GetCurrentLevelName();
+        TrackerAsset.Instance.Completable.Initialized(levelName, CompletableTracker.Completable.Level);
     }
 
     public void RetryLevel()
@@ -139,6 +195,7 @@ public class LevelTestManager : MonoBehaviour
         endPanel.SetActive(false);
         blackRect.SetActive(false);
         debugPanel.SetActive(false);
+        TrackerAsset.Instance.GameObject.Used("end_panel_minimized");
     }
 
     public void MinimizeGameOverPanel()
@@ -148,6 +205,7 @@ public class LevelTestManager : MonoBehaviour
         //endPanel.SetActive(false);
         blackRect.SetActive(false);
         debugPanel.SetActive(false);
+        TrackerAsset.Instance.GameObject.Used("game_over_panel_minimized");
     }
 
     public void ActivateLevelBlocks(TextAsset textAsset, bool allActive)

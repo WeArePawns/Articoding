@@ -24,12 +24,12 @@ namespace UBlockly.UGUI
     public class LineGroupView : BaseView
     {
         [SerializeField] private float m_ReservedStartX;
-        
+
         public override ViewType Type
         {
             get { return ViewType.LineGroup; }
         }
-        
+
         /// <summary>
         /// Set the reserved x start pos for other UIs, like mutator entry...
         /// </summary>
@@ -52,7 +52,7 @@ namespace UBlockly.UGUI
                     return 0;
 
                 bool applyMargin = true;
-                
+
                 //don't apply right margin when the last input connection is not a slot
                 InputView inputView = Childs[Childs.Count - 1] as InputView;
                 if (inputView != null)
@@ -124,7 +124,7 @@ namespace UBlockly.UGUI
                 //calculate x: get the last child's right, as input view may align right
                 if (i == Childs.Count - 1)
                     size.x = Childs[i].XY.x + Childs[i].Width;
-                
+
                 size.y = Mathf.Max(size.y, Childs[i].Height);
             }
 
@@ -142,8 +142,8 @@ namespace UBlockly.UGUI
             if (Mathf.Approximately(this.Width, width))
                 return;
             this.Width = width;
-            
-            ConnectionInputView conView = ((InputView) LastChild).GetConnectionView();
+
+            ConnectionInputView conView = ((InputView)LastChild).GetConnectionView();
             if (conView != null && conView.ConnectionInputViewType == ConnectionInputViewType.Statement)
             {
                 conView.Width = width - (LastChild.XY.x + conView.XY.x);
@@ -170,10 +170,18 @@ namespace UBlockly.UGUI
             //I know it is a little bit awkward here...
             //but to make it seem prettier...maybe refactor later
             Vector2 size = Size;
-            ConnectionInputView conView = ((InputView) LastChild).GetConnectionView();
+            ConnectionInputView conView = ((InputView)LastChild).GetConnectionView();
             if (conView != null && !conView.IsSlot)
                 size.x -= conView.Width;
             return size;
+        }
+
+        public override bool CanBeCloned(BlockView block = null)
+        {
+            bool cloned = true;
+            for (int i = 0; i < Childs.Count && cloned; i++)
+                cloned = Childs[i].CanBeCloned(block);
+            return cloned;
         }
     }
 }

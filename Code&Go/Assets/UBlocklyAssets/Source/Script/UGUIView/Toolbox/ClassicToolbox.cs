@@ -16,6 +16,7 @@ limitations under the License.
 
 ****************************************************************************/
 
+using AssetPackage;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -102,11 +103,32 @@ namespace UBlockly.UGUI
                     BuildBlockViewsForActiveCategory();
             }
 
+            //Set Block Count
+            foreach (BlockView bw in mRootList[categoryName].transform.GetComponentsInChildren<BlockView>())
+            {
+                if (Block.blocksAvailable.ContainsKey(bw.BlockType))
+                    if (Block.blocksAvailable[bw.BlockType] > 0)
+                    {
+                        //If the block was disabled we reactivate it
+                        bw.enabled = true;
+                        bw.ChangeBgColor(GetColorOfBlockView(bw));
+                    }
+                    else
+                    {
+                        bw.enabled = false;
+                        bw.ChangeBgColor(Color.gray);
+                    }
+                bw.UpdateCount();
+            }
+
             //resize the background
             LayoutRebuilder.ForceRebuildLayoutImmediate(contentTrans);
             m_BlockScrollList.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, LayoutUtility.GetPreferredWidth(contentTrans));
 
             m_BlockScrollList.GetComponent<ScrollRect>().content = contentTrans;
+
+
+            TrackerAsset.Instance.GameObject.Interacted(categoryName.ToLower() + "_button");
         }
 
         public void HideBlockCategory()
@@ -140,16 +162,17 @@ namespace UBlockly.UGUI
         }
 
         public override bool CheckBin(BlockView blockView)
-        {            
+        {
             if (blockView.InToolbox || nActiveCategories == 0) return false;
 
+            m_BinArea.SetActive(true);
             RectTransform toggleTrans = m_BinArea.transform as RectTransform;
             if (RectTransformUtility.RectangleContainsScreenPoint(toggleTrans, UnityEngine.Input.mousePosition, BlocklyUI.UICanvas.worldCamera))
             {
-                m_BinArea.gameObject.SetActive(true);
+                m_BinArea.transform.GetChild(0).GetComponent<Image>().color = Color.white;
                 return true;
             }
-            m_BinArea.gameObject.SetActive(false);
+            m_BinArea.transform.GetChild(0).GetComponent<Image>().color = Color.grey;
             return false;
         }
 

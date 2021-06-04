@@ -35,7 +35,7 @@
                 "activeBlocks": [
                     {
                         "blockName": "text",
-                        "maxUses": 2
+                        "maxUses": 4
                     }                           
                 ]
             }
@@ -48,7 +48,11 @@
                     {
                         "blockName": "logic_negate",
                         "maxUses": 2
-                    }   
+                    },
+                    {
+                        "blockName": "logic_ifelse",
+                        "maxUses": 2
+                    }      
                 ]
             }
         },
@@ -58,9 +62,9 @@
                 "activate": true,
                 "activeBlocks": [
                     {
-                        "blockName": "controls_whileUntil",
+                        "blockName": "controls_repeat",
                         "maxUses": 2
-                    }                      
+                    }
                 ]
             }
         },
@@ -71,11 +75,11 @@
                 "activeBlocks": [
                     {
                         "blockName": "movement_move",
-                        "maxUses": 2
+                        "maxUses": 1
                     },
                     {
                         "blockName": "movement_cells_occupied",
-                        "maxUses": 2
+                        "maxUses": 3
                     }
                 ]
             }

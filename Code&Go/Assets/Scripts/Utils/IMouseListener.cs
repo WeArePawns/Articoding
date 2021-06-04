@@ -6,4 +6,5 @@ public interface IMouseListener
 {
     void OnMouseButtonDown(int index);
     void OnMouseButtonUp(int index);
+    void OnMouseButtonUpAnywhere(int index);
 }
