@@ -314,7 +314,7 @@ public class ProgressManager : MonoBehaviour
         foreach (Category c in categories)
         {
             int tmp = GetCategoryCurrentProgress(c);
-            levels += tmp < 0 ? 0 : tmp;
+            levels += Mathf.Max(0, tmp);
             totalLevel += c.levels.Count;
         }
 

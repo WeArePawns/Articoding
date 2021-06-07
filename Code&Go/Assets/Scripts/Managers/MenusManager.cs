@@ -1,7 +1,7 @@
 ﻿using AssetPackage;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
+using uAdventure.Simva;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -88,13 +88,9 @@ public class MenusManager : MonoBehaviour
     {
         //GameManager.instance.Quit(); //TODO: GameManager
         bool gameCompleted = ProgressManager.Instance.GetGameProgress() == 1f;
-        TrackerAsset.Instance.Completable.Completed("articoding", CompletableTracker.Completable.Game, gameCompleted, ProgressManager.Instance.GetTotalStars());
+        //TrackerAsset.Instance.Completable.Completed("articoding", CompletableTracker.Completable.Game, gameCompleted, ProgressManager.Instance.GetTotalStars());
 
-#if UNITY_EDITOR
-        EditorApplication.ExitPlaymode(); ;
-#endif
-
-        Application.Quit();
+        SimvaExtension.Instance.Quit();
     }
 
     public void TraceEditor()

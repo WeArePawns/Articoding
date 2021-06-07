@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityFx.Async;
 using UnityFx.Async.Promises;
+using uAdventure.Analytics;
 using SimvaPlugin;
 using Simva.Api;
 using Simva.Model;
@@ -16,7 +17,6 @@ using System.Linq;
 using System.Collections;
 using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
-using uAdventure.Analytics;
 
 namespace uAdventure.Simva
 {
@@ -36,16 +36,29 @@ namespace uAdventure.Simva
         private AuthorizationInfo auth;
         private Schedule schedule;
         private SimvaApi<IStudentsApi> simvaController;
-
-        private TrackerConfig trackerConfig;
-        private float nextFlush = 0;
-        private bool flushRequested = true;
-
         private IRunnerChapterTarget runner;
+        private bool abortQuit;
+        private bool allowedToQuit;
+        private bool freeplay;
 
         protected void Awake()
         {
             instance = this;
+            Application.wantsToQuit += Application_wantsToQuit;
+        }
+
+        private bool Application_wantsToQuit()
+        {
+            if (!allowedToQuit)
+            {
+                StartCoroutine(QuitRoutine());
+            }
+            return allowedToQuit;
+        }
+
+        private void Update()
+        {
+            CheckTrackerFlush();
         }
 
         public static SimvaExtension Instance
@@ -102,11 +115,7 @@ namespace uAdventure.Simva
 
         public SimvaBridge SimvaBridge { get; private set; }
 
-        private void Update()
-        {
-            CheckTrackerFlush();
-        }
-
+        [Priority(10)]
         public IEnumerator OnAfterGameLoad()
         {
             TrackerConfig defaultTrackerConfig = new TrackerConfig();
@@ -145,7 +154,29 @@ namespace uAdventure.Simva
             }
         }
 
-        // TODO: llamar cuando se guarde
+        public void Quit()
+        {
+            abortQuit = false;
+            StartCoroutine(QuitRoutine());
+        }
+
+        private IEnumerator QuitRoutine()
+        {
+            // Saving Auth
+            OnBeforeGameSave();
+
+            yield return OnGameFinished();
+
+            if (!abortQuit)
+            {
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.ExitPlaymode();
+#else
+                Application.Quit();
+#endif
+            }
+        }
+
         public void OnBeforeGameSave()
         {
             if(auth != null)
@@ -169,14 +200,18 @@ namespace uAdventure.Simva
             afterBackup = true;
         }
 
+
+        [Priority(10)]
         public IEnumerator OnGameFinished()
         {
             if (IsActive)
             {
                 var readyToClose = false;
+                yield return LoadManager.Instance.Unload();
                 yield return RunTarget("Simva.FlushAll");
                 yield return new WaitUntil(() => afterFlush);
-                Continue(CurrentActivityId, true)
+                var complete = !freeplay;
+                Continue(CurrentActivityId, complete)
                     .Then(() => readyToClose = true);
 
                 yield return new WaitUntil(() => readyToClose);
@@ -187,26 +222,13 @@ namespace uAdventure.Simva
             }
         }
 
-        public IEnumerator FinishTracker()
-        {
-            if (TrackerAsset.Instance.Active)
-            {
-                var flushed = false;
-                TrackerAsset.Instance.ForceCompleteTraces();
-                TrackerAsset.Instance.FlushAll(() => flushed = true);
-                var time = Time.time;
-                yield return new WaitUntil(() => flushed);
-                TrackerAsset.Instance.Stop();
-            }
-        }
-
         public IEnumerator OnGameReady()
         {
             if (PlayerPrefs.HasKey("simva_auth"))
             {
                 NotifyLoading(true);
                 this.auth = JsonConvert.DeserializeObject<AuthorizationInfo>(PlayerPrefs.GetString("simva_auth"));
-                this.auth.ClientId = "uadventure"; // TODO: poner id especifico
+                this.auth.ClientId = "uadventure";
                 SimvaApi<IStudentsApi>.Login(this.auth)
                     .Then(simvaController =>
                 {
@@ -238,6 +260,10 @@ namespace uAdventure.Simva
             yield return null;
         }
 
+        public IEnumerator Restart()
+        {
+            yield return null;
+        }
 
         public void InitUser()
         {
@@ -394,6 +420,7 @@ namespace uAdventure.Simva
                         //This only works in windows player
                         Application.runInBackground = true;
                         string traces = SimvaBridge.Load(((TrackerAssetSettings)TrackerAsset.Instance.Settings).BackupFile);
+                        Instantiate(Resources.Load("SimvaBackupPopup"));
                         backupOperation = SaveActivity(CurrentActivityId, traces, true);
                         backupOperation.Then(() =>
                         {
@@ -402,15 +429,17 @@ namespace uAdventure.Simva
                             Application.runInBackground = false;
                         });
                     }
-
                     return UpdateSchedule();
                 })
                 .Then(schedule =>
                 {
-                    NotifyLoading(false);
                     var result = new AsyncCompletionSource();
                     StartCoroutine(AsyncCoroutine(LaunchActivity(schedule.Next), result));
                     return result;
+                })
+                .Finally(() =>
+                {
+                    NotifyLoading(false);
                 })
                 .Catch(error =>
                 {
@@ -430,23 +459,32 @@ namespace uAdventure.Simva
 
         public IEnumerator LaunchActivity(string activityId)
         {
-            if (activityId == null)
+            if (activityId == null || freeplay)
             {
-                RunTarget("Simva.End");
+                if (backupOperation != null && !backupOperation.IsCompletedSuccessfully)
+                {
+                    AbortQuit();
+                    yield return RunTarget("Simva.Backup");
+                    yield return new WaitUntil(() => afterBackup);
+                }
+
+                //yield return RunTarget("Simva.End");
+                allowedToQuit = true;
                 schedule = null;
             }
             else
             {
                 Activity activity = GetActivity(activityId);
-
                 if (activity != null)
                 {
+                    freeplay = activity.Name == "Freeplay";
+                    AbortQuit();
                     Debug.Log("[SIMVA] Schedule: " + activity.Type + ". Name: " + activity.Name + " activityId " + activityId);
                     switch (activity.Type)
                     {
                         case "limesurvey":
                             Debug.Log("[SIMVA] Starting Survey...");
-                            RunTarget("Simva.Survey");
+                            yield return RunTarget("Simva.Survey");
                             break;
                         case "gameplay":
                         default:
@@ -485,20 +523,133 @@ namespace uAdventure.Simva
                             }
 
                             DestroyImmediate(runner.gameObject);
-                            yield return SceneManager.UnloadSceneAsync("Simva");
+                            SceneManager.UnloadSceneAsync("Simva");
 
                             Debug.Log("[SIMVA] Starting Gameplay...");
                             LoadManager.Instance.LoadScene("MenuScene");
-
                             break;
                     }
                 }
-                else if(backupOperation != null && !backupOperation.IsCompleted)
-                {
-                    yield return RunTarget("Simva.Backup");
-                }
             }
         }
+
+        private void AbortQuit()
+        {
+            abortQuit = true;
+        }
+
+        private bool ActivityHasDetails(Activity activity, params string[] details)
+        {
+            if (activity.Details == null)
+            {
+                return false;
+            }
+
+            return details.Any(d => IsTrue(activity.Details, d));
+        }
+
+        private static bool IsTrue(Dictionary<string, object> details, string key)
+        {
+            return details.ContainsKey(key) && details[key] is bool && (bool)details[key];
+        }
+
+        // NOTIFIERS
+
+        public void AddResponseManager(SimvaResponseManager manager)
+        {
+            if (manager)
+            {
+                // To make sure we only have one instance of a notify per manager
+                // We first remove (as it is ignored if not present)
+                responseListeners -= manager.Notify;
+                // Then we add it
+                responseListeners += manager.Notify;
+            }
+        }
+
+        public void RemoveResponseManager(SimvaResponseManager manager)
+        {
+            if (manager)
+            {
+                // If a delegate is not present the method gets ignored
+                responseListeners -= manager.Notify;
+            }
+        }
+
+        public void AddLoadingManager(SimvaLoadingManager manager)
+        {
+            if (manager)
+            {
+                // To make sure we only have one instance of a notify per manager
+                // We first remove (as it is ignored if not present)
+                loadingListeners -= manager.IsLoading;
+                // Then we add it
+                loadingListeners += manager.IsLoading;
+            }
+        }
+
+        public void RemoveLoadingManager(SimvaLoadingManager manager)
+        {
+            if (manager)
+            {
+                // If a delegate is not present the method gets ignored
+                loadingListeners -= manager.IsLoading;
+            }
+        }
+
+        public void NotifyManagers(string message)
+        {
+            responseListeners?.Invoke(message);
+        }
+
+        public void NotifyLoading(bool state)
+        {
+            loadingListeners?.Invoke(state);
+        }
+
+        private static bool HasLoginInfo()
+        {
+            return OpenIdUtility.HasLoginInfo();
+        }
+
+        public bool canBeInteracted()
+        {
+            return false;
+        }
+
+        public void setInteractuable(bool state)
+        {
+        }
+
+        internal IEnumerator AsyncCoroutine(IEnumerator coroutine, IAsyncCompletionSource op)
+        {
+            yield return coroutine;
+            op.SetCompleted();
+        }
+
+        private IEnumerator RunTarget(string target)
+        {
+            var mb = runner as MonoBehaviour;
+            if(mb != null && mb)
+            {
+                DestroyImmediate(runner.gameObject);
+                runner = null;
+            }
+            else
+            {
+                yield return SceneManager.LoadSceneAsync("Simva", LoadSceneMode.Additive);
+            }
+            runner = SimvaSceneHandler.Instantiate(target);
+            runner.RenderScene();
+
+            yield return new WaitUntil(() => runner.IsReady);
+        }
+
+#region Analytics
+
+        private TrackerConfig trackerConfig;
+        private float nextFlush = 0;
+        private bool flushRequested = true;
 
         public IEnumerator StartTracker(TrackerConfig config, IBridge bridge = null)
         {
@@ -620,115 +771,19 @@ namespace uAdventure.Simva
             }
         }
 
-        private IEnumerator RunTarget(string target)
+        public IEnumerator FinishTracker()
         {
-            if(runner != null)
+            if (TrackerAsset.Instance.Active)
             {
-                DestroyImmediate(runner.gameObject);
-            }
-            else
-            {
-                yield return SceneManager.LoadSceneAsync("Simva", LoadSceneMode.Additive);
-            }
-            runner = SimvaSceneHandler.Instantiate(target);
-            runner.RenderScene();
-
-            yield return new WaitUntil(() => runner.IsReady);
-        }
-
-        private bool ActivityHasDetails(Activity activity, params string[] details)
-        {
-            if (activity.Details == null)
-            {
-                return false;
-            }
-
-            return details.Any(d => IsTrue(activity.Details, d));
-        }
-
-        private static bool IsTrue(Dictionary<string, object> details, string key)
-        {
-            return details.ContainsKey(key) && details[key] is bool && (bool)details[key];
-        }
-
-        // NOTIFIERS
-
-        public void AddResponseManager(SimvaResponseManager manager)
-        {
-            if (manager)
-            {
-                // To make sure we only have one instance of a notify per manager
-                // We first remove (as it is ignored if not present)
-                responseListeners -= manager.Notify;
-                // Then we add it
-                responseListeners += manager.Notify;
+                var flushed = false;
+                TrackerAsset.Instance.ForceCompleteTraces();
+                TrackerAsset.Instance.FlushAll(() => flushed = true);
+                var time = Time.time;
+                yield return new WaitUntil(() => flushed);
+                TrackerAsset.Instance.Stop();
             }
         }
 
-        public void RemoveResponseManager(SimvaResponseManager manager)
-        {
-            if (manager)
-            {
-                // If a delegate is not present the method gets ignored
-                responseListeners -= manager.Notify;
-            }
-        }
-
-        public void AddLoadingManager(SimvaLoadingManager manager)
-        {
-            if (manager)
-            {
-                // To make sure we only have one instance of a notify per manager
-                // We first remove (as it is ignored if not present)
-                loadingListeners -= manager.IsLoading;
-                // Then we add it
-                loadingListeners += manager.IsLoading;
-            }
-        }
-
-        public void RemoveLoadingManager(SimvaLoadingManager manager)
-        {
-            if (manager)
-            {
-                // If a delegate is not present the method gets ignored
-                loadingListeners -= manager.IsLoading;
-            }
-        }
-
-        public void NotifyManagers(string message)
-        {
-            if (responseListeners != null)
-            {
-                responseListeners(message);
-            }
-        }
-
-        public void NotifyLoading(bool state)
-        {
-            if (loadingListeners != null)
-            {
-                loadingListeners(state);
-            }
-        }
-
-        private static bool HasLoginInfo()
-        {
-            return OpenIdUtility.HasLoginInfo();
-        }
-
-        public bool canBeInteracted()
-        {
-            return false;
-        }
-
-        public void setInteractuable(bool state)
-        {
-        }
-
-        internal IEnumerator AsyncCoroutine(IEnumerator coroutine, IAsyncCompletionSource op)
-        {
-            yield return coroutine;
-            op.SetCompleted();
-        }
+#endregion
     }
 }

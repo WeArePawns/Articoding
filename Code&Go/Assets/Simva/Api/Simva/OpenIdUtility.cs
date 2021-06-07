@@ -572,25 +572,25 @@ namespace Simva
                 wrapper.SetResult(authInfo);
                 return wrapper;
             })
-                .Catch(ex =>
+            .Catch(ex =>
+            {
+                if (uwr.isHttpError)
                 {
-                    if (uwr.isHttpError)
+                    var apiEx = (ApiException)ex;
+                    var msg = (string)apiEx.ErrorContent;
+                    try
                     {
-                        var apiEx = (ApiException)ex;
-                        var msg = (string)apiEx.ErrorContent;
-                        try
-                        {
-                            var authError = JsonConvert.DeserializeObject<AuthorizationError>(msg);
-                            msg = authError.ErrorDescription;
-                        }
-                        catch { }
-                        wrapper.SetException(new ApiException((int)uwr.responseCode, msg));
+                        var authError = JsonConvert.DeserializeObject<AuthorizationError>(msg);
+                        msg = authError.ErrorDescription;
                     }
-                    else
-                    {
-                        wrapper.SetException(ex);
-                    }
-                });
+                    catch { }
+                    wrapper.SetException(new ApiException((int)uwr.responseCode, msg));
+                }
+                else
+                {
+                    wrapper.SetException(ex);
+                }
+            });
 
             return wrapper;
         }
@@ -616,25 +616,25 @@ namespace Simva
                 wrapper.SetResult(authInfo);
                 return wrapper;
             })
-                .Catch(ex =>
+            .Catch(ex =>
+            {
+                if (uwr.isHttpError)
                 {
-                    if (uwr.isHttpError)
+                    var apiEx = (ApiException)ex;
+                    var msg = (string)apiEx.ErrorContent;
+                    try
                     {
-                        var apiEx = (ApiException)ex;
-                        var msg = (string)apiEx.ErrorContent;
-                        try
-                        {
-                            var authError = JsonConvert.DeserializeObject<AuthorizationError>(msg);
-                            msg = authError.ErrorDescription;
-                        }
-                        catch { }
-                        wrapper.SetException(new ApiException((int)uwr.responseCode, msg));
+                        var authError = JsonConvert.DeserializeObject<AuthorizationError>(msg);
+                        msg = authError.ErrorDescription;
                     }
-                    else
-                    {
-                        wrapper.SetException(ex);
-                    }
-                });
+                    catch { }
+                    wrapper.SetException(new ApiException((int)uwr.responseCode, msg));
+                }
+                else
+                {
+                    wrapper.SetException(ex);
+                }
+            });
 
             return wrapper;
         }

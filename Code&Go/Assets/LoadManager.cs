@@ -70,6 +70,19 @@ public class LoadManager : MonoBehaviour
         lastLoadedIndex = index;
     }
 
+    public IEnumerator Unload()
+    {
+        content.SetActive(true);
+
+        //Unload current Scene
+        if (lastLoadedIndex != -1)
+            loadOperations.Add(SceneManager.UnloadSceneAsync(lastLoadedIndex));
+
+        yield return StartCoroutine(WaitUntilLoadingIsComplete());
+
+        lastLoadedIndex = -1;
+    }
+
     public void LoadScene(string sceneName)
     {
         content.SetActive(true);

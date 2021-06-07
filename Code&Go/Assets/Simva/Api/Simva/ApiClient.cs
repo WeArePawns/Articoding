@@ -515,6 +515,10 @@ namespace Simva
                                     {
                                         AuthorizationInfo = authInfo;
                                         addAuthAndComplete();
+                                    })
+                                    .Catch(ex =>
+                                    {
+                                        result.SetException(ex);
                                     });
                             }
                             else

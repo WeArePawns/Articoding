@@ -1,17 +1,18 @@
 ﻿using UnityEngine;
-using UniRx;
 using UnityFx.Async.Promises;
+using uAdventure.Runner;
 using System;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Simva;
 using UnityFx.Async;
 using AssetPackage;
-using uAdventure.Runner;
+using System.IO;
+using System.Text;
 
 namespace uAdventure.Simva
 {
-    // Manager for "Simva.End"
+    // Manager for "Simva.Backup"
     public class BackupController : MonoBehaviour, IRunnerChapterTarget
     {
         public Scrollbar progressBar;
@@ -31,25 +32,29 @@ namespace uAdventure.Simva
         {
             if(SimvaExtension.Instance.backupOperation != null)
             {
-                Debug.Log("Last progress: " + SimvaExtension.Instance.backupOperation.Progress);
                 if (!progressCallbackAdded)
                 {
                     ((AsyncCompletionSource)SimvaExtension.Instance.backupOperation).AddProgressCallback((p) =>
                     {
-                        progressBar.size = p;
+                        if (progressBar)
+                        {
+                            var scaledProgress = (Mathf.Clamp(p, 0f, 0.5f) / 0.5f) * 0.9f
+                                + (Mathf.Clamp(p - 0.5f, 0f, 0.5f) / 0.5f) * 0.1f;
+                            progressBar.size = scaledProgress;
+                        }
                     });
                     progressCallbackAdded = true;
                 }
 
                 if (SimvaExtension.Instance.backupOperation.IsCompletedSuccessfully)
                 {
-                    progressBar.transform.parent.gameObject.SetActive(false);
+                    progressBar.transform.parent.parent.gameObject.SetActive(false);
                     successText.gameObject.SetActive(true);
                     errorText.gameObject.SetActive(false);
                 }
                 else if (SimvaExtension.Instance.backupOperation.IsFaulted)
                 {
-                    progressBar.transform.parent.gameObject.SetActive(false);
+                    progressBar.transform.parent.parent.gameObject.SetActive(false);
                     successText.gameObject.SetActive(false);
                     errorText.gameObject.SetActive(true);
                     var errorMessage = errorText.transform.GetChild(0).GetComponent<Text>();
@@ -57,7 +62,7 @@ namespace uAdventure.Simva
                 }
                 else
                 {
-                    progressBar.transform.parent.gameObject.SetActive(true);
+                    progressBar.transform.parent.parent.gameObject.SetActive(true);
                     successText.gameObject.SetActive(false);
                     errorText.gameObject.SetActive(false);
                 }
@@ -81,14 +86,27 @@ namespace uAdventure.Simva
             });
         }
 
-        public void Quit()
+        public void Share()
         {
-            Application.Quit();
+            string username = SimvaExtension.Instance.API.AuthorizationInfo.Username;
+            string traces = SimvaExtension.Instance.SimvaBridge.Load(((TrackerAssetSettings)TrackerAsset.Instance.Settings).BackupFile);
+            string filePath = Path.Combine(Application.temporaryCachePath, "traces_backup_" + username + ".log");
+            File.WriteAllBytes(filePath, Encoding.UTF8.GetBytes(traces));
+
+            Application.OpenURL("file://" + new FileInfo(filePath).Directory.FullName);
+
+            // Share on WhatsApp only, if installed (Android only)
+            //if( NativeShare.TargetExists( "com.whatsapp" ) )
+            //	new NativeShare().AddFile( filePath ).AddTarget( "com.whatsapp" ).Share();
         }
 
         public void RenderScene()
         {
             this.transform.GetChild(0).gameObject.SetActive(true);
+            foreach(var backupPopup in FindObjectsOfType<BackupPopupController>())
+            {
+                DestroyImmediate(backupPopup.gameObject);
+            }
         }
 
         public void Destroy(float time, Action onDestroy)
