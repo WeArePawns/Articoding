@@ -233,7 +233,7 @@ namespace uAdventure.Simva
             {
                 NotifyLoading(true);
                 this.auth = JsonConvert.DeserializeObject<AuthorizationInfo>(PlayerPrefs.GetString("simva_auth"));
-                this.auth.ClientId = "uadventure";
+                this.auth.ClientId = SimvaConf.Local.ClientId;
                 SimvaApi<IStudentsApi>.Login(this.auth)
                     .Then(simvaController =>
                 {
