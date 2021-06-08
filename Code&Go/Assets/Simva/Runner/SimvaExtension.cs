@@ -39,7 +39,7 @@ namespace uAdventure.Simva
         private IRunnerChapterTarget runner;
         private bool abortQuit;
         private bool allowedToQuit;
-        private bool freeplay;
+        private bool gameplay;
 
         protected void Awake()
         {
@@ -179,10 +179,10 @@ namespace uAdventure.Simva
 
         public void OnBeforeGameSave()
         {
-            if(auth != null)
+            /*if(auth != null)
             {
                 PlayerPrefs.SetString("simva_auth", JsonConvert.SerializeObject(auth));
-            }
+            }*/
         }
 
         public IAsyncOperation backupOperation;
@@ -210,7 +210,12 @@ namespace uAdventure.Simva
                 yield return LoadManager.Instance.Unload();
                 yield return RunTarget("Simva.FlushAll");
                 yield return new WaitUntil(() => afterFlush);
-                var complete = !freeplay;
+                var complete = true;//!freeplay;
+                var activity = GetActivity(CurrentActivityId);
+                if(activity.Type == "gameplay")
+                {
+                    complete = false;
+                }
                 Continue(CurrentActivityId, complete)
                     .Then(() => readyToClose = true);
 
@@ -306,8 +311,8 @@ namespace uAdventure.Simva
                 {
                     this.auth = simvaController.AuthorizationInfo;
                     this.simvaController = simvaController;
-                    PlayerPrefs.SetString("simva_auth", JsonConvert.SerializeObject(auth));
-                    PlayerPrefs.Save();
+                    //PlayerPrefs.SetString("simva_auth", JsonConvert.SerializeObject(auth));
+                    //PlayerPrefs.Save();
                     return UpdateSchedule();
                 })
                 .Then(schedule =>
@@ -459,7 +464,7 @@ namespace uAdventure.Simva
 
         public IEnumerator LaunchActivity(string activityId)
         {
-            if (activityId == null || freeplay)
+            if (activityId == null || gameplay)
             {
                 if (backupOperation != null && !backupOperation.IsCompletedSuccessfully)
                 {
@@ -477,7 +482,6 @@ namespace uAdventure.Simva
                 Activity activity = GetActivity(activityId);
                 if (activity != null)
                 {
-                    freeplay = activity.Name == "Freeplay";
                     AbortQuit();
                     Debug.Log("[SIMVA] Schedule: " + activity.Type + ". Name: " + activity.Name + " activityId " + activityId);
                     switch (activity.Type)
@@ -494,6 +498,8 @@ namespace uAdventure.Simva
                             trackerConfig.setTraceFormat(TrackerConfig.TraceFormat.XAPI);
                             trackerConfig.setRawCopy(true);
                             trackerConfig.setDebug(true);
+
+                            gameplay = true;
 
                             if (ActivityHasDetails(activity, "realtime", "trace_storage"))
                             {

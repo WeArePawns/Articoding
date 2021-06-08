@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using uAdventure.Simva;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityFx.Async.Promises;
 
 public class MenusManager : MonoBehaviour
 {
@@ -96,5 +97,28 @@ public class MenusManager : MonoBehaviour
     public void TraceEditor()
     {
         TrackerAsset.Instance.Accessible.Accessed("editor_levels", AccessibleTracker.Accessible.Screen);
+    }
+
+    public void GoToPostSurvey()
+    {
+        //SimvaExtension.Instance.NotifyLoading(true);
+        string activityId = SimvaExtension.Instance.CurrentActivityId;
+        Simva.Model.Schedule schedule = SimvaExtension.Instance.Schedule;
+        var dic = schedule.Activities;
+        string username = SimvaExtension.Instance.API.AuthorizationInfo.Username;
+
+        foreach(var activity in dic.Values)
+        {
+            if(activity.Type == "limesurvey" && activity.Name.ToLower().Contains("post"))
+            {
+                activityId = activity.Id;
+            }
+        }
+
+        SimvaExtension.Instance.API.Api.GetActivityTarget(activityId)
+            .Then(result =>
+            {
+                Application.OpenURL(result[username]);
+            });
     }
 }
