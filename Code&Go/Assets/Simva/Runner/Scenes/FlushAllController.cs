@@ -1,15 +1,12 @@
 ﻿using UnityEngine;
-using UniRx;
-using UnityFx.Async.Promises;
-using System;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using uAdventure.Runner;
+using System;
+using System.Collections;
 
 namespace uAdventure.Simva
 {
     // Manager for "Simva.End"
-    public class EndController : MonoBehaviour, IRunnerChapterTarget
+    public class FlushAllController : MonoBehaviour, IRunnerChapterTarget
     {
         private bool ready;
 
@@ -21,16 +18,19 @@ namespace uAdventure.Simva
         {
         }
 
-        public void Quit()
-        {
-            SimvaExtension.Instance.Quit();
-        }
-
-
         public void RenderScene()
         {
+            SimvaExtension.Instance.NotifyLoading(true);
+            this.transform.GetChild(0).gameObject.SetActive(true);
+            StartCoroutine(FinishTracker());
             ready = true;
         }
+
+        private IEnumerator FinishTracker()
+        {
+            yield return SimvaExtension.Instance.FinishTracker();
+            SimvaExtension.Instance.AfterFlush();
+        } 
 
         public void Destroy(float time, Action onDestroy)
         {
