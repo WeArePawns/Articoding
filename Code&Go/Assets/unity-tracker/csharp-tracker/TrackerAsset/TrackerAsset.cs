@@ -66,6 +66,11 @@ namespace AssetPackage
         /// <summary>
         /// True when flush is called while flushing.
         /// </summary>
+        private bool flushAllRequested = false;
+
+        /// <summary>
+        /// True when flush is called while flushing.
+        /// </summary>
         private bool extraFlushRequested = false;
 
         /// <summary>
@@ -660,7 +665,7 @@ namespace AssetPackage
         /// <summary>
         /// Flushes the queue.
         /// </summary>
-        public void Flush(Action callback = null)
+        public void Flush(Action callback = null, bool complete = false)
         {
             if (!Started)
             {
@@ -671,6 +676,10 @@ namespace AssetPackage
             if (flushing)
             {
                 extraFlushRequested = true;
+                if (complete)
+                {
+                    flushAllRequested = true;
+                }
                 if (callback != null)
                 {
                     callbacksForExtraFlush.Add(callback);
@@ -692,15 +701,16 @@ namespace AssetPackage
                         Flush(() =>
                         {
                             extraFlushRequested = false;
+                            flushAllRequested = false;
                             var auxCallbacks = callbacksForExtraFlush.ToArray();
                             callbacksForExtraFlush.Clear();
                             foreach (var c in auxCallbacks)
                             {
                                 c();
                             }
-                        });
+                        }, flushAllRequested);
                     }
-                }, false);
+                }, complete);
             }
 
 
@@ -725,7 +735,7 @@ namespace AssetPackage
             {
                 return;
             }
-            ProcessQueue(callback, true);
+            Flush(callback, true);
         }
 #endif
 
