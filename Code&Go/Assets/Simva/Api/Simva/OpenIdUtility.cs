@@ -823,11 +823,7 @@ namespace Simva
                 yield return new WaitForFixedUpdate();
             }
 
-            if (webRequest.isNetworkError)
-            {
-                op.SetException(new ApiException((int)webRequest.responseCode, webRequest.error, webRequest.downloadHandler.text));
-            }
-            else if (webRequest.isHttpError)
+            if (webRequest.isNetworkError || webRequest.isHttpError)
             {
                 Debug.Log(webRequest.downloadHandler.text);
                 op.SetException(new ApiException((int)webRequest.responseCode, webRequest.error, webRequest.downloadHandler.text));
