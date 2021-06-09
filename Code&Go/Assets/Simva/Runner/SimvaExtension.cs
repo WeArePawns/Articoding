@@ -135,7 +135,7 @@ namespace uAdventure.Simva
             if (!IsEnabled)
             {
                 Debug.Log("[SIMVA] Study is not set! Stopping...");
-                yield return StartTracker(defaultTrackerConfig);
+                yield return StartTracker(defaultTrackerConfig, null);
                 yield break;
             }
             else if (IsActive)
@@ -525,7 +525,7 @@ namespace uAdventure.Simva
                             {
                                 SimvaBridge = new SimvaBridge(API.ApiClient);
                                 Debug.Log("[SIMVA] Starting tracker...");
-                                yield return StartTracker(trackerConfig, SimvaBridge);
+                                yield return StartTracker(trackerConfig, auth.Username + "_" + activityId + "_backup.log", SimvaBridge);
                             }
 
                             DestroyImmediate(runner.gameObject);
@@ -657,7 +657,7 @@ namespace uAdventure.Simva
         private float nextFlush = 0;
         private bool flushRequested = true;
 
-        public IEnumerator StartTracker(TrackerConfig config, IBridge bridge = null)
+        public IEnumerator StartTracker(TrackerConfig config, string backupFilename, IBridge bridge = null)
         {
             trackerConfig = config;
             string domain = "";
@@ -732,6 +732,12 @@ namespace uAdventure.Simva
                 BackupStorage = config.getRawCopy(),
                 UseBearerOnTrackEndpoint = trackerConfig.getUseBearerOnTrackEndpoint()
             };
+
+            if (!string.IsNullOrEmpty(backupFilename))
+            {
+                tracker_settings.BackupFile = backupFilename;
+            }
+
             Debug.Log("[ANALYTICS] Settings: " + JsonConvert.SerializeObject(tracker_settings));
             TrackerAsset.Instance.StrictMode = false;
             TrackerAsset.Instance.Bridge = bridge ?? new UnityBridge();

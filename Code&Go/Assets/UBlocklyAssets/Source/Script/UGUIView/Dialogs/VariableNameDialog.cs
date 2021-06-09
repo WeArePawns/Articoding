@@ -16,6 +16,8 @@ limitations under the License.
 
 ****************************************************************************/
 
+using AssetPackage;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -47,9 +49,31 @@ namespace UBlockly.UGUI
             {
                 inventoryControl.DisableDissapear(false);
                 if (mIsRename)
+                {
                     BlocklyUI.WorkspaceView.Workspace.RenameVariable(mOldVarName, m_Input.text);
+
+
+                    TrackerAsset.Instance.setVar("new_variable_name", m_Input.text);
+                    TrackerAsset.Instance.setVar("old_variable_name", mOldVarName);
+                    TrackerAsset.Instance.setVar("block_type", "variable");
+                    TrackerAsset.Instance.setVar("action", "rename");
+                    TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName().ToLower());
+                    TrackerAsset.Instance.GameObject.Interacted("rename_variable");
+                }
                 else
-                    BlocklyUI.WorkspaceView.Workspace.CreateVariable(m_Input.text);
+                {
+                    VariableModel model = BlocklyUI.WorkspaceView.Workspace.CreateVariable(m_Input.text);
+
+                    if (model == null) return;
+
+                    TrackerAsset.Instance.setVar("variable_name", model.Name);
+                    TrackerAsset.Instance.setVar("block_type", "variable");
+                    TrackerAsset.Instance.setVar("action", "declare");
+                    TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName().ToLower());
+                    TrackerAsset.Instance.GameObject.Interacted("new_variable");
+                }
+
+
             });
         }
 

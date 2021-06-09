@@ -20,6 +20,7 @@ using AssetPackage;
 using Simva;
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using uAdventure.Simva;
 using UnityEngine;
 using UnityEngine.UI;
@@ -228,10 +229,18 @@ namespace UBlockly.UGUI
 
             OnPickBlockView();
 
+            string id = GameManager.Instance.GetBlockId(mPickedBlockView.Block);
+            XmlNode dom = Xml.BlockToDomWithXY(mPickedBlockView.Block, false);
+            string text = UBlockly.Xml.DomToText(dom);
+            text = GameManager.Instance.ChangeCodeIDs(text);
+
+
             TrackerAsset.Instance.setVar("block_type", mPickedBlockView.Block.Type);
+            TrackerAsset.Instance.setVar("code", "\r\n" + text);
+
             TrackerAsset.Instance.setVar("action", "create");
             TrackerAsset.Instance.setVar("level", GameManager.Instance.GetCurrentLevelName().ToLower());
-            TrackerAsset.Instance.GameObject.Interacted(GameManager.Instance.GetBlockId(mPickedBlockView.Block));
+            TrackerAsset.Instance.GameObject.Interacted(id);
             
         }
 
