@@ -17,8 +17,18 @@ public class SaveManager
 #else
         Application.persistentDataPath;
 #endif
-        string token = SimvaExtension.Instance.API.AuthorizationInfo.Username;
-        Filepath = Path.Combine(dataPath, token + "_" + filename);
+        string token = "";
+
+        try
+        {
+            token = SimvaExtension.Instance.API.AuthorizationInfo.Username;
+            token += "_";
+        }
+        catch(System.Exception e)
+        {
+            token = "";
+        }
+        Filepath = Path.Combine(dataPath, token + filename);
     }
 
     public static void Load()
