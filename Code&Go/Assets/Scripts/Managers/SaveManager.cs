@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using uAdventure.Simva;
 using UnityEngine;
 
 public class SaveManager
@@ -16,7 +17,8 @@ public class SaveManager
 #else
         Application.persistentDataPath;
 #endif
-        Filepath = Path.Combine(dataPath, filename);
+        string token = SimvaExtension.Instance.API.AuthorizationInfo.Username;
+        Filepath = Path.Combine(dataPath, token + "_" + filename);
     }
 
     public static void Load()
