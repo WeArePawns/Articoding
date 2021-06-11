@@ -53,7 +53,7 @@ public class ProgressManager : MonoBehaviour
             for (int j = 0; j < data.levelsData.Length; j++)
             {
                 data.levelsData[j] = new LevelSaveData();
-                data.levelsData[j].stars = 0;
+                data.levelsData[j].stars = -1;
             }
             categoriesData[i] = data;
         }
@@ -73,11 +73,14 @@ public class ProgressManager : MonoBehaviour
 
     //Setters
     //---------
-    public void LevelCompleted(uint starsAchieved)
+    public void LevelCompleted(int starsAchieved)
     {
-        uint newStarsAchieved = (uint)Mathf.Clamp((float)starsAchieved - (float)currentCategoryData.levelsData[currentLevel].stars, 0.0f, 3.0f);
+        if (currentCategoryData.levelsData[currentLevel].stars == -1)
+            currentCategoryData.levelsData[currentLevel].stars = 0;
+
+        int newStarsAchieved = Mathf.Clamp(starsAchieved - currentCategoryData.levelsData[currentLevel].stars, 0, 3);
         currentCategoryData.levelsData[currentLevel].stars = currentCategoryData.levelsData[currentLevel].stars + newStarsAchieved;
-        currentCategoryData.totalStars += newStarsAchieved;
+        currentCategoryData.totalStars += (uint)newStarsAchieved;
 
         int categoryIndex = Array.IndexOf(categoriesData, currentCategoryData);
 
@@ -95,16 +98,16 @@ public class ProgressManager : MonoBehaviour
         TrackerAsset.Instance.Completable.Completed(levelName, CompletableTracker.Completable.Level, true, starsAchieved);
 
         var categoryName = categories[categoryIndex].name_id;
-        if(lastCategoryUnlocked == categoryIndex)
+        if (currentCategoryData.GetLevelsCompleted() < currentCategoryData.levelsData.Length)
         {
-            TrackerAsset.Instance.Completable.Progressed(categoryName, CompletableTracker.Completable.Completable, (float)currentCategoryData.lastLevelUnlocked / categories[categoryIndex].levels.Count);
+            TrackerAsset.Instance.Completable.Progressed(categoryName, CompletableTracker.Completable.Completable, (float)currentCategoryData.GetLevelsCompleted() / categories[categoryIndex].levels.Count);
         }
         else
         {
             TrackerAsset.Instance.Completable.Completed(categoryName, CompletableTracker.Completable.Completable, true, GetCategoryTotalStars(categoryIndex));
         }
 
-        if(categoriesData[lastCategoryUnlocked].lastLevelUnlocked == categories[lastCategoryUnlocked].levels.Count && lastCategoryUnlocked + 1 == categories.Count)
+        if (GetGameProgress() == 1.0f)
         {
             TrackerAsset.Instance.Completable.Completed("articoding", CompletableTracker.Completable.Game, true, GetTotalStars());
         }
@@ -117,7 +120,7 @@ public class ProgressManager : MonoBehaviour
         currentLevel = level;
 
 
-        if(currentLevel == 0 && !currentCategoryData.completableInitialized)
+        if (currentLevel == 0 && !currentCategoryData.completableInitialized)
         {
             var categoryName = categories[categoryIndex].name_id;
             TrackerAsset.Instance.Completable.Initialized(categoryName, CompletableTracker.Completable.Completable);
@@ -131,8 +134,8 @@ public class ProgressManager : MonoBehaviour
     public void LevelStarted(Category category, int level)
     {
         int index = categories.IndexOf(category);
-        if (index < 0)        
-            TrackerAsset.Instance.Accessible.Accessed(levelsCreatedCategory.levels[level].levelName);        
+        if (index < 0)
+            TrackerAsset.Instance.Accessible.Accessed(levelsCreatedCategory.levels[level].levelName);
         else
         {
             LevelStarted(categories.IndexOf(category), level);
@@ -165,13 +168,13 @@ public class ProgressManager : MonoBehaviour
         return allUnlocked || (categoryIndex <= lastCategoryUnlocked);
     }
 
-    public uint GetLevelStars(int categoryIndex, int level)
+    public int GetLevelStars(int categoryIndex, int level)
     {
         if (categoryIndex >= categoriesData.Length || categoryIndex < 0 || level >= categoriesData[categoryIndex].levelsData.Length || level < 0) return 0;
         return categoriesData[categoryIndex].levelsData[level].stars;
     }
 
-    public uint GetLevelStars(Category category, int level)
+    public int GetLevelStars(Category category, int level)
     {
         return GetLevelStars(categories.IndexOf(category), level);
     }
@@ -192,7 +195,7 @@ public class ProgressManager : MonoBehaviour
         int index = categories.IndexOf(category);
         if (index >= categoriesData.Length || index < 0) return 0;
 
-        return categoriesData[index].lastLevelUnlocked;
+        return categoriesData[index].GetLevelsCompleted();
     }
 
     public int GetCategoryTotalProgress(Category category)
@@ -273,7 +276,7 @@ public class ProgressManager : MonoBehaviour
         LevelData data = ScriptableObject.CreateInstance<LevelData>();
         //TODO//data.description = "Nivel creado por el usuario";
         data.activeBlocks = activeBlocks;
-        data.levelName = "level_created_" + index.ToString();        
+        data.levelName = "level_created_" + index.ToString();
         data.auxLevelBoard = board;
         data.minimosPasos = 10;
 
@@ -304,6 +307,8 @@ public class ProgressManager : MonoBehaviour
         coins = data.coins;
         levelsCreated = data.levelsCreatedData;
         LoadLevelsCreated();
+
+        CheckLevelsData();
     }
 
     public float GetGameProgress()
@@ -318,7 +323,7 @@ public class ProgressManager : MonoBehaviour
             totalLevel += c.levels.Count;
         }
 
-        return levels / (float) totalLevel;
+        return levels / (float)totalLevel;
     }
 
     public int GetTotalStars()
@@ -331,5 +336,19 @@ public class ProgressManager : MonoBehaviour
         }
 
         return stars;
+    }
+
+    private void CheckLevelsData()
+    {
+        if (allUnlocked) return;
+
+        foreach(CategorySaveData categoryData in categoriesData)
+        {
+            for (int i = 0; i < categoryData.levelsData.Length; i++)
+            {
+                if (categoryData.lastLevelUnlocked <= i )
+                    categoryData.levelsData[i].stars = -1;
+            }
+        }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class LevelSaveData
 {
-    public uint stars;// 3bits 1 por estrella
+    public int stars = -1;// -1 if the level is not completed
 }
 
 [System.Serializable]
@@ -15,6 +15,14 @@ public class CategorySaveData
     public int lastLevelUnlocked;
     public uint totalStars;
     public bool completableInitialized;
+
+    public int GetLevelsCompleted()
+    {
+        int levelsCompleted = 0;
+        foreach (LevelSaveData levelData in levelsData)
+            levelsCompleted += levelData.stars >= 0 ? 1 : 0;
+        return levelsCompleted;
+    }
 }
 
 [System.Serializable]

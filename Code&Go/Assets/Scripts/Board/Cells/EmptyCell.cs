@@ -15,7 +15,7 @@ public class EmptyCell : BoardCell
         placedObject.SetMovable(false);
         placedObject.SetRotatable(false);
 
-        if (placedObject.GetNameAsLower() == "laser_")
+        if (placedObject.GetComponent<LaserEmitter>() != null)
         {
             placedObject.GetComponent<LaserEmitter>().ChangeIntensity(0.0f);
             boardManager.InvokeLevelFailed();

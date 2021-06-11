@@ -9,11 +9,12 @@ public class StarsController : MonoBehaviour
     public Image firstRunStar;
     public Image noHintsStar;
     public Text stepsOverflowText;
+    public Color activatedColor;
     private Color deactivatedColor = new Color(1.0f, 1.0f, 1.0f, 0.5f);
 
-    public uint GetStars()
+    public int GetStars()
     {
-        uint nStars = 3;
+        int nStars = 3;
         if (firstRunStar.color == deactivatedColor)
             nStars --;
         if (noHintsStar.color == deactivatedColor)
@@ -38,6 +39,12 @@ public class StarsController : MonoBehaviour
     {
         minimumStepsStar.color = deactivatedColor;
         stepsOverflowText.text = stepsOverflow.ToString() + "+";
+    }
+
+    public void ReactivateMinimumStepsStar()
+    {
+        minimumStepsStar.color = activatedColor;
+        stepsOverflowText.text = "";
     }
 
     public bool IsFirstRunStarActive()

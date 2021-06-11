@@ -228,6 +228,7 @@ public class LevelManager : MonoBehaviour
         boardManager.GenerateBoardElements(state);
         debugPanel.SetActive(true);
         cameraFit.FitBoard(boardManager.GetRows(), boardManager.GetColumns());
+        starsController.ReactivateMinimumStepsStar();
     }
 
     public void ReloadLevel()

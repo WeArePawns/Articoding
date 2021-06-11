@@ -40,7 +40,7 @@ public class LevelCard : MonoBehaviour
 
         title.text = numLevel.ToString();
 
-        uint levelStars = ProgressManager.Instance.GetLevelStars(category, numLevel - 1);
+        int levelStars = ProgressManager.Instance.GetLevelStars(category, numLevel - 1);
 
         //cambia el color de las estrellas que ha conseguido el jugador en el nivel
         for (int i = 0; i < 3; i++)
