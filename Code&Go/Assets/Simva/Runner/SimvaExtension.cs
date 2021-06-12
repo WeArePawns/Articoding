@@ -49,11 +49,11 @@ namespace uAdventure.Simva
 
         private bool Application_wantsToQuit()
         {
-            if (!allowedToQuit)
+            if (!allowedToQuit && IsActive)
             {
                 StartCoroutine(QuitRoutine());
             }
-            return allowedToQuit;
+            return allowedToQuit || !IsActive;
         }
 
         private void Update()
